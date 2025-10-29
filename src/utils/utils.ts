@@ -1,0 +1,66 @@
+// Library Imports
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+
+// Get Current Date
+export const getCurrentDate = () => {
+	const today = new Date();
+	const year = today.getFullYear();
+	const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+	const day = String(today.getDate()).padStart(2, '0');
+	return `${year}-${month}-${day}`;
+};
+
+// Time Formatting Function
+export function formatTime(timeRemaining: number): string {
+	const minutes = Math.floor(timeRemaining / 60);
+	const seconds = timeRemaining % 60;
+
+	const timerMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+	const timerSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+
+	return `${timerMinutes}:${timerSeconds}`;
+}
+
+// Checking Local Browser Storage
+export const checkLocalStorage = (
+	checkFor: string,
+	defaultValue: number | string | boolean
+): number | string | boolean => {
+	const item = localStorage.getItem(checkFor);
+	if (item === null) return defaultValue;
+
+	try {
+		return JSON.parse(item);
+	} catch {
+		return defaultValue;
+	}
+};
+
+// Get Date Range for Statistics
+export const getRange = (timeframe: string, period: any) => {
+	const now = new Date();
+	let start: Date;
+	let end: Date;
+
+	if (timeframe === 'W') {
+		start = startOfWeek(new Date(period), { weekStartsOn: 1 });
+		end = endOfWeek(new Date(period), { weekStartsOn: 1 });
+	} else if (timeframe === 'M') {
+		start = startOfMonth(new Date(now.getFullYear(), period));
+		end = endOfMonth(new Date(now.getFullYear(), period));
+	} else if (timeframe === 'Y') {
+		// ✅ ensure year is a number
+		const year = typeof period === 'string' ? parseInt(period, 10) : period;
+		start = new Date(year, 0, 1);
+		end = new Date(year, 11, 31);
+	} else {
+		start = startOfWeek(now, { weekStartsOn: 1 });
+		end = endOfWeek(now, { weekStartsOn: 1 });
+	}
+
+	// ✅ return plain YYYY-MM-DD strings (no UTC conversion!)
+	return {
+		startDate: format(start, 'yyyy-MM-dd'),
+		endDate: format(end, 'yyyy-MM-dd'),
+	};
+};
