@@ -31,7 +31,7 @@ const AuthPage = () => {
 	return (
 		<div
 			className={`bg-white md:p-4 flex flex-col w-4/5 md:w-3/5 lg:w-2/5 h-3/5 md:h-2/5 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
-			<p>In Progres</p>
+			<p>In Progress</p>
 		</div>
 	);
 };

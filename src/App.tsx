@@ -1,7 +1,7 @@
 // Style Imports
-import './index.css';
-import 'primereact/resources/themes/lara-light-blue/theme.css';
+import 'primereact/resources/themes/tailwind-light/theme.css';
 import 'primereact/resources/primereact.min.css';
+import './index.css';
 
 // Icon Imports
 import { PrimeReactProvider } from 'primereact/api';
@@ -151,7 +151,7 @@ function App() {
   }, []); // Empty dependency array, so this runs only once on mount.
 
   return (
-    <div className='flex flex-col h-[dvh] w-screen bg-zinc-100 overflow-hidden'>
+    <div className='flex flex-col h-dvh w-dvw bg-zinc-100 overflow-hidden'>
       <PrimeReactProvider>
         <SettingsContext.Provider
           value={{
