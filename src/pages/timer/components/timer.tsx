@@ -1,5 +1,4 @@
 //  API Imports
-import { playAudio } from '../api/audio';
 import { sendPushNotification } from '../api/push-notification';
 
 // Component Imports
@@ -18,10 +17,12 @@ import { useSettings } from '../../../hooks/use-settings';
 import { useState, useEffect, useRef } from 'react';
 
 // Utils Imports
+import { playAudio } from '../utils/audio';
 import { formatTime } from '../../../utils/utils';
 
 // Component Definition
-function Timer() {
+const Timer = () => {
+	// Settings Context
 	const settings = useSettings();
 
 	// Component States
@@ -46,11 +47,11 @@ function Timer() {
 		};
 	}, []);
 
+	// End of Timer handling
 	useEffect(() => {
 		if (!settings.timerWorker.current) {
 			return;
 		}
-
 		settings.timerWorker.current.onmessage = async (e) => {
 			timeRemainingRef.current = e.data.timeRemaining;
 			setTimeRemaining(timeRemainingRef.current);
@@ -67,25 +68,6 @@ function Timer() {
 					// Local Storage Completion
 					settings.workingTimeCompleted.current += Math.floor(settings.workingTime / 60);
 					settings.workingCyclesCompleted.current += 1;
-
-					/*
-					// Try to send study data to backend
-					if (
-						settings.session?.user?.email &&
-						settings.todayDate.current &&
-						settings.workingTimeCompleted.current !== null
-					) {
-						const studyData: InputData = {
-							user_id: settings.session.user.email,
-							study_date: settings.todayDate.current,
-							minutes_studied: Math.floor(settings.workingTime / 60),
-							topic: settings.activeWorkItem
-								? settings.activeWorkItem.work_item
-								: null,
-						};
-						await sendStudyData(studyData);
-					}
-					*/
 				}
 
 				// Sending Push Notification
@@ -97,6 +79,7 @@ function Timer() {
 		};
 	}, [settings]);
 
+	// Showing Tab Timer
 	useEffect(() => {
 		if (settings.showTabTimer === true) {
 			document.title = `${formatTime(timeRemaining)} - Zeitful`;
@@ -105,11 +88,13 @@ function Timer() {
 		}
 	}, [timeRemaining, settings]);
 
+	// Timer Progress Handling
 	useEffect(() => {
 		let calculatedProgressBarValue = (1 - timeRemaining / progressBarTotalRef.current) * 100;
 		setProgressBarValue(calculatedProgressBarValue);
 	}, [timeRemaining, progressBarTotalRef]);
 
+	// Time Remaining Handling
 	useEffect(() => {
 		if (settings.cycleNumber % 8 === 0) {
 			setTimeRemaining(settings.longBreakTime);
@@ -130,8 +115,9 @@ function Timer() {
 
 	return (
 		<div
-			className={`relative p-4 w-4/5 md:w-3/5 xl:w-2/5 h-1/2 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+			className={`relative p-4 w-4/5 md:w-3/5 xl:w-2/5 h-1/2 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
+				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+			}`}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation progress={progressBarValue} waveColor={settings.waveColor} />
@@ -148,6 +134,6 @@ function Timer() {
 			<div className='absolute inset-0 bg-white rounded-lg z-0'></div>
 		</div>
 	);
-}
+};
 
 export default Timer;

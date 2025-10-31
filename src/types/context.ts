@@ -3,6 +3,7 @@ import type { Dispatch, RefObject } from 'react';
 import type { WorkItem } from './work-item';
 import type { Page } from './types';
 
+// Interface Defintion
 export interface SettingsContextType {
 	showTabTimer: boolean;
 	workingTime: number;

@@ -6,7 +6,7 @@ import TopicList from './topicBreakDownTable';
 import { useSettings } from '../../../hooks/use-settings';
 
 // Type Imports
-import type { StudyData } from '../../../types/study-data.ts';
+import type { StudyData } from '../../../types/interfaces.ts';
 
 // Utils Imports
 import {

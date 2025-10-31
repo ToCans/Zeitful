@@ -1,11 +1,15 @@
-//import "../index.css";
-import { HiOutlinePlusCircle, HiOutlineMinusCircle } from 'react-icons/hi';
+// Component Imports
 import { ColorPicker } from 'primereact/colorpicker';
-
-import { formatTime } from '../../../utils/utils';
+// Icon Imports
+import { HiOutlinePlusCircle, HiOutlineMinusCircle } from 'react-icons/hi';
+// Hook Imports
 import { useSettings } from '../../../hooks/use-settings';
+// React Imports
 import { useEffect, useState } from 'react';
+// Utils Imports
+import { formatTime } from '../../../utils/utils';
 
+// Component Definition
 const Settings = () => {
 	const settings = useSettings();
 	const [isMounted, setIsMounted] = useState(false);

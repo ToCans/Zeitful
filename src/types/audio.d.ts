@@ -1,5 +1,4 @@
-// src/types/audio.d.ts
-
+// Type Declarations for Audio Files
 declare module '*.mp3' {
 	const src: string;
 	export default src;

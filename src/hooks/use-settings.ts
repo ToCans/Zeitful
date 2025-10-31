@@ -1,6 +1,9 @@
+// Context Imports
+import SettingsContext from '../context/settingsContext';
+// React Imports
 import { useContext } from 'react';
-import SettingsContext from '../context/settingsContext'; // adjust path to where your context is defined
-import type { SettingsContextType } from '../types/context'; // if you're using a type
+// Type Imports
+import type { SettingsContextType } from '../types/context';
 
 export const useSettings = (): SettingsContextType => {
 	const context = useContext(SettingsContext);
