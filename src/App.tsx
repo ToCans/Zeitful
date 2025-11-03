@@ -2,35 +2,28 @@
 import 'primereact/resources/themes/tailwind-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import './index.css';
-
+// API Imports
+import { getTasks, getTopics } from './api/database';
 // Icon Imports
 import { PrimeReactProvider } from 'primereact/api';
-
 // React Imports
 import { useState, useRef, useEffect } from 'react';
-
 // Component and Context Imports
-import NavBar from './components/NavBar';
+import NavBar from './components/NavBar/NavBar';
 import AuthPage from './pages/users/components/authPage';
 import Settings from './pages/settings/components/settings';
 import Statistics from './pages/statistics/components/statistics';
 import Timer from './pages/timer/components/timer';
 import SettingsContext from './context/settingsContext';
-
 // MP3 Imports
 import breakFinishAudioClip from './assets/sounds/complete.mp3';
 import workFinishAudioClip from './assets/sounds/lowHighChime.mp3';
-
 // Script Imports
 import timerWorkerScript from './scripts/timerWorker';
-
 // Function Imports
 import { checkLocalStorage } from './utils/utils';
-
 //Type Imports
-import type { WorkItem } from './types/work-item';
-import type { Page } from './types/types';
-
+import type { Page, WorkTask, WorkTopic } from './types/types';
 // Utils Imports
 import { getCurrentDate } from './utils/utils';
 
@@ -38,10 +31,11 @@ import { getCurrentDate } from './utils/utils';
 function App() {
 	// Default States
 	const [activePage, setActivePage] = useState<Page>('Timer');
-	const [activeWorkItem, setActiveWorkItem] = useState<WorkItem | null>(null);
+	const [activeWorkTask, setActiveWorkTask] = useState<WorkTask | null>(null);
 	const [cycleNumber, setCycleNumber] = useState<number>(1);
 	const [timerRunning, setTimerRunning] = useState<boolean>(false);
-	const [workItems, setWorkItems] = useState<WorkItem[]>([]);
+	const [workTopics, setWorkTopics] = useState<WorkTopic[]>([]);
+	const [workTasks, setWorkTasks] = useState<WorkTask[]>([]);
 
 	// Default References
 	const permission = useRef<string | null>(null);
@@ -134,6 +128,14 @@ function App() {
 		};
 	}, []);
 
+	// Get the latest topics and tasks
+	useEffect(() => {
+		(async () => {
+			setWorkTopics(await getTopics());
+			setWorkTasks(await getTasks());
+		})();
+	}, []);
+
 	useEffect(() => {
 		// Setting refs
 		todayDate.current = getCurrentDate();
@@ -168,8 +170,9 @@ function App() {
 						timerRunning,
 						permission,
 						subscription,
-						workItems,
-						activeWorkItem,
+						workTasks,
+						workTopics,
+						activeWorkTask,
 						waveColor,
 						setActivePage,
 						setTabTimer,
@@ -178,8 +181,9 @@ function App() {
 						setLongBreakTime,
 						setCycleNumber,
 						setTimerRunning,
-						setWorkItems,
-						setActiveWorkItem,
+						setWorkTasks,
+						setWorkTopics,
+						setActiveWorkTask,
 						setWaveColor,
 					}}
 				>

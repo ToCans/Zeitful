@@ -1,5 +1,5 @@
 // API Imports
-import { subscribeToPush } from '../api/subscribe-to-push-notifications';
+import { subscribeToPush } from '../api/push-notification';
 // Type Defintions
 import type { SettingsContextType } from '../../../types/context';
 
@@ -11,7 +11,7 @@ export interface TimerWorkerMessageProps {
 }
 
 // Sending Time Worker Message
-const sendTimerWorkerMessage = ({
+export const sendTimerWorkerMessage = ({
 	timerWorker,
 	runningBoolean,
 	timeRemaining,

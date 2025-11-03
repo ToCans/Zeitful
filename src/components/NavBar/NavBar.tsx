@@ -1,13 +1,12 @@
 // API Imports
-import { sendTimerWorkerMessage } from '../services/service-worker';
+import { sendTimerWorkerMessage } from '../../pages/timer/api/timer-controls';
 // Component Imports
 import ActiveNavBarUnderline from './activeNavBarUnderline';
 import { Button } from 'primereact/button';
 // Icon Imports
 import { PiClockCountdown, PiChartBar, PiUserCircle, PiGear } from 'react-icons/pi';
-
 // Type Imports
-import type { Page } from '../types/types';
+import type { Page } from '../../types/types';
 
 // Interface Definition
 interface NavBarProps {
@@ -34,9 +33,8 @@ const NavBar = ({ activePage, timerWorker, setActivePage, setTimerRunning }: Nav
 					icon={() => (
 						<div className='relative flex flex-col items-center'>
 							<PiClockCountdown
-								className={`size-10 fill-black opacity-75 ${
-									activePage === 'Timer' ? '90' : ''
-								}`}
+								className={`size-10 fill-black opacity-75 ${activePage === 'Timer' ? '90' : ''
+									}`}
 							/>
 							<ActiveNavBarUnderline active={activePage === 'Timer'} />
 						</div>
@@ -51,9 +49,8 @@ const NavBar = ({ activePage, timerWorker, setActivePage, setTimerRunning }: Nav
 					icon={() => (
 						<div className='relative flex flex-col items-center'>
 							<PiChartBar
-								className={`size-10 fill-black opacity-75 ${
-									activePage === 'Stats' ? '90' : ''
-								}`}
+								className={`size-10 fill-black opacity-75 ${activePage === 'Stats' ? '90' : ''
+									}`}
 							/>
 							<ActiveNavBarUnderline active={activePage === 'Statistics'} />
 						</div>
@@ -68,9 +65,8 @@ const NavBar = ({ activePage, timerWorker, setActivePage, setTimerRunning }: Nav
 					icon={() => (
 						<div className='relative flex flex-col items-center'>
 							<PiUserCircle
-								className={`size-10 fill-black opacity-75 ${
-									activePage === 'User' ? '90' : ''
-								}`}
+								className={`size-10 fill-black opacity-75 ${activePage === 'User' ? '90' : ''
+									}`}
 							/>
 							<ActiveNavBarUnderline active={activePage === 'AuthPage'} />
 						</div>
@@ -85,9 +81,8 @@ const NavBar = ({ activePage, timerWorker, setActivePage, setTimerRunning }: Nav
 					icon={() => (
 						<div className='relative flex flex-col items-center'>
 							<PiGear
-								className={`size-10 fill-black opacity-75 ${
-									activePage === 'Settings' ? '90' : ''
-								}`}
+								className={`size-10 fill-black opacity-75 ${activePage === 'Settings' ? '90' : ''
+									}`}
 							/>
 							<ActiveNavBarUnderline active={activePage === 'Settings'} />
 						</div>
