@@ -16,7 +16,7 @@ import { useSettings } from '../../../hooks/use-settings';
 import { useRef, useState } from 'react';
 
 // Component Definition
-const WorkFocus = () => {
+const TaskFocus = () => {
     const settings = useSettings();
     const [text, setText] = useState("");
     const [color, setColor] = useState("000000");
@@ -72,4 +72,4 @@ const WorkFocus = () => {
     );
 };
 
-export default WorkFocus;
+export default TaskFocus;
