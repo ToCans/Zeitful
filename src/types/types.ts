@@ -1,8 +1,15 @@
 // Type Defintions
+export type DatabaseActionStatus = 'Success' | 'Failure';
 export type Page = 'Timer' | 'Statistics' | 'UserPage' | 'Settings';
 export type WorkTaskStatus = 'Open' | 'Active' | 'Closed';
 
+export type DatabaseActionResponse = {
+	status: DatabaseActionStatus;
+	message: string;
+};
+
 export type WorkTopic = {
+	id: string;
 	topic: string;
 	color: string;
 };

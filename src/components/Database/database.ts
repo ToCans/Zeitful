@@ -22,7 +22,8 @@ export async function getDatabase(): Promise<Database> {
 function createTables(db: Database) {
   db.run(`
     CREATE TABLE IF NOT EXISTS WorkTopic (
-      topic TEXT PRIMARY KEY,
+      id TEXT PRIMARY KEY,
+      topic TEXT NOT NULL,
       color TEXT NOT NULL
     );
 
@@ -32,8 +33,7 @@ function createTables(db: Database) {
       task_name TEXT,
       duration REAL NOT NULL,
       completion_time TEXT NOT NULL,
-      status TEXT NOT NULL CHECK(status IN ('Open', 'Active', 'Closed')),
-      FOREIGN KEY (topic) REFERENCES WorkTopic(topic)
+      status TEXT NOT NULL CHECK(status IN ('Open', 'Active', 'Closed'))
     );
   `);
 }
