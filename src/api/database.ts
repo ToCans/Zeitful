@@ -5,24 +5,20 @@ import { getDatabase, saveDatabase } from '../components/Database/database';
 import type { WorkTask, WorkTaskStatus, WorkTopic } from '../types/types';
 
 // --- Topics ---
-export async function addTopic(topic: Omit<WorkTopic, 'id'>): Promise<string> {
+export async function addTopic(topic: WorkTopic): Promise<void> {
     const db = await getDatabase();
-    const id = uuidv4();
-    db.run('INSERT INTO WorkTopic (id, topic, color) VALUES (?, ?, ?)', [
-        id,
+    db.run('INSERT OR REPLACE INTO WorkTopic (topic, color) VALUES (?, ?)', [
         topic.topic,
         topic.color,
     ]);
     await saveDatabase();
-    return id;
 }
 
 export async function getTopics(): Promise<WorkTopic[]> {
     const db = await getDatabase();
     const res = db.exec('SELECT * FROM WorkTopic');
     if (res.length === 0) return [];
-    return res[0].values.map(([id, topic, color]) => ({
-        id: id as string,
+    return res[0].values.map(([topic, color]) => ({
         topic: topic as string,
         color: color as string,
     }));
@@ -33,8 +29,17 @@ export async function addTask(task: Omit<WorkTask, 'id'>): Promise<string> {
     const db = await getDatabase();
     const id = uuidv4();
     db.run(
-        'INSERT INTO WorkTask (id, topic_id, time, status) VALUES (?, ?, ?, ?)',
-        [id, task.topic?.id ?? null, task.time.toISOString(), task.status]
+        `INSERT INTO WorkTask 
+      (id, topic, task_name, duration, completion_time, status) 
+     VALUES (?, ?, ?, ?, ?, ?)`,
+        [
+            id,
+            task.topic,
+            task.task_name,
+            task.duration,
+            task.completion_time.toISOString(),
+            task.status,
+        ]
     );
     await saveDatabase();
     return id;
@@ -43,20 +48,21 @@ export async function addTask(task: Omit<WorkTask, 'id'>): Promise<string> {
 export async function getTasks(): Promise<WorkTask[]> {
     const db = await getDatabase();
     const res = db.exec(`
-    SELECT t.id, t.time, t.status,
-           wt.id as topic_id, wt.topic as topic_name, wt.color as topic_color
+    SELECT t.id, t.topic, t.task_name, t.duration, t.completion_time, t.status, wt.color
     FROM WorkTask t
-    LEFT JOIN WorkTopic wt ON t.topic_id = wt.id
+    LEFT JOIN WorkTopic wt ON t.topic = wt.topic
   `);
+
     if (res.length === 0) return [];
+
     return res[0].values.map(
-        ([id, time, status, topic_id, topic_name, topic_color]) => ({
+        ([id, topic, task_name, duration, completion_time, status]) => ({
             id: id as string,
-            time: new Date(time as string),
+            topic: topic as string | null,
+            task_name: task_name as string | null,
+            duration: duration as number,
+            completion_time: new Date(completion_time as string),
             status: status as WorkTaskStatus,
-            topic: topic_id
-                ? { id: topic_id as string, topic: topic_name as string, color: topic_color as string }
-                : null,
         })
     );
 }

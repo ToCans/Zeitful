@@ -4,17 +4,8 @@ import { useSettings } from '../../../hooks/use-settings';
 // React Imports
 import { useEffect, useState } from 'react';
 
-// Interface Definition
-export interface handleUserActionProps {
-	event?: React.FormEvent<HTMLFormElement>;
-	setLoading: (loading: boolean) => void;
-	setShowMessage: (showMessage: boolean) => void;
-	setAuthStatus: (authStatus: string) => void;
-	setAuthMessage: (authMessage: string) => void;
-}
-
 // Component Definition
-const AuthPage = () => {
+const UserPage = () => {
 	// TODO: Cleanup
 	const settings = useSettings();
 
@@ -41,10 +32,18 @@ const AuthPage = () => {
 	};
 
 	const handleAddTask = async () => {
-		const topic = settings.workTopics[0] || null;
+		// Active Topic Handling
+		let topic;
+		if (settings.activeWorkTask) {
+			topic = settings.activeWorkTask["topic"];
+		} else {
+			topic = null;
+		}
+
 		await addTask({
 			topic,
-			time: new Date(),
+			duration: settings.workingTime,
+			completion_time: new Date(),
 			status: 'Open',
 		});
 		settings.setWorkTasks(await getTasks());
@@ -67,8 +66,9 @@ const AuthPage = () => {
 
 			<h2 className="mt-4 font-semibold">Tasks</h2>
 			<pre>{JSON.stringify(settings.workTasks, null, 2)}</pre>
+
 		</div>
 	);
 };
 
-export default AuthPage;
+export default UserPage;

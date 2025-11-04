@@ -10,7 +10,7 @@ import { PrimeReactProvider } from 'primereact/api';
 import { useState, useRef, useEffect } from 'react';
 // Component and Context Imports
 import NavBar from './components/NavBar/NavBar';
-import AuthPage from './pages/users/components/authPage';
+import UserPage from './pages/users/components/userPage';
 import Settings from './pages/settings/components/settings';
 import Statistics from './pages/statistics/components/statistics';
 import Timer from './pages/timer/components/timer';
@@ -191,7 +191,7 @@ function App() {
 					<div className='flex-1 flex flex-col justify-center items-center bg-no-repeat bg-cover bg-center overscroll-none'>
 						{activePage === 'Timer' && <Timer />}
 						{activePage === 'Statistics' && <Statistics />}
-						{activePage === 'AuthPage' && <AuthPage />}
+						{activePage === 'UserPage' && <UserPage />}
 						{activePage === 'Settings' && <Settings />}
 					</div>
 

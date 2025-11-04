@@ -34,13 +34,13 @@ const TimeButton = ({
 	// Start Button Handling
 	if (purpose === 'Start') {
 		return (
-			<IconContext.Provider value={{ className: 'timerButton' }}>
+			<IconContext.Provider value={{ className: 'size-8 opacity-50 hover:opacity-70' }}>
 				<PiPlayDuotone
 					id='startButton'
 					onClick={async () => {
 						startTimer({ settings: settings, timeRemaining, setTimerRunning: setTimerRunning });
 					}}
-					className='size-8'
+
 				/>
 			</IconContext.Provider>
 		);
@@ -48,7 +48,7 @@ const TimeButton = ({
 	// Pause Button Handling
 	else if (purpose === 'Pause') {
 		return (
-			<IconContext.Provider value={{ className: 'timerButton' }}>
+			<IconContext.Provider value={{ className: 'size-8 opacity-50 hover:opacity-70' }}>
 				<PiPauseDuotone
 					id='pauseButton'
 					onClick={async () => {
@@ -62,7 +62,7 @@ const TimeButton = ({
 	// Restart Button Handling
 	else if (purpose === 'Restart') {
 		return (
-			<IconContext.Provider value={{ className: 'timerButton' }}>
+			<IconContext.Provider value={{ className: 'size-8 opacity-50 hover:opacity-70' }}>
 				<PiArrowCounterClockwise
 					id='restartButton'
 					onClick={async () => {
@@ -76,7 +76,7 @@ const TimeButton = ({
 	// Skip Button Handling
 	else {
 		return (
-			<IconContext.Provider value={{ className: 'timerButton' }}>
+			<IconContext.Provider value={{ className: 'size-8 opacity-50 hover:opacity-70' }}>
 				<PiSkipForwardDuotone
 					id='skipButton'
 					onClick={async () => {
