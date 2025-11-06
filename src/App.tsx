@@ -36,6 +36,7 @@ function App() {
 	const [timerRunning, setTimerRunning] = useState<boolean>(false);
 	const [workTopics, setWorkTopics] = useState<WorkTopic[]>([]);
 	const [workTasks, setWorkTasks] = useState<WorkTask[]>([]);
+	const [showTaskManagement, setShowTaskManagement] = useState<boolean>(false);
 
 	// Default References
 	const permission = useRef<string | null>(null);
@@ -174,6 +175,7 @@ function App() {
 						workTopics,
 						activeWorkTask,
 						waveColor,
+						showTaskManagement,
 						setActivePage,
 						setTabTimer,
 						setWorkingTime,
@@ -185,10 +187,11 @@ function App() {
 						setWorkTopics,
 						setActiveWorkTask,
 						setWaveColor,
+						setShowTaskManagement,
 					}}
 				>
 					{/* Main content grows and centers */}
-					<div className='flex-1 flex flex-col justify-center items-center bg-no-repeat bg-cover bg-center overscroll-none'>
+					<div className='flex-1 flex flex-col justify-center items-center overscroll-none'>
 						{activePage === 'Timer' && <Timer />}
 						{activePage === 'Statistics' && <Statistics />}
 						{activePage === 'UserPage' && <UserPage />}

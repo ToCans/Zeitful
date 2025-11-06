@@ -64,3 +64,8 @@ export const getRange = (timeframe: string, period: any) => {
 		endDate: format(end, 'yyyy-MM-dd'),
 	};
 };
+
+export const getRandomHexColor = (): string => {
+	const randomColor = Math.floor(Math.random() * 0xffffff);
+	return `#${randomColor.toString(16).padStart(6, '0')}`;
+};

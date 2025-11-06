@@ -22,6 +22,7 @@ export interface SettingsContextType {
 	workTasks: WorkTask[];
 	activeWorkTask: WorkTask | null;
 	waveColor: string;
+	showTaskManagement: boolean;
 	setActivePage: Dispatch<React.SetStateAction<Page>>;
 	setTabTimer: Dispatch<React.SetStateAction<boolean>>;
 	setWorkingTime: Dispatch<React.SetStateAction<number>>;
@@ -33,4 +34,5 @@ export interface SettingsContextType {
 	setWorkTopics: Dispatch<React.SetStateAction<WorkTopic[]>>;
 	setActiveWorkTask: Dispatch<React.SetStateAction<WorkTask | null>>;
 	setWaveColor: Dispatch<React.SetStateAction<string>>;
+	setShowTaskManagement: Dispatch<React.SetStateAction<boolean>>;
 }

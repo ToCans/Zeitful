@@ -1,21 +1,16 @@
 //  API Imports
 import { sendPushNotification } from '../api/push-notification';
-
 // Component Imports
 import TimeDisplay from './timeDisplay';
 import TimerControls from './timeControls';
 import WavesAnimation from './wavesAnimation';
-// import WorkFocus from './workFocus';
-
+import TaskFocus from './taskFocus';
 // Hook Imports
 import { useSettings } from '../../../hooks/use-settings';
-
 // Interface Imports
 // import { InputData } from '../../../api/study-data';
-
 // React Imports
 import { useState, useEffect, useRef } from 'react';
-
 // Utils Imports
 import { playAudio } from '../utils/audio';
 import { formatTime } from '../../../utils/utils';
@@ -77,7 +72,6 @@ const Timer = () => {
 				settings.setCycleNumber(settings.cycleNumber + 1);
 
 				// TODO: Store Data Here
-
 			}
 		};
 	}, [settings]);
@@ -118,8 +112,9 @@ const Timer = () => {
 
 	return (
 		<div
-			className={`relative p-4 w-4/5 md:w-3/5 xl:w-2/5 h-1/2 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+			className={`relative p-4 w-4/5 md:w-3/5 xl:w-2/5 h-1/2 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
+				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+			}`}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation progress={progressBarValue} waveColor={settings.waveColor} />
@@ -127,6 +122,7 @@ const Timer = () => {
 			{/* Content Layer */}
 			<div className='relative z-20 w-full h-full flex flex-col rounded-lg p-5 justify-center items-center space-y-2'>
 				<TimeDisplay timeRemaining={timeRemaining} />
+				<TaskFocus />
 				<TimerControls timeRemaining={timeRemaining} setTimeRemaining={setTimeRemaining} />
 				<p className='sm:text-xl text-center select-none'>
 					Current Cycle: {Math.ceil(settings.cycleNumber / 2)}

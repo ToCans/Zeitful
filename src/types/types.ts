@@ -1,5 +1,6 @@
 // Type Defintions
 export type DatabaseActionStatus = 'Success' | 'Failure';
+export type Item = 'Task' | 'Topic';
 export type Page = 'Timer' | 'Statistics' | 'UserPage' | 'Settings';
 export type WorkTaskStatus = 'Open' | 'Active' | 'Closed';
 
@@ -8,17 +9,23 @@ export type DatabaseActionResponse = {
 	message: string;
 };
 
+export type WorkTask = {
+	id: string;
+	topic_id: string | null;
+	task_name: string;
+	status: WorkTaskStatus;
+};
+
 export type WorkTopic = {
 	id: string;
-	topic: string;
+	name: string;
 	color: string;
 };
 
-export type WorkTask = {
+export type WorkEntry = {
 	id: string;
-	topic: WorkTopic["topic"] | null;
+	topic: WorkTopic['name'] | null;
 	task_name: string | null;
 	duration: number;
 	completion_time: Date;
-	status: WorkTaskStatus;
 };
