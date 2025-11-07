@@ -12,7 +12,7 @@ export async function addTask(task: WorkTask): Promise<DatabaseActionResponse> {
 
 		// Check if topic already exists
 		const existing = db.exec(
-			'SELECT * FROM WorkTask WHERE name = "' + task.name.replace(/"/g, '""') + '"'
+			'SELECT * FROM work_tasks WHERE name = "' + task.name.replace(/"/g, '""') + '"'
 		);
 
 		if (existing.length > 0) {
@@ -23,7 +23,7 @@ export async function addTask(task: WorkTask): Promise<DatabaseActionResponse> {
 		}
 
 		db.run(
-			`INSERT INTO WorkTask (id, topic_id, name, status)
+			`INSERT INTO work_tasks (id, topic_id, name, status)
              VALUES (?, ?, ?, ?)`,
 			[
 				task.id,
@@ -51,7 +51,7 @@ export async function getTasks(): Promise<WorkTask[]> {
 	const db = await getDatabase();
 	const res = db.exec(`
     SELECT t.id, t.topic_id, t.name, t.status
-    FROM WorkTask t
+    FROM work_tasks t
   `);
 
 	if (res.length === 0) return [];

@@ -61,22 +61,18 @@ function App() {
 		const value = checkLocalStorage('tabTimer', true);
 		return typeof value === 'boolean' ? value : true;
 	});
-
 	const [workingTime, setWorkingTime] = useState<number>(() => {
 		const value = checkLocalStorage('workingTime', 25 * 60);
 		return typeof value === 'number' ? value : 5 * 60;
 	});
-
 	const [shortBreakTime, setShortBreakTime] = useState<number>(() => {
 		const value = checkLocalStorage('shortBreakTime', 5 * 60);
 		return typeof value === 'number' ? value : 5 * 60;
 	});
-
 	const [longBreakTime, setLongBreakTime] = useState<number>(() => {
 		const value = checkLocalStorage('longBreakTime', 15 * 60);
 		return typeof value === 'number' ? value : 15 * 60;
 	});
-
 	const [timerColor, settimerColor] = useState<string>(() => {
 		const value = checkLocalStorage('timerColor', 'bfdbfe');
 		return typeof value === 'string' ? value : 'bfdbfe';

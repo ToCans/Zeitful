@@ -12,7 +12,7 @@ export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse
 
 		// Check if topic already exists
 		const existing = db.exec(
-			'SELECT * FROM WorkTopic WHERE name = "' + topic.name.replace(/"/g, '""') + '"'
+			'SELECT * FROM work_topics WHERE name = "' + topic.name.replace(/"/g, '""') + '"'
 		);
 		console.log(existing);
 
@@ -25,7 +25,7 @@ export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse
 
 		// If not found, insert new
 		db.run(
-			`INSERT INTO WorkTopic 
+			`INSERT INTO work_topics 
         (id, name, color) 
         VALUES (?, ?, ?)`,
 			[topic.id, topic.name, topic.color]
@@ -46,7 +46,7 @@ export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse
 
 export async function getTopics(): Promise<WorkTopic[]> {
 	const db = await getDatabase();
-	const res = db.exec('SELECT * FROM WorkTopic');
+	const res = db.exec('SELECT * FROM work_topics');
 	if (res.length === 0) return [];
 	return res[0].values.map(([id, name, color]) => ({
 		id: id as string,

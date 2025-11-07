@@ -10,7 +10,7 @@ export async function addWorkEntry(workEntry: WorkEntry): Promise<DatabaseAction
 	try {
 		const db = await getDatabase();
 		db.run(
-			`INSERT INTO WorkEntry 
+			`INSERT INTO work_entries 
         (id, task_id, topic_id, task_name, topic_name, duration, completion_time) 
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
 			[
@@ -64,7 +64,7 @@ export async function getWorkEntries(): Promise<WorkEntry[]> {
 	const db = await getDatabase();
 	const res = db.exec(`
     SELECT t.id, t.task_id, t.topic_id, t.task_name, t.topic_name, t.duration, t.completion_time
-    FROM WorkEntry t
+    FROM work_entries t
   `);
 
 	if (res.length === 0) return [];

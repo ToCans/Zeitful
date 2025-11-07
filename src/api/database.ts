@@ -26,20 +26,20 @@ export async function getDatabase(): Promise<Database> {
 // Database/Tables Creation
 function createTables(db: Database) {
 	db.run(`
-	CREATE TABLE IF NOT EXISTS WorkTopic (
+	CREATE TABLE IF NOT EXISTS work_topics (
 	  id TEXT PRIMARY KEY,
 	  name TEXT NOT NULL,
 	  color TEXT NOT NULL
 	);
 
-	CREATE TABLE IF NOT EXISTS WorkTask (
+	CREATE TABLE IF NOT EXISTS work_tasks (
 	  id TEXT PRIMARY KEY,
 	  topic_id TEXT,
 	  name TEXT,
 	  status TEXT NOT NULL CHECK(status IN ('Open', 'Active', 'Closed'))
 	);
 
-	CREATE TABLE IF NOT EXISTS WorkEntry (
+	CREATE TABLE IF NOT EXISTS work_entries (
 	  id TEXT PRIMARY KEY,
 	  task_id TEXT,
 	  topic_id TEXT,
@@ -70,9 +70,9 @@ export async function gatherDatabaseData() {
 		return rows;
 	}
 
-	const topics = queryAll(`SELECT * FROM WorkTopic`);
-	const tasks = queryAll(`SELECT * FROM WorkTask`);
-	const workEntries = queryAll(`SELECT * FROM WorkEntry`);
+	const topics = queryAll(`SELECT * FROM work_topics`);
+	const tasks = queryAll(`SELECT * FROM work_tasks`);
+	const workEntries = queryAll(`SELECT * FROM work_entries`);
 
 	return { topics, tasks, workEntries };
 }
@@ -97,7 +97,7 @@ export async function importDatabaseHelper(jsonData: any) {
 
 	// Helper: Upsert for topics
 	const upsertTopic = db.prepare(`
-    INSERT INTO WorkTopic (id, name, color) 
+    INSERT INTO work_topics (id, name, color) 
     VALUES (?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET name=excluded.name, color=excluded.color
   `);
@@ -108,7 +108,7 @@ export async function importDatabaseHelper(jsonData: any) {
 
 	// Upsert for tasks
 	const upsertTask = db.prepare(`
-    INSERT INTO WorkTask (id, topic_id, name, status)
+    INSERT INTO work_tasks (id, topic_id, name, status)
     VALUES (?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET topic_id=excluded.topic_id, name=excluded.name, status=excluded.status
   `);
@@ -119,7 +119,7 @@ export async function importDatabaseHelper(jsonData: any) {
 
 	// Upsert for work entries
 	const upsertEntry = db.prepare(`
-    INSERT INTO WorkEntry (id, task_id, topic_id, task_name, topic_name, duration, completion_time)
+    INSERT INTO work_entries (id, task_id, topic_id, task_name, topic_name, duration, completion_time)
     VALUES (?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       task_id=excluded.task_id,

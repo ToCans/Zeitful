@@ -79,7 +79,6 @@ const WorkEntryManager = () => {
 					</IconContext.Provider>
 				</div>
 			</div>
-
 			<div className='overflow-y-scroll mt-2'>
 				{settings.workEntries.map((workEntry) => (
 					<WorkEntryTile
