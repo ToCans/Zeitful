@@ -1,3 +1,3 @@
 # Zeitful
 
-A local time tracking application.
+A local, browser-based time tracking application.
