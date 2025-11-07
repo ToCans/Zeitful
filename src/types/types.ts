@@ -12,7 +12,7 @@ export type DatabaseActionResponse = {
 export type WorkTask = {
 	id: string;
 	topic_id: string | null;
-	task_name: string;
+	name: string;
 	status: WorkTaskStatus;
 };
 
@@ -24,8 +24,10 @@ export type WorkTopic = {
 
 export type WorkEntry = {
 	id: string;
-	topic: WorkTopic['name'] | null;
-	task_name: string | null;
+	task_id: WorkTask['id'] | null;
+	topic_id: WorkTopic['id'] | null;
+	task_name: WorkTask['name'] | null;
+	topic_name: WorkTopic['name'] | null;
 	duration: number;
 	completion_time: Date;
 };

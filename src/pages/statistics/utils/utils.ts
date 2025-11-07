@@ -2,20 +2,9 @@
 import { format, startOfWeek, addWeeks, startOfMonth, addDays } from 'date-fns';
 // Type Imports
 import type { StudyData } from '../../../types/interfaces';
-import type { WorkItem } from '../../../types/work-item';
 
 // Type Defintion
 type PeriodOption = { label: string; value: Date | number };
-
-// Utility function to convert minutes → "Xh Ym"
-const formatMinutes = (totalMinutes: number) => {
-	const hours = Math.floor(totalMinutes / 60);
-	const minutes = totalMinutes % 60;
-	if (hours > 0) {
-		return `${hours}h ${minutes}m`;
-	}
-	return `${minutes}m`;
-};
 
 // Generates the Period options based on the timeframe
 export const generatePeriods = (timeframe: 'W' | 'M' | 'Y'): PeriodOption[] => {

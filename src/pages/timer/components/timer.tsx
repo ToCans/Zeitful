@@ -14,6 +14,7 @@ import { useState, useEffect, useRef } from 'react';
 // Utils Imports
 import { playAudio } from '../utils/audio';
 import { formatTime } from '../../../utils/utils';
+import { handleAddWorkEntry } from '../../../api/database';
 
 // Component Definition
 const Timer = () => {
@@ -71,7 +72,16 @@ const Timer = () => {
 				// Incrementing Cycle
 				settings.setCycleNumber(settings.cycleNumber + 1);
 
-				// TODO: Store Data Here
+				// Storing Work Entry Data
+				await handleAddWorkEntry(
+					settings,
+					{
+						task_id: settings.activeWorkTask?.id ?? null,
+						topic_id: settings.activeWorkTask?.topic_id ?? null,
+						task_name: settings.activeWorkTask?.name ?? null,
+					},
+					settings.workTopics
+				);
 			}
 		};
 	}, [settings]);
@@ -117,7 +127,7 @@ const Timer = () => {
 			}`}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
-			<WavesAnimation progress={progressBarValue} waveColor={settings.waveColor} />
+			<WavesAnimation progress={progressBarValue} timerColor={settings.timerColor} />
 
 			{/* Content Layer */}
 			<div className='relative z-20 w-full h-full flex flex-col rounded-lg p-5 justify-center items-center space-y-2'>

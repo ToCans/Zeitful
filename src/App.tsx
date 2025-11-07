@@ -3,7 +3,7 @@ import 'primereact/resources/themes/tailwind-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import './index.css';
 // API Imports
-import { getTasks, getTopics } from './api/database';
+import { getTasks, getTopics, getWorkEntries } from './api/database';
 // Icon Imports
 import { PrimeReactProvider } from 'primereact/api';
 // React Imports
@@ -23,7 +23,7 @@ import timerWorkerScript from './scripts/timerWorker';
 // Function Imports
 import { checkLocalStorage } from './utils/utils';
 //Type Imports
-import type { Page, WorkTask, WorkTopic } from './types/types';
+import type { Page, WorkEntry, WorkTask, WorkTopic } from './types/types';
 // Utils Imports
 import { getCurrentDate } from './utils/utils';
 
@@ -36,7 +36,7 @@ function App() {
 	const [timerRunning, setTimerRunning] = useState<boolean>(false);
 	const [workTopics, setWorkTopics] = useState<WorkTopic[]>([]);
 	const [workTasks, setWorkTasks] = useState<WorkTask[]>([]);
-	const [showTaskManagement, setShowTaskManagement] = useState<boolean>(false);
+	const [workEntries, setWorkEntries] = useState<WorkEntry[]>([]);
 
 	// Default References
 	const permission = useRef<string | null>(null);
@@ -75,8 +75,8 @@ function App() {
 		return typeof value === 'number' ? value : 15 * 60;
 	});
 
-	const [waveColor, setWaveColor] = useState<string>(() => {
-		const value = checkLocalStorage('waveColor', 'bfdbfe');
+	const [timerColor, settimerColor] = useState<string>(() => {
+		const value = checkLocalStorage('timerColor', 'bfdbfe');
 		return typeof value === 'string' ? value : 'bfdbfe';
 	});
 
@@ -134,6 +134,7 @@ function App() {
 		(async () => {
 			setWorkTopics(await getTopics());
 			setWorkTasks(await getTasks());
+			setWorkEntries(await getWorkEntries());
 		})();
 	}, []);
 
@@ -173,9 +174,9 @@ function App() {
 						subscription,
 						workTasks,
 						workTopics,
+						workEntries,
 						activeWorkTask,
-						waveColor,
-						showTaskManagement,
+						timerColor,
 						setActivePage,
 						setTabTimer,
 						setWorkingTime,
@@ -185,9 +186,9 @@ function App() {
 						setTimerRunning,
 						setWorkTasks,
 						setWorkTopics,
+						setWorkEntries,
 						setActiveWorkTask,
-						setWaveColor,
-						setShowTaskManagement,
+						settimerColor,
 					}}
 				>
 					{/* Main content grows and centers */}

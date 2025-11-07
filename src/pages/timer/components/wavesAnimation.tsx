@@ -1,11 +1,11 @@
 // Interface Defintion
 interface WavesAnimationProps {
 	progress: number;
-	waveColor: string;
+	timerColor: string;
 }
 
 // Component Definition
-const WavesAnimation = ({ progress, waveColor }: WavesAnimationProps) => {
+const WavesAnimation = ({ progress, timerColor }: WavesAnimationProps) => {
 	// Handling animation offset when the container is nearly full
 	const nearlyFullProgress = (progress: number): number => {
 		let fillHeightOffset: number;
@@ -21,7 +21,7 @@ const WavesAnimation = ({ progress, waveColor }: WavesAnimationProps) => {
 			className='absolute z-10 bottom-0 left-0 w-full transition-all duration-500 ease-out overflow-hidden'
 			style={{
 				height: `${progress}%`,
-				backgroundColor: `#${waveColor}`,
+				backgroundColor: `#${timerColor}`,
 			}}
 		>
 			{

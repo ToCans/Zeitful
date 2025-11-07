@@ -30,14 +30,16 @@ function createTables(db: Database) {
     CREATE TABLE IF NOT EXISTS WorkTask (
       id TEXT PRIMARY KEY,
       topic_id TEXT,
-      task_name TEXT,
+      name TEXT,
       status TEXT NOT NULL CHECK(status IN ('Open', 'Active', 'Closed'))
     );
 
     CREATE TABLE IF NOT EXISTS WorkEntry (
       id TEXT PRIMARY KEY,
-      topic TEXT,
+      task_id TEXT,
+      topic_id TEXT,
       task_name TEXT,
+      topic_name TEXT,
       duration REAL NOT NULL,
       completion_time TEXT NOT NULL
     );

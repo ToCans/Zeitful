@@ -13,7 +13,7 @@ export const workTaskOptionTemplate = (workTask: WorkTask) => {
 					style={{ backgroundColor: `${tileColor}` }}
 				></span>
 			</div>
-			<p className='text-center justify-center'>{workTask.task_name}</p>
+			<p className='text-center justify-center'>{workTask.name}</p>
 		</div>
 	);
 };
@@ -29,7 +29,7 @@ export const selectedWorkTaskOptionTemplate = (workTask: WorkTask) => {
 					className={`h-4 w-4 border-2 mr-2 border-slate-500 rounded-md`}
 					style={{ backgroundColor: `${tileColor}` }}
 				></span>
-				<p className='text-center justify-center'>{workTask.task_name}</p>
+				<p className='text-center justify-center'>{workTask.name}</p>
 			</div>
 		);
 	}

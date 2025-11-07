@@ -1,6 +1,6 @@
 // Type Imports
 import type { Dispatch, RefObject } from 'react';
-import type { Page, WorkTask, WorkTopic } from './types';
+import type { Page, WorkTask, WorkTopic, WorkEntry } from './types';
 
 // Interface Defintion
 export interface SettingsContextType {
@@ -20,9 +20,9 @@ export interface SettingsContextType {
 	subscription: RefObject<PushSubscription | null>;
 	workTopics: WorkTopic[];
 	workTasks: WorkTask[];
+	workEntries: WorkEntry[];
 	activeWorkTask: WorkTask | null;
-	waveColor: string;
-	showTaskManagement: boolean;
+	timerColor: string;
 	setActivePage: Dispatch<React.SetStateAction<Page>>;
 	setTabTimer: Dispatch<React.SetStateAction<boolean>>;
 	setWorkingTime: Dispatch<React.SetStateAction<number>>;
@@ -32,7 +32,7 @@ export interface SettingsContextType {
 	setTimerRunning: Dispatch<React.SetStateAction<boolean>>;
 	setWorkTasks: Dispatch<React.SetStateAction<WorkTask[]>>;
 	setWorkTopics: Dispatch<React.SetStateAction<WorkTopic[]>>;
+	setWorkEntries: Dispatch<React.SetStateAction<WorkEntry[]>>;
 	setActiveWorkTask: Dispatch<React.SetStateAction<WorkTask | null>>;
-	setWaveColor: Dispatch<React.SetStateAction<string>>;
-	setShowTaskManagement: Dispatch<React.SetStateAction<boolean>>;
+	settimerColor: Dispatch<React.SetStateAction<string>>;
 }

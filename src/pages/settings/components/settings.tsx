@@ -38,13 +38,13 @@ const Settings = () => {
 		localStorage.setItem('workingTime', JSON.stringify(settings.workingTime));
 		localStorage.setItem('shortBreakTime', JSON.stringify(settings.shortBreakTime));
 		localStorage.setItem('longBreakTime', JSON.stringify(settings.longBreakTime));
-		localStorage.setItem('waveColor', JSON.stringify(settings.waveColor));
+		localStorage.setItem('timerColor', JSON.stringify(settings.timerColor));
 	}, [
 		settings.showTabTimer,
 		settings.workingTime,
 		settings.shortBreakTime,
 		settings.longBreakTime,
-		settings.waveColor,
+		settings.timerColor,
 	]);
 
 	// For Showing Timer in Tab Info
@@ -58,9 +58,9 @@ const Settings = () => {
 			} else {
 				timeRemaining = settings.workingTime;
 			}
-			document.title = `${formatTime(timeRemaining)} - Studia`;
+			document.title = `${formatTime(timeRemaining)} - Zeitful`;
 		} else {
-			document.title = 'Studia';
+			document.title = 'Zeitful';
 		}
 	}, [settings, settings.showTabTimer]);
 
@@ -73,12 +73,12 @@ const Settings = () => {
 			<h1 className='flex text-3xl font-semibold select-none'>User Settings:</h1>
 			<div className='flex flex-col items-center justify-center space-y-2 flex-1'>
 				<div className='flex flex-row space-x-2 sm:text-2xl items-center justify-center w-full'>
-					<p className='select-none text-lg'>Wave Color:</p>
+					<p className='select-none text-lg'>Timer Color:</p>
 					<ColorPicker
 						className='outline-none focus:outline-none ring-0 focus:ring-0 focus:shadow-none'
 						inputClassName='h-5 w-5'
-						onChange={(e) => settings.setWaveColor(e.value as string)}
-						defaultColor={`#${settings.waveColor}`}
+						onChange={(e) => settings.settimerColor(e.value as string)}
+						defaultColor={`#${settings.timerColor}`}
 					/>
 				</div>
 				<div className='flex flex-row space-x-2 sm:text-2xl items-center justify-center w-full'>

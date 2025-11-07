@@ -11,7 +11,7 @@ const TopicTile = ({ topic }: TopicTileProps) => {
 				className={`h-4 w-4 border-2 mr-2 border-slate-500 rounded-md`}
 				style={{ backgroundColor: `${topic.color}` }}
 			></span>
-			<p>{topic.name}</p>
+			<p className='min-w-40'>{topic.name}</p>
 		</div>
 	);
 };

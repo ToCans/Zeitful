@@ -33,7 +33,7 @@ const TaskManager = () => {
 							let selectedTopicName = selectedTopic?.id ?? selectedTopic;
 							handleAddTask(settings, {
 								topic_id: selectedTopicName,
-								task_name: newTaskName,
+								name: newTaskName,
 							} as any);
 						}}
 					/>
