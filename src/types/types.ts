@@ -1,6 +1,6 @@
 // Type Defintions
 export type DatabaseActionStatus = 'Success' | 'Failure';
-export type Item = 'Task' | 'Topic';
+export type Item = 'Task' | 'Topic' | 'User';
 export type Page = 'Timer' | 'Statistics' | 'UserPage' | 'Settings';
 export type WorkTaskStatus = 'Open' | 'Active' | 'Closed';
 

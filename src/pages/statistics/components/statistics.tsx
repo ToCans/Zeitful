@@ -1,5 +1,3 @@
-// Component Imports
-import WorkEntryManager from '../../../components/ItemManager/workEntryManager';
 // React Imports
 import { useEffect, useState } from 'react';
 
@@ -20,11 +18,11 @@ const Statistics = () => {
 			}`}
 		>
 			<div className='flex flex-row w-full justify-between items-center'>
-				<p className='text-2xl'>Work Entry Viewer</p>
-				<p className='text-xs text-gray-600'>More features coming soon</p>
+				<p className='text-2xl'>Statistics</p>
 			</div>
-
-			<WorkEntryManager />
+			<div className='flex flex-1 justify-center items-center'>
+				<p>Coming soon</p>
+			</div>
 		</div>
 	);
 };

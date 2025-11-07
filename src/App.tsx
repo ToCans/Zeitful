@@ -3,7 +3,9 @@ import 'primereact/resources/themes/tailwind-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import './index.css';
 // API Imports
-import { getTasks, getTopics, getWorkEntries } from './api/database';
+import { getTasks } from './api/tasks';
+import { getTopics } from './api/topics';
+import { getWorkEntries } from './api/workEntries';
 // Icon Imports
 import { PrimeReactProvider } from 'primereact/api';
 // React Imports

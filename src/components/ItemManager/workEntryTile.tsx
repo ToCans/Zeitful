@@ -1,3 +1,5 @@
+// Component Imports
+import ColorIcon from './colorIcon';
 // Type Imports
 import type { WorkEntry, WorkTask, WorkTopic } from '../../types/types';
 // Utils Imports
@@ -39,10 +41,7 @@ const WorkEntryTile = ({ workEntry, workTasks, workTopics }: WorkEntryTileProps)
 
 	return (
 		<div className='flex flex-row space-x-2 items-center w-full'>
-			<span
-				className={`h-4 w-4 border-2 mr-2 border-slate-500 rounded-md`}
-				style={{ backgroundColor: `${tileColor}` }}
-			></span>
+			<ColorIcon color={tileColor} />
 			<p className='min-w-30'>{tileTopicName}</p>
 			<p className='min-w-30'>{tileTaskName}</p>
 			<p className='min-w-10'>{formatMinutes(workEntry.duration)}</p>

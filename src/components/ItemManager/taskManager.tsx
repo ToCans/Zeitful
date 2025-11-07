@@ -8,7 +8,7 @@ import { InputText } from 'primereact/inputtext';
 import { useState } from 'react';
 // Utils Imports
 import { useSettings } from '../../hooks/use-settings';
-import { handleAddTask } from '../../api/database';
+import { handleAddTask } from '../../api/tasks';
 import type { WorkTopic } from '../../types/types';
 import {
 	selectedWorkTopicOptionTemplate,

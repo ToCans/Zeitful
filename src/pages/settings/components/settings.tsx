@@ -70,7 +70,7 @@ const Settings = () => {
 				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
 			}`}
 		>
-			<h1 className='flex text-3xl font-semibold select-none'>User Settings:</h1>
+			<h1 className='flex text-2xl select-none'>User Settings</h1>
 			<div className='flex flex-col items-center justify-center space-y-2 flex-1'>
 				<div className='flex flex-row space-x-2 sm:text-2xl items-center justify-center w-full'>
 					<p className='select-none text-lg'>Timer Color:</p>

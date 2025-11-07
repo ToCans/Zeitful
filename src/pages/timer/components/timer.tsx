@@ -7,14 +7,12 @@ import WavesAnimation from './wavesAnimation';
 import TaskFocus from './taskFocus';
 // Hook Imports
 import { useSettings } from '../../../hooks/use-settings';
-// Interface Imports
-// import { InputData } from '../../../api/study-data';
 // React Imports
 import { useState, useEffect, useRef } from 'react';
 // Utils Imports
 import { playAudio } from '../utils/audio';
 import { formatTime } from '../../../utils/utils';
-import { handleAddWorkEntry } from '../../../api/database';
+import { handleAddWorkEntry } from '../../../api/workEntries';
 
 // Component Definition
 const Timer = () => {

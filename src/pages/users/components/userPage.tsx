@@ -1,6 +1,7 @@
 // Component Imports
 import TaskManager from '../../../components/ItemManager/taskManager';
 import TopicManager from '../../../components/ItemManager/topicManager';
+import WorkEntryManager from '../../../components/ItemManager/workEntryManager';
 // React Imports
 import { useEffect, useState } from 'react';
 // Type Imports
@@ -50,10 +51,19 @@ const UserPage = () => {
 				>
 					Topic
 				</button>
+				<button
+					className={`${
+						itemManagement == 'User' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
+					}`}
+					onClick={() => setItemManagement('User')}
+				>
+					User
+				</button>
 			</div>
 			<div className='h-2/3'>
 				{itemManagement === 'Task' && <TaskManager />}
 				{itemManagement === 'Topic' && <TopicManager />}
+				{itemManagement === 'User' && <WorkEntryManager />}
 			</div>
 		</div>
 	);

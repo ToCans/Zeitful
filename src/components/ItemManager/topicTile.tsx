@@ -1,16 +1,18 @@
+// Component Import
+import ColorIcon from './colorIcon';
+// Type Import
 import type { WorkTopic } from '../../types/types';
 
+// Interface Defintion
 interface TopicTileProps {
 	topic: WorkTopic;
 }
 
+// Component Defintion
 const TopicTile = ({ topic }: TopicTileProps) => {
 	return (
 		<div className='flex flex-row space-x-2 items-center'>
-			<span
-				className={`h-4 w-4 border-2 mr-2 border-slate-500 rounded-md`}
-				style={{ backgroundColor: `${topic.color}` }}
-			></span>
+			<ColorIcon color={topic.color} />
 			<p className='min-w-40'>{topic.name}</p>
 		</div>
 	);

@@ -11,7 +11,7 @@ import { useState } from 'react';
 // Utils Imports
 import { getRandomHexColor } from '../../utils/utils';
 import { useSettings } from '../../hooks/use-settings';
-import { handleAddTopic } from '../../api/database';
+import { handleAddTopic } from '../../api/topics';
 
 // Component Definition
 const TopicManager = () => {
