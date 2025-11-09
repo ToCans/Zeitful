@@ -62,6 +62,17 @@ const Timer = () => {
 					// Local Storage Completion
 					settings.workingTimeCompleted.current += Math.floor(settings.workingTime / 60);
 					settings.workingCyclesCompleted.current += 1;
+
+					// Storing Work Entry Data
+					await handleAddWorkEntry(
+						settings,
+						{
+							task_id: settings.activeWorkTask?.id ?? null,
+							topic_id: settings.activeWorkTask?.topic_id ?? null,
+							task_name: settings.activeWorkTask?.name ?? null,
+						},
+						settings.workTopics
+					);
 				}
 
 				// Sending Push Notification
@@ -70,16 +81,7 @@ const Timer = () => {
 				// Incrementing Cycle
 				settings.setCycleNumber(settings.cycleNumber + 1);
 
-				// Storing Work Entry Data
-				await handleAddWorkEntry(
-					settings,
-					{
-						task_id: settings.activeWorkTask?.id ?? null,
-						topic_id: settings.activeWorkTask?.topic_id ?? null,
-						task_name: settings.activeWorkTask?.name ?? null,
-					},
-					settings.workTopics
-				);
+
 			}
 		};
 	}, [settings]);
@@ -120,9 +122,8 @@ const Timer = () => {
 
 	return (
 		<div
-			className={`relative p-4 w-4/5 md:w-3/5 xl:w-2/5 h-1/2 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
-				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-			}`}
+			className={`relative p-4 w-4/5 md:w-3/5 xl:w-2/5 h-1/2 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				}`}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation progress={progressBarValue} timerColor={settings.timerColor} />
