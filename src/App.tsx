@@ -81,7 +81,7 @@ function App() {
 		return typeof value === 'string' ? value : 'bfdbfe';
 	});
 	const [useCloudDatabase, setUseCloudDatabase] = useState<boolean>(() => {
-		const value = checkLocalStorage('useCloudStorage', false);
+		const value = checkLocalStorage('useCloudDatabase', false);
 		return typeof value === 'boolean' ? value : false;
 	});
 

@@ -38,6 +38,7 @@ const Settings = () => {
 	// Handling for when the user changes any of the settings
 	useEffect(() => {
 		console.log('Saving settings to local storage');
+		localStorage.setItem('useCloudDatabase', JSON.stringify(settings.useCloudDatabase));
 		localStorage.setItem('showTabTimer', JSON.stringify(settings.showTabTimer));
 		localStorage.setItem('workingTime', JSON.stringify(settings.workingTime));
 		localStorage.setItem('shortBreakTime', JSON.stringify(settings.shortBreakTime));

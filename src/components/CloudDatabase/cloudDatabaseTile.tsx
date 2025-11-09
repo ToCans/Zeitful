@@ -1,17 +1,17 @@
 // DB Utils
-import { importJsonFile } from '../../api/database';
+import { importCloudDatabaseCredentialile } from '../../api/cloudDatabase';
 // Icon Imports
 import { PiArrowsClockwise, PiCloud } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
 // Hook Imports
-// import { useSettings } from '../../../hooks/use-settings';
+import { useSettings } from '../../hooks/use-settings';
 // React Imports
 import { useRef } from 'react';
 
 
 // Component Definition
 const CloudDatabaseTile = () => {
-    // const settings = useSettings();
+    const settings = useSettings();
     const credentialsInputRef = useRef<HTMLInputElement>(null);
 
     async function handleCloudCredentialsImportClick() {
@@ -22,7 +22,8 @@ const CloudDatabaseTile = () => {
         const file = e.target.files?.[0];
         if (!file) return;
         try {
-            await importJsonFile(file);
+            const cloudDatabaseCredentials = await importCloudDatabaseCredentialile(file);
+            settings.setCloudDatabase(cloudDatabaseCredentials);
         } catch (err) {
             console.error(err);
         }
@@ -59,7 +60,8 @@ const CloudDatabaseTile = () => {
                 >
                     <PiArrowsClockwise />
                 </IconContext.Provider>
-                <p className='font-light text-xs'>Last Synced:</p>
+                <p className='text-gray-500 text-xs'>Last Synced:</p>
+
 
             </div>
 
