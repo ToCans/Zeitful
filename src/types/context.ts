@@ -1,6 +1,7 @@
 // Type Imports
+import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Dispatch, RefObject } from 'react';
-import type { Page, WorkTask, WorkTopic, WorkEntry, CloudDatabase } from './types';
+import type { Page, WorkTask, WorkTopic, WorkEntry } from './types';
 
 // Interface Defintion
 export interface SettingsContextType {
@@ -23,7 +24,7 @@ export interface SettingsContextType {
 	workEntries: WorkEntry[];
 	activeWorkTask: WorkTask | null;
 	timerColor: string;
-	cloudDatabase: CloudDatabase | null;
+	cloudDatabase: SupabaseClient | null;
 	useCloudDatabase: boolean;
 	setActivePage: Dispatch<React.SetStateAction<Page>>;
 	setTabTimer: Dispatch<React.SetStateAction<boolean>>;
@@ -38,5 +39,5 @@ export interface SettingsContextType {
 	setActiveWorkTask: Dispatch<React.SetStateAction<WorkTask | null>>;
 	settimerColor: Dispatch<React.SetStateAction<string>>;
 	setUseCloudDatabase: Dispatch<React.SetStateAction<boolean>>;
-	setCloudDatabase: Dispatch<React.SetStateAction<CloudDatabase | null>>;
+	setCloudDatabase: Dispatch<React.SetStateAction<SupabaseClient | null>>;
 }

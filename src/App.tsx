@@ -25,7 +25,8 @@ import timerWorkerScript from './scripts/timerWorker';
 // Function Imports
 import { checkLocalStorage } from './utils/utils';
 //Type Imports
-import { type CloudDatabase, type Page, type WorkEntry, type WorkTask, type WorkTopic } from './types/types';
+import { type Page, type WorkEntry, type WorkTask, type WorkTopic } from './types/types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 // Utils Imports
 import { getCurrentDate } from './utils/utils';
 
@@ -41,7 +42,7 @@ function App() {
 	const [workEntries, setWorkEntries] = useState<WorkEntry[]>([]);
 
 	// Cloud Database
-	const [cloudDatabase, setCloudDatabase] = useState<CloudDatabase | null>(null);
+	const [cloudDatabase, setCloudDatabase] = useState<SupabaseClient | null>(null);
 
 	// Default References
 	const permission = useRef<string | null>(null);

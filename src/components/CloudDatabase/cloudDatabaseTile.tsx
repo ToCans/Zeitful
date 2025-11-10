@@ -1,10 +1,13 @@
 // DB Utils
-import { importCloudDatabaseCredentialile } from '../../api/cloudDatabase';
+import { importCloudDatabaseCredentialile, sendToSupabaseDatabase, getFromSupabaseDatabase } from '../../api/cloudDatabase';
+import { gatherDatabaseData, importDatabaseHelper } from '../../api/database';
+// Hook Imports
+import { useSettings } from '../../hooks/use-settings';
 // Icon Imports
 import { PiArrowsClockwise, PiCloud } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
-// Hook Imports
-import { useSettings } from '../../hooks/use-settings';
+// Library Imports
+import { createClient } from '@supabase/supabase-js';
 // React Imports
 import { useRef } from 'react';
 
@@ -23,11 +26,27 @@ const CloudDatabaseTile = () => {
         if (!file) return;
         try {
             const cloudDatabaseCredentials = await importCloudDatabaseCredentialile(file);
-            settings.setCloudDatabase(cloudDatabaseCredentials);
+            const supabaseClient = createClient(cloudDatabaseCredentials['database_url'], cloudDatabaseCredentials['api_key']);
+            settings.setCloudDatabase(supabaseClient);
         } catch (err) {
             console.error(err);
         }
     }
+
+    async function handleCloudDatabaseDataSync() {
+        if (settings.cloudDatabase) {
+            try {
+                const localData = await gatherDatabaseData();
+                await sendToSupabaseDatabase(settings.cloudDatabase, localData);
+                const cloudData = await getFromSupabaseDatabase(settings.cloudDatabase);
+                await importDatabaseHelper(cloudData);
+                console.log("Successful database sync");
+            } catch (e) {
+                console.log("Experience error syncing databases", e);
+            }
+        }
+    }
+
 
     return (
 
@@ -43,7 +62,7 @@ const CloudDatabaseTile = () => {
                 <IconContext.Provider
                     value={{
                         className:
-                            'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon',
+                            `fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon ${settings.cloudDatabase === null && settings.useCloudDatabase === true ? 'animate-bounce' : ''}`,
                     }}
                 >
                     <PiCloud
@@ -52,22 +71,18 @@ const CloudDatabaseTile = () => {
                         }}
                     />
                 </IconContext.Provider>
+
                 <IconContext.Provider
                     value={{
                         className:
                             'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon',
                     }}
                 >
-                    <PiArrowsClockwise />
+                    <PiArrowsClockwise onClick={() => { handleCloudDatabaseDataSync(); }} />
                 </IconContext.Provider>
                 <p className='text-gray-500 text-xs'>Last Synced:</p>
-
-
             </div>
-
-        </div>
-
-
+        </div >
     );
 };
 
