@@ -4,6 +4,11 @@ export type Item = 'Task' | 'Topic' | 'User';
 export type Page = 'Timer' | 'Statistics' | 'UserPage' | 'Settings';
 export type WorkTaskStatus = 'Open' | 'Active' | 'Closed';
 
+export type CloudDatabase = {
+	api_key: string;
+	database_url: string;
+};
+
 export type DatabaseActionResponse = {
 	status: DatabaseActionStatus;
 	message: string;

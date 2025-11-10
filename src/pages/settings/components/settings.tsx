@@ -14,8 +14,12 @@ const Settings = () => {
 	const settings = useSettings();
 	const [isMounted, setIsMounted] = useState(false);
 
-	const handleCheckboxChange = () => {
+	const handleTabCheckboxChange = () => {
 		settings.setTabTimer(!settings.showTabTimer);
+	};
+
+	const handleCloudCheckboxChange = () => {
+		settings.setUseCloudDatabase(!settings.useCloudDatabase);
 	};
 
 	// Trigger the slide-in animation on component mount
@@ -34,6 +38,11 @@ const Settings = () => {
 	// Handling for when the user changes any of the settings
 	useEffect(() => {
 		console.log('Saving settings to local storage');
+		localStorage.setItem(
+			'lastCloudDatabaseSync',
+			JSON.stringify(settings.lastCloudDatabaseSync)
+		);
+		localStorage.setItem('useCloudDatabase', JSON.stringify(settings.useCloudDatabase));
 		localStorage.setItem('showTabTimer', JSON.stringify(settings.showTabTimer));
 		localStorage.setItem('workingTime', JSON.stringify(settings.workingTime));
 		localStorage.setItem('shortBreakTime', JSON.stringify(settings.shortBreakTime));
@@ -45,6 +54,8 @@ const Settings = () => {
 		settings.shortBreakTime,
 		settings.longBreakTime,
 		settings.timerColor,
+		settings.useCloudDatabase,
+		settings.lastCloudDatabaseSync,
 	]);
 
 	// For Showing Timer in Tab Info
@@ -140,7 +151,19 @@ const Settings = () => {
 						<input
 							type='checkbox'
 							checked={settings.showTabTimer}
-							onChange={handleCheckboxChange}
+							onChange={handleTabCheckboxChange}
+						/>
+					</label>
+				</div>
+				<div className='flex flex-row space-x-2 sm:text-2xl items-center justify-center w-3/5 lg:w-2/5 3xl:w-1/5'>
+					<p className='text-center align-middle select-none text-lg '>
+						Use Cloud Database
+					</p>
+					<label>
+						<input
+							type='checkbox'
+							checked={settings.useCloudDatabase}
+							onChange={handleCloudCheckboxChange}
 						/>
 					</label>
 				</div>

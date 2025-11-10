@@ -25,7 +25,8 @@ import timerWorkerScript from './scripts/timerWorker';
 // Function Imports
 import { checkLocalStorage } from './utils/utils';
 //Type Imports
-import type { Page, WorkEntry, WorkTask, WorkTopic } from './types/types';
+import { type Page, type WorkEntry, type WorkTask, type WorkTopic } from './types/types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 // Utils Imports
 import { getCurrentDate } from './utils/utils';
 
@@ -39,6 +40,9 @@ function App() {
 	const [workTopics, setWorkTopics] = useState<WorkTopic[]>([]);
 	const [workTasks, setWorkTasks] = useState<WorkTask[]>([]);
 	const [workEntries, setWorkEntries] = useState<WorkEntry[]>([]);
+
+	// Cloud Database
+	const [cloudDatabase, setCloudDatabase] = useState<SupabaseClient | null>(null);
 
 	// Default References
 	const permission = useRef<string | null>(null);
@@ -76,6 +80,14 @@ function App() {
 	const [timerColor, settimerColor] = useState<string>(() => {
 		const value = checkLocalStorage('timerColor', 'bfdbfe');
 		return typeof value === 'string' ? value : 'bfdbfe';
+	});
+	const [useCloudDatabase, setUseCloudDatabase] = useState<boolean>(() => {
+		const value = checkLocalStorage('useCloudDatabase', false);
+		return typeof value === 'boolean' ? value : false;
+	});
+	const [lastCloudDatabaseSync, setLastCloudDatabaseSync] = useState<string>(() => {
+		const value = checkLocalStorage('lastCloudDatabaseSync', 'None');
+		return typeof value === 'string' ? value : 'None';
 	});
 
 	// Register the service worker
@@ -175,6 +187,9 @@ function App() {
 						workEntries,
 						activeWorkTask,
 						timerColor,
+						cloudDatabase,
+						useCloudDatabase,
+						lastCloudDatabaseSync,
 						setActivePage,
 						setTabTimer,
 						setWorkingTime,
@@ -187,6 +202,9 @@ function App() {
 						setWorkEntries,
 						setActiveWorkTask,
 						settimerColor,
+						setCloudDatabase,
+						setUseCloudDatabase,
+						setLastCloudDatabaseSync,
 					}}
 				>
 					{/* Main content grows and centers */}

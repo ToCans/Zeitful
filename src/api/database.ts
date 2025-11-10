@@ -78,7 +78,7 @@ export async function gatherDatabaseData() {
 }
 
 // Converts the database to a downloadable json file
-export async function downloadJson() {
+export async function downloadDataJson() {
 	const data = await gatherDatabaseData();
 	const blob = new Blob([JSON.stringify(data, null, 2)], {
 		type: 'application/json',
