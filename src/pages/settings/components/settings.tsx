@@ -38,6 +38,10 @@ const Settings = () => {
 	// Handling for when the user changes any of the settings
 	useEffect(() => {
 		console.log('Saving settings to local storage');
+		localStorage.setItem(
+			'lastCloudDatabaseSync',
+			JSON.stringify(settings.lastCloudDatabaseSync)
+		);
 		localStorage.setItem('useCloudDatabase', JSON.stringify(settings.useCloudDatabase));
 		localStorage.setItem('showTabTimer', JSON.stringify(settings.showTabTimer));
 		localStorage.setItem('workingTime', JSON.stringify(settings.workingTime));
@@ -50,6 +54,8 @@ const Settings = () => {
 		settings.shortBreakTime,
 		settings.longBreakTime,
 		settings.timerColor,
+		settings.useCloudDatabase,
+		settings.lastCloudDatabaseSync,
 	]);
 
 	// For Showing Timer in Tab Info
@@ -71,8 +77,9 @@ const Settings = () => {
 
 	return (
 		<div
-			className={`bg-white flex flex-col p-4 w-4/5 md:w-3/5 h-1/2 md:h-2/5 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+			className={`bg-white flex flex-col p-4 w-4/5 md:w-3/5 h-1/2 md:h-2/5 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
+				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+			}`}
 		>
 			<h1 className='flex text-2xl select-none'>User Settings</h1>
 			<div className='flex flex-col items-center justify-center space-y-2 flex-1'>

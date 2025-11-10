@@ -85,6 +85,10 @@ function App() {
 		const value = checkLocalStorage('useCloudDatabase', false);
 		return typeof value === 'boolean' ? value : false;
 	});
+	const [lastCloudDatabaseSync, setLastCloudDatabaseSync] = useState<string>(() => {
+		const value = checkLocalStorage('lastCloudDatabaseSync', 'None');
+		return typeof value === 'string' ? value : 'None';
+	});
 
 	// Register the service worker
 	useEffect(() => {
@@ -185,6 +189,7 @@ function App() {
 						timerColor,
 						cloudDatabase,
 						useCloudDatabase,
+						lastCloudDatabaseSync,
 						setActivePage,
 						setTabTimer,
 						setWorkingTime,
@@ -198,7 +203,8 @@ function App() {
 						setActiveWorkTask,
 						settimerColor,
 						setCloudDatabase,
-						setUseCloudDatabase
+						setUseCloudDatabase,
+						setLastCloudDatabaseSync,
 					}}
 				>
 					{/* Main content grows and centers */}

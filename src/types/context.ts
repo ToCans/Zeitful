@@ -26,6 +26,7 @@ export interface SettingsContextType {
 	timerColor: string;
 	cloudDatabase: SupabaseClient | null;
 	useCloudDatabase: boolean;
+	lastCloudDatabaseSync: string;
 	setActivePage: Dispatch<React.SetStateAction<Page>>;
 	setTabTimer: Dispatch<React.SetStateAction<boolean>>;
 	setWorkingTime: Dispatch<React.SetStateAction<number>>;
@@ -40,4 +41,5 @@ export interface SettingsContextType {
 	settimerColor: Dispatch<React.SetStateAction<string>>;
 	setUseCloudDatabase: Dispatch<React.SetStateAction<boolean>>;
 	setCloudDatabase: Dispatch<React.SetStateAction<SupabaseClient | null>>;
+	setLastCloudDatabaseSync: Dispatch<React.SetStateAction<string>>;
 }
