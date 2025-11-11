@@ -58,11 +58,13 @@ const TaskManager = () => {
 					valueTemplate={selectedWorkTopicOptionTemplate}
 				/>
 			</div>
-			<div className='overflow-auto'>
-				<h2 className='mt-4 font-semibold'>Tasks</h2>
-				{settings.workTasks.map((task) => (
-					<TaskTile key={task.id} task={task} topics={settings.workTopics} />
-				))}
+			<div className="flex flex-col w-full">
+				<h2 className="font-semibold p-2">Tasks</h2>
+				<div className="flex-1 overflow-y-auto">
+					{settings.workTasks.map((task) => (
+						<TaskTile key={task.id} task={task} topics={settings.workTopics} />
+					))}
+				</div>
 			</div>
 		</div>
 	);

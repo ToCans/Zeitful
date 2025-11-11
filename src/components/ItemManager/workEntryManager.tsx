@@ -9,12 +9,9 @@ const WorkEntryManager = () => {
 
 
 	return (
-		<div className='flex flex-col flex-1'>
-			<div className='flex items-center justify-between mt-4'>
-				<h2 className='font-semibold'>Work Entries</h2>
-
-			</div>
-			<div className='overflow-y-scroll mt-2'>
+		<div className="flex flex-col w-full">
+			<h2 className="font-semibold p-2">Work Entries</h2>
+			<div className="flex-1 overflow-y-auto">
 				{settings.workEntries.map((workEntry) => (
 					<WorkEntryTile
 						key={workEntry.id}

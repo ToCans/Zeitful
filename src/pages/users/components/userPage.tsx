@@ -63,79 +63,55 @@ const UserPage = () => {
 
 	return (
 		<div
-			className={`bg-white gap-1 flex flex-col relative p-4 w-4/5 md:w-3/5 xl:w-2/5 h-1/2 rounded-lg overflow-auto shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+			className={`bg-white gap-1 flex flex-col relative p-4 w-4/5 md:w-3/5 xl:w-2/5 h-[50vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}
 		>
 			<div className='flex flex-row w-full justify-between items-center'>
 				<p className='text-2xl'>Work {itemManagement} Management</p>
 			</div>
+
 			<div className='flex flex-row justify-between'>
 				<div className='flex flex-row gap-2'>
 					<button
-						className={`${itemManagement == 'Task' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
-							}`}
+						className={`${itemManagement == 'Task' ? 'opacity-85' : 'opacity-50 hover:opacity-75'}`}
 						onClick={() => setItemManagement('Task')}
 					>
 						Task
 					</button>
 					<button
-						className={`${itemManagement == 'Topic' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
-							}`}
+						className={`${itemManagement == 'Topic' ? 'opacity-85' : 'opacity-50 hover:opacity-75'}`}
 						onClick={() => setItemManagement('Topic')}
 					>
 						Topic
 					</button>
 					<button
-						className={`${itemManagement == 'User' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
-							}`}
+						className={`${itemManagement == 'User' ? 'opacity-85' : 'opacity-50 hover:opacity-75'}`}
 						onClick={() => setItemManagement('User')}
 					>
 						User
 					</button>
 				</div>
-				<div className='flex gap-1'>
-					{/* hidden file input */}
 
-					<input
-						type='file'
-						accept='application/json'
-						ref={dataFileInputRef}
-						onChange={handleDataImport}
-						className='hidden'
-					/>
-					<IconContext.Provider
-						value={{
-							className:
-								'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon',
-						}}
-					>
-						<PiUpload
-							onClick={() => {
-								handleDataImportClick();
-							}}
-						/>
+				<div className='flex gap-1'>
+					<input type='file' accept='application/json' ref={dataFileInputRef} onChange={handleDataImport} className='hidden' />
+					<IconContext.Provider value={{ className: 'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon' }}>
+						<PiUpload onClick={handleDataImportClick} />
 					</IconContext.Provider>
-					<IconContext.Provider
-						value={{
-							className:
-								'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon',
-						}}
-					>
-						<PiDownloadSimple
-							onClick={() => {
-								handleDataDownloadClick();
-							}}
-						/>
+					<IconContext.Provider value={{ className: 'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon' }}>
+						<PiDownloadSimple onClick={handleDataDownloadClick} />
 					</IconContext.Provider>
 				</div>
 			</div>
+
 			{settings.useCloudDatabase && <CloudDatabaseTile />}
-			<div className='h-2/3'>
+
+			{/* Scrollable content */}
+			<div className='flex-1 overflow-y-auto mt-2'>
 				{itemManagement === 'Task' && <TaskManager />}
 				{itemManagement === 'Topic' && <TopicManager />}
 				{itemManagement === 'User' && <WorkEntryManager />}
 			</div>
 		</div>
+
 	);
 };
 
