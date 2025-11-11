@@ -73,11 +73,10 @@ const CloudDatabaseTile = () => {
 				/>
 				<IconContext.Provider
 					value={{
-						className: `fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon ${
-							settings.cloudDatabase === null && settings.useCloudDatabase === true
-								? 'animate-bounce'
-								: ''
-						}`,
+						className: `fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon ${settings.cloudDatabase === null && settings.useCloudDatabase === true
+							? 'animate-bounce'
+							: ''
+							}`,
 					}}
 				>
 					<PiCloud
@@ -86,7 +85,7 @@ const CloudDatabaseTile = () => {
 						}}
 					/>
 				</IconContext.Provider>
-				{settings.cloudDatabase !== null && settings.useCloudDatabase === true ? (
+				{(settings.lastCloudDatabaseSync !== null && settings.useCloudDatabase === true) ? (
 					<div className='flex flex-row gap-1'>
 						<IconContext.Provider
 							value={{

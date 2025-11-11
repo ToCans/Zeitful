@@ -77,9 +77,8 @@ const Settings = () => {
 
 	return (
 		<div
-			className={`bg-white flex flex-col p-4 w-4/5 md:w-3/5 h-1/2 md:h-2/5 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
-				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-			}`}
+			className={`bg-white flex flex-col p-4 w-4/5 md:w-3/5 h-[50vh] md:h-2/5 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				}`}
 		>
 			<h1 className='flex text-2xl select-none'>User Settings</h1>
 			<div className='flex flex-col items-center justify-center space-y-2 flex-1'>
