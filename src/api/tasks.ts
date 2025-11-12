@@ -76,8 +76,7 @@ export const handleAddTask = async (
 			name: task.name,
 			status: 'Open',
 		});
-		console.log(response.status);
-		console.log(response.message);
+		console.log(response.status, response.message);
 		settings.setWorkTasks(await getTasks());
 	} else {
 		console.log('Please enter a task name');

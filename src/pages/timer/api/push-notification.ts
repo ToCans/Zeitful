@@ -1,5 +1,8 @@
 // Type Imports
 import type { SettingsContextType } from '../../../types/context';
+// Utils Imports
+import { urlBase64ToUint8Array } from '../utils/push-notification-utils';
+
 
 // Send Push Notification Functions
 export const sendPushNotification = async (settings: SettingsContextType) => {
@@ -55,9 +58,13 @@ export const subscribeToPush = async (settings: SettingsContextType): Promise<vo
 			console.log('No push manager available');
 			return;
 		}
+
+		// Public Vapid Key and Push Notifcation Setup
+		const vapidPublicKey = 'BKcJp8Aq5hki25jJsakB9Gcazick4XBYw_tnazGj6F7WNUi5TPAdevrd6O1OfbsLN_uZQM1LidLrFVuuycyv0Qs';
+		const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 		const pushSubscription = await pushManager.subscribe({
 			userVisibleOnly: true,
-			applicationServerKey: import.meta.env.REACT_APP_VAPID_PUBLIC_KEY,
+			applicationServerKey: convertedVapidKey,
 		});
 
 		// Sets push manager subscription if it doesn't exist already

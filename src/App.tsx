@@ -98,28 +98,24 @@ function App() {
 			window.addEventListener('load', async () => {
 				try {
 					// Regiistering Software
-					const swRegistration = await navigator.serviceWorker.register('./sw.js');
-					console.log('Service worker registration succeeded:', swRegistration);
+					const swRegistration = await navigator.serviceWorker.register('/sw.js');
+					console.log('Push notification manager registration was successful:', swRegistration);
 
 					// Push Manager Handling
 					const pushManager = swRegistration.pushManager;
 					if (!pushManager) {
-						console.warn('Push Manager not available');
+						console.warn('Push manager is not available');
 						return;
 					}
 
 					// Gathering Permissoin State
 					let permissionState = await pushManager.permissionState();
 					if (permissionState === 'prompt') {
-						console.log('Push Manager Permission prompt');
 						permission.current = permissionState;
 					} else if (permissionState === 'granted') {
-						console.log('Push Manager Permission granted');
 						permission.current = permissionState;
 						subscription.current = await pushManager.getSubscription();
-						console.log('Push subscription', subscription.current);
 					} else {
-						console.log('Permission denied');
 						permission.current = permissionState;
 					}
 				} catch (e) {
@@ -127,7 +123,7 @@ function App() {
 				}
 			});
 		} else {
-			console.log("Can't load service worker");
+			console.log("Can't load push manager service worker");
 		}
 	}, []);
 

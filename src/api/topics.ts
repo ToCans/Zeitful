@@ -63,8 +63,7 @@ export const handleAddTopic = async (
 	if (topic.name !== '') {
 		const id = uuidv4();
 		const response = await addTopic({ id: id, name: topic.name, color: topic.color });
-		console.log(response.status);
-		console.log(response.message);
+		console.log(response.status, response.message);
 		settings.setWorkTopics(await getTopics());
 	} else {
 		console.log('Please enter a topic name');
