@@ -24,7 +24,7 @@ const TopicManager = () => {
 			<div className='flex flex-row items-center gap-2'>
 				<IconContext.Provider
 					value={{
-						className: 'fill-gray-600 size-6 m-2',
+						className: 'fill-gray-600 hover:fill-gray-500 size-6 m-2',
 					}}
 				>
 					<PiPlus
@@ -35,6 +35,7 @@ const TopicManager = () => {
 				</IconContext.Provider>
 
 				<InputText
+					className='w-2/5'
 					id='newTopic'
 					placeholder='Add a new topic'
 					value={newTopicName}

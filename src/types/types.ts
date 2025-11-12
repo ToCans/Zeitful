@@ -14,6 +14,18 @@ export type DatabaseActionResponse = {
 	message: string;
 };
 
+export type DurationByTopic = {
+	[topic_id: string]: number;
+};
+
+export type ItemData = {
+	itemIds: string[];
+	itemNames: string[];
+	itemDurations: number[];
+	itemColors: string[];
+	topicPercentage?: number[];
+};
+
 export type WorkTask = {
 	id: string;
 	topic_id: string | null;

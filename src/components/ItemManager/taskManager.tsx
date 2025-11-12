@@ -22,10 +22,10 @@ const TaskManager = () => {
 	const [selectedTopic, setSelectedTopic] = useState<WorkTopic | null>(null);
 	return (
 		<div className='flex flex-col flex-1'>
-			<div className='flex flex-row items-center gap-2'>
+			<div className='flex flex-row items-center gap-2 w-full'>
 				<IconContext.Provider
 					value={{
-						className: 'fill-gray-600 size-6 m-2',
+						className: 'fill-gray-600 hover:fill-gray-500 size-6 m-2',
 					}}
 				>
 					<PiPlus
@@ -40,6 +40,7 @@ const TaskManager = () => {
 				</IconContext.Provider>
 
 				<InputText
+					className='w-2/5'
 					id='newTask'
 					placeholder='Add a new task'
 					value={newTaskName}
@@ -47,6 +48,7 @@ const TaskManager = () => {
 				/>
 				<p>under</p>
 				<Dropdown
+					className='w-2/5'
 					value={selectedTopic}
 					onChange={(e) => {
 						setSelectedTopic(e.value);
