@@ -14,11 +14,15 @@ const TaskTile = ({ topics, task }: TaskTileProps) => {
 	const tileColor = matchedTopic ? matchedTopic.color : '#DBDBDB';
 	const topicName = matchedTopic ? matchedTopic.name : 'No Topic';
 	return (
-		<div className='flex flex-row space-x-2 items-center'>
+		<div className='flex flex-row space-x-2 items-center w-full p-1'>
 			<ColorIcon color={tileColor} />
-			<p className='min-w-40'>{topicName}</p>
-			<p className='min-w-40'>{task.name}</p>
-			<p className='min-w-10'>{task.status}</p>
+			<div className='flex flex-row justify-between items-center w-full'>
+				<div className='flex md:flex-row flex-col'>
+					<p className='text-sm text-nowrap'>{topicName}</p>
+					<p className='text-sm text-nowrap'>{task.name}</p>
+				</div>
+				<p className='text-sm'>{task.status}</p>
+			</div>
 		</div>
 	);
 };

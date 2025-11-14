@@ -1,37 +1,45 @@
 // Component Imports
 import { Chart } from 'primereact/chart';
 // Type Imports
-import type { ItemData } from '../../../types/types';
+import type { ChartData, ItemData } from '../../../types/types';
 // Utils Imports
 import { piChartDataFormatter } from '../utils/utils';
+import { useEffect, useState } from 'react';
 
 // Interface Defintion
 interface PiChartProps {
-    itemData: ItemData | null,
+	itemData: ItemData | null;
 }
 
 // Component Defintion
 const PiChart = ({ itemData }: PiChartProps) => {
-    if (!itemData) {
-        return null;
-    }
+	const [chartData, setChartData] = useState<ChartData | null>(null);
 
-    const chartData = piChartDataFormatter(itemData);
+	useEffect(() => {
+		if (itemData) {
+			const formattedData = piChartDataFormatter(itemData);
+			setChartData(formattedData);
+		}
+	}, []);
 
-    return (
-        <Chart
-            className='flex w-11/12 h-1/2 justify-center items-center'
-            type='doughnut'
-            data={chartData}
-            options={{
-                plugins: {
-                    legend: {
-                        display: false, // <-- hides the legend
-                    },
-                },
-            }}
-        />);
+	if (chartData === null) {
+		return null;
+	}
 
+	return (
+		<Chart
+			className='flex w-3/5 justify-center items-center'
+			type='doughnut'
+			data={chartData}
+			options={{
+				plugins: {
+					legend: {
+						display: false,
+					},
+				},
+			}}
+		/>
+	);
 };
 
 export default PiChart;

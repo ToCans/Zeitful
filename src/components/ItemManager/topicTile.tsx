@@ -13,7 +13,7 @@ const TopicTile = ({ topic }: TopicTileProps) => {
 	return (
 		<div className='flex flex-row space-x-2 items-center'>
 			<ColorIcon color={topic.color} />
-			<p className='min-w-40'>{topic.name}</p>
+			<p className='text-sm text-nowrap'>{topic.name}</p>
 		</div>
 	);
 };

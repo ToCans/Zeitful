@@ -47,9 +47,9 @@ const TopicManager = () => {
 					onChange={(e) => setNewTopicColor(`#${e.value}`)}
 				/>
 			</div>
-			<div className="flex flex-col w-full">
-				<h2 className="font-semibold p-2">Topics</h2>
-				<div className="flex-1 overflow-y-auto">
+			<div className='flex flex-col w-full'>
+				<h2 className='font-semibold p-2'>Work Topics</h2>
+				<div className='flex-1 overflow-y-auto'>
 					{settings.workTopics.map((topic) => (
 						<TopicTile key={topic.id} topic={topic} />
 					))}

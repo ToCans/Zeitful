@@ -4,6 +4,7 @@ import ColorIcon from './colorIcon';
 import type { WorkEntry, WorkTask, WorkTopic } from '../../types/types';
 // Utils Imports
 import { formatMinutes } from '../../utils/time';
+import { formatDate } from '../../utils/date';
 
 interface WorkEntryTileProps {
 	workEntry: WorkEntry;
@@ -35,19 +36,27 @@ const WorkEntryTile = ({ workEntry, workTasks, workTopics }: WorkEntryTileProps)
 		}
 
 		const tileColor = matchedTopic ? matchedTopic.color : '#DBDBDB';
+		const { date, time } = formatDate(String(workEntry.completion_time));
 
 		return (
-			<div className='flex flex-row space-x-2 items-center w-full'>
+			<div className='flex flex-row space-x-2 items-center w-full p-1'>
 				<ColorIcon color={tileColor} />
-				<p className='min-w-30'>{tileTopicName}</p>
-				<p className='min-w-30'>{tileTaskName}</p>
-				<p className='min-w-10'>{formatMinutes(workEntry.duration)}</p>
-				<p className='min-w-40'>{String(workEntry.completion_time)}</p>
+				<div className='flex flex-row justify-between items-center w-full'>
+					<div className='flex md:flex-row flex-col'>
+						<p className='text-sm text-nowrap'>{tileTopicName}</p>
+						<p className='text-sm text-nowrap'>{tileTaskName}</p>
+					</div>
+					<p className='text-gray-500 text-sm'>{formatMinutes(workEntry.duration)}</p>
+					<div className='flex md:flex-row flex-col'>
+						<p className='text-gray-500 text-sm'>{date}</p>
+						<p className='text-gray-500 text-sm'>{time}</p>
+					</div>
+				</div>
 			</div>
 		);
 	} catch (err) {
 		console.error('Error rendering WorkEntryTile:', err, { workEntry, workTasks, workTopics });
-		return <div className="text-red-500">Error rendering work entry</div>;
+		return <div className='text-red-500'>Error rendering work entry</div>;
 	}
 };
 

@@ -18,6 +18,14 @@ export type DurationByTopic = {
 	[topic_id: string]: number;
 };
 
+export type ChartData = {
+	labels: string[];
+	datasets: {
+		data: number[];
+		backgroundColor: string[];
+	}[];
+};
+
 export type ItemData = {
 	itemIds: string[];
 	itemNames: string[];

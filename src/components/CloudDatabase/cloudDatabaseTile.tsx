@@ -17,6 +17,8 @@ import { IconContext } from 'react-icons';
 import { createClient } from '@supabase/supabase-js';
 // React Imports
 import { useRef } from 'react';
+// Utils Imports
+import { formatDate } from '../../utils/date';
 
 // Component Definition
 const CloudDatabaseTile = () => {
@@ -62,48 +64,54 @@ const CloudDatabaseTile = () => {
 	}
 
 	return (
-		<div className='flex flex-row '>
-			<div className='flex flex-row items-center gap-1'>
-				<input
-					type='file'
-					accept='application/json'
-					ref={credentialsInputRef}
-					onChange={handleCloudDatabaseFileUpload}
-					className='hidden'
-				/>
-				<IconContext.Provider
-					value={{
-						className: `fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon ${settings.cloudDatabase === null && settings.useCloudDatabase === true
+		<div className='flex flex-row items-center gap-1'>
+			<input
+				type='file'
+				accept='application/json'
+				ref={credentialsInputRef}
+				onChange={handleCloudDatabaseFileUpload}
+				className='hidden'
+			/>
+			<IconContext.Provider
+				value={{
+					className: `fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon ${
+						settings.cloudDatabase === null && settings.useCloudDatabase === true
 							? 'animate-bounce'
 							: ''
-							}`,
+					}`,
+				}}
+			>
+				<PiCloud
+					onClick={() => {
+						handleCloudCredentialsImportClick();
+					}}
+				/>
+			</IconContext.Provider>
+			<div className='flex flex-row space-x-1 items-center'></div>
+			{settings.useCloudDatabase === true && settings.cloudDatabase !== null ? (
+				<IconContext.Provider
+					value={{
+						className: 'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon',
 					}}
 				>
-					<PiCloud
+					<PiArrowsClockwise
 						onClick={() => {
-							handleCloudCredentialsImportClick();
+							handleCloudDatabaseDataSync();
 						}}
 					/>
 				</IconContext.Provider>
-				{(settings.lastCloudDatabaseSync !== null && settings.useCloudDatabase === true) ? (
-					<div className='flex flex-row gap-1'>
-						<IconContext.Provider
-							value={{
-								className:
-									'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon',
-							}}
-						>
-							<PiArrowsClockwise
-								onClick={() => {
-									handleCloudDatabaseDataSync();
-								}}
-							/>
-						</IconContext.Provider>
-						<p className='text-gray-500 text-xs'>Last Synced:</p>
-						<p className='text-gray-500 text-xs'>{settings.lastCloudDatabaseSync}</p>
-					</div>
-				) : null}
-			</div>
+			) : null}
+			{settings.lastCloudDatabaseSync !== null && settings.useCloudDatabase === true ? (
+				<div className='flex flex-row space-x-1'>
+					<p className='text-gray-500 text-xs'>Last Synced:</p>
+					<p className='text-gray-500 text-xs'>
+						{formatDate(settings.lastCloudDatabaseSync).date}
+					</p>
+					<p className='text-gray-500 text-xs'>
+						@ {formatDate(settings.lastCloudDatabaseSync).time}
+					</p>
+				</div>
+			) : null}
 		</div>
 	);
 };
