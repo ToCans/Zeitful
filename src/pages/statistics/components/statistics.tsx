@@ -54,7 +54,7 @@ const Statistics = () => {
 				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
 			}`}
 		>
-			<div className='flex flex-col flex-1 items-center'>
+			<div className='flex flex-col flex-1 items-center min-h-0'>
 				<TimeFrameSelection timeFrame={timeFrame} setTimeFrame={setTimeFrame} />
 
 				<Dropdown
@@ -67,7 +67,7 @@ const Statistics = () => {
 					className='w-full'
 				/>
 
-				<div className='flex flex-1 w-full'>
+				<div className='flex w-full h-full min-h-0'>
 					{itemData?.itemIds.length === 0 ? (
 						<p className='text-gray-500 text-sm'>No data found for this period.</p>
 					) : (

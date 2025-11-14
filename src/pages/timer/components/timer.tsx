@@ -80,8 +80,6 @@ const Timer = () => {
 
 				// Incrementing Cycle
 				settings.setCycleNumber(settings.cycleNumber + 1);
-
-
 			}
 		};
 	}, [settings]);
@@ -122,8 +120,9 @@ const Timer = () => {
 
 	return (
 		<div
-			className={`relative p-4 w-4/5 md:w-3/5 xl:w-2/5 h-[50vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+			className={`relative p-4 md:w-3/5 xl:w-2/5 h-[50vh] w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
+				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+			}`}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation progress={progressBarValue} timerColor={settings.timerColor} />

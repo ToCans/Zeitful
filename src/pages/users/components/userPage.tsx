@@ -48,13 +48,9 @@ const UserPage = () => {
 			</div>
 
 			{settings.useCloudDatabase && <CloudDatabaseTile />}
-
-			{/* Scrollable content */}
-			<div className='flex-1 overflow-y-auto mt-2'>
-				{itemManagement === 'Task' && <TaskManager />}
-				{itemManagement === 'Topic' && <TopicManager />}
-				{itemManagement === 'User' && <WorkEntryManager />}
-			</div>
+			{itemManagement === 'Task' && <TaskManager />}
+			{itemManagement === 'Topic' && <TopicManager />}
+			{itemManagement === 'User' && <WorkEntryManager />}
 		</div>
 	);
 };

@@ -33,7 +33,9 @@ const ItemPercentageTile = ({
 					{formatMinutes(itemDuration)}
 				</p>
 				{/* Last item aligned to the right */}
-				<p className='text-xs text-right'>{topicPercentage.toFixed(2)}%</p>
+				<p className='text-xs text-gray-500 font-semibold text-right'>
+					{topicPercentage.toFixed(2)}%
+				</p>
 			</div>
 		</div>
 	);
