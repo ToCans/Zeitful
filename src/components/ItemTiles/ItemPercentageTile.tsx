@@ -28,7 +28,7 @@ const ItemPercentageTile = ({
 			<div className='flex w-1/2 flex-row'>
 				<p className='text-sm'>{itemName}</p>
 			</div>
-			<div className='flex w-1/2 flex-row justify-between'>
+			<div className='flex w-1/2 flex-row justify-between items-center'>
 				<p className='text-xs text-left text-gray-500 font-semibold'>
 					{formatMinutes(itemDuration)}
 				</p>

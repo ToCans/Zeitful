@@ -50,9 +50,8 @@ const Statistics = () => {
 
 	return (
 		<div
-			className={`bg-white gap-1 flex flex-col relative p-4 xl:w-2/5 md:w-3/5 w-11/12 md:h-[50vh] h-[70vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${
-				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-			}`}
+			className={`bg-white gap-1 flex flex-col relative p-4 xl:w-2/5 lg:w-3/5 md:w-4/5 w-11/12 md:h-[50vh] h-[70vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				}`}
 		>
 			<div className='flex flex-col flex-1 items-center min-h-0'>
 				<TimeFrameSelection timeFrame={timeFrame} setTimeFrame={setTimeFrame} />
@@ -61,9 +60,8 @@ const Statistics = () => {
 					value={selectedPeriod}
 					options={periodOptions}
 					onChange={(e) => setSelectedPeriod(e.value)}
-					placeholder={`Select ${
-						timeFrame === 'W' ? 'week' : timeFrame === 'M' ? 'month' : 'year'
-					}`}
+					placeholder={`Select ${timeFrame === 'W' ? 'week' : timeFrame === 'M' ? 'month' : 'year'
+						}`}
 					className='w-full'
 				/>
 

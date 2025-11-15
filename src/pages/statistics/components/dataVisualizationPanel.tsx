@@ -13,7 +13,7 @@ interface DataVisualizationPanelProps {
 // Component Definition
 const DataVisualizationPanel = ({ itemData }: DataVisualizationPanelProps) => {
 	return (
-		<div className='flex md:flex-row flex-col w-full h-full overflow-y-auto p-2 gap-2'>
+		<div className='flex md:flex-row flex-col w-full h-full overflow-y-auto p-2 md:gap-4 gap-2'>
 			{/* Chart and Topic Breakdown */}
 			<div className='flex flex-col md:w-1/2 w-full gap-4 items-center py-2'>
 				<p className='font-semibold text-sm w-full '>Topic Breakdown</p>

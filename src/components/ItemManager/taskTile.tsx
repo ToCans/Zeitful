@@ -17,9 +17,10 @@ const TaskTile = ({ topics, task }: TaskTileProps) => {
 		<div className='flex flex-row space-x-2 items-center w-full p-1'>
 			<ColorIcon color={tileColor} />
 			<div className='flex flex-row justify-between items-center w-full'>
-				<div className='flex md:flex-row flex-col md:items-center'>
-					<p className='text-sm text-nowrap'>{topicName}</p>
-					<p className='text-sm text-nowrap'>{task.name}</p>
+				<div className='flex md:flex-row flex-col md:items-center flex-1 gap-1'>
+					<p className='text-sm text-nowrap w-3/5'>{task.name}</p>
+					<p className='text-sm text-nowrap w-2/5'>{topicName}</p>
+
 				</div>
 				<p className='text-sm'>{task.status}</p>
 			</div>
