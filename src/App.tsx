@@ -90,40 +90,31 @@ function App() {
 		return typeof value === 'string' ? value : 'None';
 	});
 
-	// Register the service worker
+	// Push
 	useEffect(() => {
-		// Check if the browser supports service workers
-		if ('serviceWorker' in navigator) {
-			// Triggered on load
-			window.addEventListener('load', async () => {
+		if ("serviceWorker" in navigator) {
+			(async () => {
 				try {
-					// Regiistering Software
-					const swRegistration = await navigator.serviceWorker.register('/sw.js');
-					console.log('Push notification manager registration was successful:', swRegistration);
+					const swRegistration = await navigator.serviceWorker.register("/sw.js");
+					console.log("SW registered", swRegistration);
 
-					// Push Manager Handling
 					const pushManager = swRegistration.pushManager;
 					if (!pushManager) {
-						console.warn('Push manager is not available');
+						console.warn("Push manager unsupported");
 						return;
 					}
 
-					// Gathering Permissoin State
 					let permissionState = await pushManager.permissionState();
-					if (permissionState === 'prompt') {
-						permission.current = permissionState;
-					} else if (permissionState === 'granted') {
-						permission.current = permissionState;
+					permission.current = permissionState;
+
+					if (permissionState === "granted") {
 						subscription.current = await pushManager.getSubscription();
-					} else {
-						permission.current = permissionState;
+						console.log("Push registered", subscription.current);
 					}
 				} catch (e) {
-					console.log('Error registering push manager service worker', e);
+					console.error("SW registration failed:", e);
 				}
-			});
-		} else {
-			console.log("Can't load push manager service worker");
+			})();
 		}
 	}, []);
 
