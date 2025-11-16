@@ -100,7 +100,7 @@ const Settings = () => {
 							}
 						}}
 					/>
-					<p className='text-center align-middle select-none w-3/5 lg:w-2/5 3xl:w-1/5'>
+					<p className='text-center align-middle select-none w-3/5 lg:w-2/5 3xl:w-1/6'>
 						Working Minutes: {Math.floor(settings.workingTime / 60)}
 					</p>
 					<HiOutlinePlusCircle
@@ -117,7 +117,7 @@ const Settings = () => {
 							}
 						}}
 					/>
-					<p className='text-center align-middle select-none w-3/5 lg:w-2/5 3xl:w-1/5'>
+					<p className='text-center align-middle select-none w-3/5 lg:w-2/5 3xl:w-1/6'>
 						Short Break Minutes: {Math.floor(settings.shortBreakTime / 60)}
 					</p>
 					<HiOutlinePlusCircle
@@ -134,7 +134,7 @@ const Settings = () => {
 							}
 						}}
 					/>
-					<p className='text-center align-middle select-none  w-3/5 lg:w-2/5 3xl:w-1/5'>
+					<p className='text-center align-middle select-none  w-3/5 lg:w-2/5 3xl:w-1/6'>
 						Long Break Minutes: {Math.floor(settings.longBreakTime / 60)}
 					</p>
 					<HiOutlinePlusCircle
@@ -142,7 +142,7 @@ const Settings = () => {
 						onClick={() => settings.setLongBreakTime(settings.longBreakTime + 60)}
 					/>
 				</div>
-				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-3/5 lg:w-2/5 3xl:w-1/5'>
+				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-3/5 lg:w-2/5 3xl:w-1/6'>
 					<p className='text-center align-middle select-none '>
 						Show Timer in Tab
 					</p>
@@ -154,7 +154,7 @@ const Settings = () => {
 						/>
 					</label>
 				</div>
-				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-3/5 lg:w-2/5 3xl:w-1/5'>
+				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-3/5 lg:w-2/5 3xl:w-1/6'>
 					<p className='text-center align-middle select-none'>
 						Use Cloud Database
 					</p>
