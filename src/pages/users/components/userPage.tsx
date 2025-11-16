@@ -34,7 +34,7 @@ const UserPage = () => {
 
 	return (
 		<div
-			className={`bg-white gap-1 flex flex-col relative p-4 xl:w-2/5 lg:w-3/5 md:w-4/5 w-11/12 md:h-[50vh] h-[70vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+			className={`bg-white gap-1 flex flex-col relative p-4 2xl:w-1/3 xl:w-2/5 lg:w-3/5 md:w-4/5 w-11/12 md:h-[50vh] h-[70vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
 				}`}
 		>
 			<p className='w-full text-2xl'>Work {itemManagement} Management</p>
