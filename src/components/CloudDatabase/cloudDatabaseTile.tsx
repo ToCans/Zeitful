@@ -47,12 +47,14 @@ const CloudDatabaseTile = () => {
 	async function handleCloudDatabaseDataSync() {
 		if (settings.cloudDatabase) {
 			try {
+				// Syncing Mechanism
 				const localData = await gatherDatabaseData();
 				await sendToSupabaseDatabase(settings.cloudDatabase, localData);
 				const cloudData = await getFromSupabaseDatabase(settings.cloudDatabase);
 				await importDatabaseHelper(cloudData);
 				settings.setLastCloudDatabaseSync(new Date().toISOString());
 
+				// Setting All Items
 				settings.setWorkTopics(await getTopics());
 				settings.setWorkTasks(await getTasks());
 				settings.setWorkEntries(await getWorkEntries());
@@ -74,11 +76,10 @@ const CloudDatabaseTile = () => {
 			/>
 			<IconContext.Provider
 				value={{
-					className: `fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon ${
-						settings.cloudDatabase === null && settings.useCloudDatabase === true
-							? 'animate-bounce'
-							: ''
-					}`,
+					className: `fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon ${settings.cloudDatabase === null && settings.useCloudDatabase === true
+						? 'animate-bounce'
+						: ''
+						}`,
 				}}
 			>
 				<PiCloud

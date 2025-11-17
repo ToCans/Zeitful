@@ -1,5 +1,7 @@
 //  API Imports
 import { sendPushNotification } from '../api/push-notification';
+import { handleAddWorkEntry } from '../../../api/workEntries';
+import { handleAddWorkEntryToCloudDatabase } from '../../../api/cloudDatabase';
 // Component Imports
 import TimeDisplay from './timeDisplay';
 import TimerControls from './timeControls';
@@ -12,7 +14,7 @@ import { useState, useEffect, useRef } from 'react';
 // Utils Imports
 import { playAudio } from '../utils/audio';
 import { formatTime } from '../../../utils/utils';
-import { handleAddWorkEntry } from '../../../api/workEntries';
+
 
 // Component Definition
 const Timer = () => {
@@ -63,7 +65,7 @@ const Timer = () => {
 					settings.workingTimeCompleted.current += Math.floor(settings.workingTime / 60);
 					settings.workingCyclesCompleted.current += 1;
 
-					// Storing Work Entry Data
+					// Storing Work Entry Data locally
 					await handleAddWorkEntry(
 						settings,
 						{
@@ -73,6 +75,17 @@ const Timer = () => {
 						},
 						settings.workTopics
 					);
+
+					// Storing Work Entry to  Cloud Database
+					if (settings.cloudDatabase) {
+						await handleAddWorkEntryToCloudDatabase(settings,
+							{
+								task_id: settings.activeWorkTask?.id ?? null,
+								topic_id: settings.activeWorkTask?.topic_id ?? null,
+								task_name: settings.activeWorkTask?.name ?? null,
+							},
+							settings.workTopics);
+					}
 				}
 
 				// Sending Push Notification
@@ -120,9 +133,8 @@ const Timer = () => {
 
 	return (
 		<div
-			className={`relative p-4 md:w-3/5 xl:w-2/5 h-[50vh] w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
-				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-			}`}
+			className={`relative p-4 md:w-3/5 xl:w-2/5 h-[50vh] w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				}`}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation progress={progressBarValue} timerColor={settings.timerColor} />
