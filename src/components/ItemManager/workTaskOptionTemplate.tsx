@@ -1,12 +1,12 @@
 // Component Imports
 import ColorIcon from './colorIcon';
 // Hook Imports
-import { useSettings } from '../../hooks/use-settings';
+import { useAppContext } from '../../hooks/useAppContext';
 // Type Imports
 import type { WorkTask } from '../../types/types';
 
 export const workTaskOptionTemplate = (workTask: WorkTask) => {
-	const settings = useSettings();
+	const settings = useAppContext();
 	const matchedTopic = settings.workTopics.find((t) => t.id === workTask.topic_id);
 	const tileColor = matchedTopic ? matchedTopic.color : '#DBDBDB';
 	return (
@@ -20,7 +20,7 @@ export const workTaskOptionTemplate = (workTask: WorkTask) => {
 };
 
 export const selectedWorkTaskOptionTemplate = (workTask: WorkTask) => {
-	const settings = useSettings();
+	const settings = useAppContext();
 	if (workTask) {
 		const matchedTopic = settings.workTopics.find((t) => t.id === workTask.topic_id);
 		const tileColor = matchedTopic ? matchedTopic.color : '#DBDBDB';

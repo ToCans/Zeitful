@@ -8,18 +8,17 @@ import TimerControls from './timeControls';
 import WavesAnimation from './wavesAnimation';
 import TaskFocus from './taskFocus';
 // Hook Imports
-import { useSettings } from '../../../hooks/use-settings';
+import { useAppContext } from '../../../hooks/useAppContext';
 // React Imports
 import { useState, useEffect, useRef } from 'react';
 // Utils Imports
 import { playAudio } from '../utils/audio';
 import { formatTime } from '../../../utils/utils';
 
-
 // Component Definition
 const Timer = () => {
 	// Settings Context
-	const settings = useSettings();
+	const settings = useAppContext();
 
 	// Component States
 	const [isMounted, setIsMounted] = useState<boolean>(false);
@@ -78,13 +77,15 @@ const Timer = () => {
 
 					// Storing Work Entry to  Cloud Database
 					if (settings.cloudDatabase) {
-						await handleAddWorkEntryToCloudDatabase(settings,
+						await handleAddWorkEntryToCloudDatabase(
+							settings,
 							{
 								task_id: settings.activeWorkTask?.id ?? null,
 								topic_id: settings.activeWorkTask?.topic_id ?? null,
 								task_name: settings.activeWorkTask?.name ?? null,
 							},
-							settings.workTopics);
+							settings.workTopics
+						);
 					}
 				}
 
@@ -133,8 +134,9 @@ const Timer = () => {
 
 	return (
 		<div
-			className={`relative p-4 md:w-3/5 xl:w-2/5 h-[50vh] w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+			className={`relative p-4 md:w-3/5 xl:w-2/5 h-[50vh] w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
+				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+			}`}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation progress={progressBarValue} timerColor={settings.timerColor} />

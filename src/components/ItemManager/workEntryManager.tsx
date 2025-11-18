@@ -1,11 +1,11 @@
 // Component Imports
 import WorkEntryTile from './workEntryTile';
 // Utils Imports
-import { useSettings } from '../../hooks/use-settings';
+import { useAppContext } from '../../hooks/useAppContext';
 
 // Component Definition
 const WorkEntryManager = () => {
-	const settings = useSettings();
+	const settings = useAppContext();
 
 	return (
 		<div className='flex flex-col h-full w-full'>

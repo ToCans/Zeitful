@@ -6,11 +6,11 @@ import {
 	selectedWorkTaskOptionTemplate,
 } from '../../../components/ItemManager/workTaskOptionTemplate';
 // Hook Imports
-import { useSettings } from '../../../hooks/use-settings';
+import { useAppContext } from '../../../hooks/useAppContext';
 
 // Component Definition
 const TaskFocus = () => {
-	const settings = useSettings();
+	const settings = useAppContext();
 	return (
 		<div className='flex rounded-lg bg-white items-center justify-center opacity-70'>
 			<Dropdown

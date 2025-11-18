@@ -7,14 +7,14 @@ import { importJsonFile, downloadDataJson } from '../../../api/database';
 // Icon Imports
 import { PiUpload, PiDownloadSimple } from 'react-icons/pi';
 // Hook Imports
-import { useSettings } from '../../../hooks/use-settings';
+import { useAppContext } from '../../../hooks/useAppContext';
 import { IconContext } from 'react-icons';
 // React Imports
 import { useRef } from 'react';
 
 // Component Defintion
 const DataHandlerTile = () => {
-	const settings = useSettings();
+	const settings = useAppContext();
 	const dataFileInputRef = useRef<HTMLInputElement>(null);
 
 	async function handleDataImportClick() {

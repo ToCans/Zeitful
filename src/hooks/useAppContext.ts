@@ -5,10 +5,10 @@ import { useContext } from 'react';
 // Type Imports
 import type { SettingsContextType } from '../types/context';
 
-export const useSettings = (): SettingsContextType => {
+export const useAppContext = (): SettingsContextType => {
 	const context = useContext(SettingsContext);
 	if (!context) {
-		throw new Error('useSettings must be used within a SettingsContext.Provider');
+		throw new Error('useAppContext must be used within a SettingsContext.Provider');
 	}
 	return context;
 };

@@ -2,7 +2,7 @@
 import { startTimer, pauseTimer, restartTimer, skipTimer } from '../api/timer-controls';
 
 // Hook Imports
-import { useSettings } from '../../../hooks/use-settings';
+import { useAppContext } from '../../../hooks/useAppContext';
 
 // Icon Imports
 import { IconContext } from 'react-icons';
@@ -12,7 +12,6 @@ import {
 	PiSkipForwardDuotone,
 	PiArrowCounterClockwise,
 } from 'react-icons/pi';
-
 
 // Interface Definitions
 interface TimeButtonProps {
@@ -29,7 +28,7 @@ const TimeButton = ({
 	setTimeRemaining,
 	setTimerRunning,
 }: TimeButtonProps) => {
-	const settings = useSettings();
+	const settings = useAppContext();
 
 	// Start Button Handling
 	if (purpose === 'Start') {
@@ -38,9 +37,12 @@ const TimeButton = ({
 				<PiPlayDuotone
 					id='startButton'
 					onClick={async () => {
-						startTimer({ settings: settings, timeRemaining, setTimerRunning: setTimerRunning });
+						startTimer({
+							settings: settings,
+							timeRemaining,
+							setTimerRunning: setTimerRunning,
+						});
 					}}
-
 				/>
 			</IconContext.Provider>
 		);
@@ -52,7 +54,11 @@ const TimeButton = ({
 				<PiPauseDuotone
 					id='pauseButton'
 					onClick={async () => {
-						pauseTimer({ settings: settings, timeRemaining, setTimerRunning: setTimerRunning });
+						pauseTimer({
+							settings: settings,
+							timeRemaining,
+							setTimerRunning: setTimerRunning,
+						});
 					}}
 					className='size-8'
 				/>
@@ -66,7 +72,12 @@ const TimeButton = ({
 				<PiArrowCounterClockwise
 					id='restartButton'
 					onClick={async () => {
-						restartTimer({ settings: settings, timeRemaining, setTimerRunning: setTimerRunning, setTimeRemaining: setTimeRemaining });
+						restartTimer({
+							settings: settings,
+							timeRemaining,
+							setTimerRunning: setTimerRunning,
+							setTimeRemaining: setTimeRemaining,
+						});
 					}}
 					className='size-8'
 				/>
@@ -80,7 +91,12 @@ const TimeButton = ({
 				<PiSkipForwardDuotone
 					id='skipButton'
 					onClick={async () => {
-						skipTimer({ settings: settings, timeRemaining, setTimerRunning: setTimerRunning, setTimeRemaining: setTimeRemaining });
+						skipTimer({
+							settings: settings,
+							timeRemaining,
+							setTimerRunning: setTimerRunning,
+							setTimeRemaining: setTimeRemaining,
+						});
 					}}
 					className='size-8'
 				/>

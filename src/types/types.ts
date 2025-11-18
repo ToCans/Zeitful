@@ -1,3 +1,6 @@
+// Type Imports
+import type { SettingsContextType } from './context';
+
 // Type Defintions
 export type DatabaseActionStatus = 'Success' | 'Failure';
 export type Item = 'Task' | 'Topic' | 'User';
@@ -33,6 +36,17 @@ export type ItemData = {
 	itemColors: string[];
 	topicPercentage?: number[];
 };
+
+export type PersistedSettings = Pick<
+	SettingsContextType,
+	| 'showTabTimer'
+	| 'workingTime'
+	| 'shortBreakTime'
+	| 'longBreakTime'
+	| 'timerColor'
+	| 'useCloudDatabase'
+	| 'lastCloudDatabaseSync'
+>;
 
 export type WorkTask = {
 	id: string;

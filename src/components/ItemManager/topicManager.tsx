@@ -10,12 +10,12 @@ import { useState } from 'react';
 
 // Utils Imports
 import { getRandomHexColor } from '../../utils/utils';
-import { useSettings } from '../../hooks/use-settings';
+import { useAppContext } from '../../hooks/useAppContext';
 import { handleAddTopic } from '../../api/topics';
 
 // Component Definition
 const TopicManager = () => {
-	const settings = useSettings();
+	const settings = useAppContext();
 	const [newTopicName, setNewTopicName] = useState<string>('');
 	const [newTopicColor, setNewTopicColor] = useState<string>(getRandomHexColor());
 

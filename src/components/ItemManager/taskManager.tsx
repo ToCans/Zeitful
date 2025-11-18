@@ -7,7 +7,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { useState } from 'react';
 // Utils Imports
-import { useSettings } from '../../hooks/use-settings';
+import { useAppContext } from '../../hooks/useAppContext';
 import { handleAddTask } from '../../api/tasks';
 import type { WorkTopic } from '../../types/types';
 import {
@@ -17,7 +17,7 @@ import {
 
 // Component Definition
 const TaskManager = () => {
-	const settings = useSettings();
+	const settings = useAppContext();
 	const [newTaskName, setNewTaskName] = useState<string>('');
 	const [selectedTopic, setSelectedTopic] = useState<WorkTopic | null>(null);
 	return (

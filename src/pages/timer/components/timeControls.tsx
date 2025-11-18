@@ -1,7 +1,7 @@
 // Component Imports
 import TimeButton from './timeButton';
 // Hook Imports
-import { useSettings } from '../../../hooks/use-settings';
+import { useAppContext } from '../../../hooks/useAppContext';
 
 // Interface Definitions
 interface TimerControlsProps {
@@ -11,7 +11,7 @@ interface TimerControlsProps {
 
 // Component Definition
 const TimerControls = ({ timeRemaining, setTimeRemaining }: TimerControlsProps) => {
-	const settings = useSettings();
+	const settings = useAppContext();
 	return (
 		<div className='row flex flex-row justify-center items-center w-full space-x-1'>
 			{settings.timerRunning ? (

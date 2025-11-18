@@ -9,7 +9,7 @@ import { getTopics } from '../../api/topics';
 import { getTasks } from '../../api/tasks';
 import { getWorkEntries } from '../../api/workEntries';
 // Hook Imports
-import { useSettings } from '../../hooks/use-settings';
+import { useAppContext } from '../../hooks/useAppContext';
 // Icon Imports
 import { PiArrowsClockwise, PiCloud } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
@@ -22,7 +22,7 @@ import { formatDate } from '../../utils/date';
 
 // Component Definition
 const CloudDatabaseTile = () => {
-	const settings = useSettings();
+	const settings = useAppContext();
 	const credentialsInputRef = useRef<HTMLInputElement>(null);
 
 	async function handleCloudCredentialsImportClick() {
@@ -76,10 +76,11 @@ const CloudDatabaseTile = () => {
 			/>
 			<IconContext.Provider
 				value={{
-					className: `fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon ${settings.cloudDatabase === null && settings.useCloudDatabase === true
-						? 'animate-bounce'
-						: ''
-						}`,
+					className: `fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon ${
+						settings.cloudDatabase === null && settings.useCloudDatabase === true
+							? 'animate-bounce'
+							: ''
+					}`,
 				}}
 			>
 				<PiCloud
