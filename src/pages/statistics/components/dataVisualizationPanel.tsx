@@ -21,8 +21,7 @@ const DataVisualizationPanel = ({ itemData }: DataVisualizationPanelProps) => {
 			{/* Chart and Topic Breakdown */}
 			<div className='flex flex-col md:w-1/2 w-full gap-4 items-center py-2'>
 				<p className='font-semibold text-sm w-full '>Topic Breakdown</p>
-				{itemData &&
-					<PiChart itemData={itemData} />}
+				{itemData && <PiChart itemData={itemData} />}
 				{itemData && <ItemPercentageBreakdown itemData={itemData} />}
 			</div>
 			<div className={`md:h-full h-1 md:w-1 w-full ${settings.darkMode ? 'bg-gray-400' : 'bg-gray-200'} rounded-b-lg`}></div>

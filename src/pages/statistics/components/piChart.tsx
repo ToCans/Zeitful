@@ -20,7 +20,7 @@ const PiChart = ({ itemData }: PiChartProps) => {
 			const formattedData = piChartDataFormatter(itemData);
 			setChartData(formattedData);
 		}
-	}, []);
+	}, [itemData]);
 
 	if (chartData === null) {
 		return null;
@@ -28,7 +28,7 @@ const PiChart = ({ itemData }: PiChartProps) => {
 
 	return (
 		<Chart
-			className='flex w-3/5 justify-center items-center'
+			className='flex 2xl:size-80 lg:size-60 size-52 justify-center items-center border-0'
 			type='doughnut'
 			data={chartData}
 			options={{
