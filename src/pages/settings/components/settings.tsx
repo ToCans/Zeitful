@@ -1,7 +1,8 @@
 // Component Imports
 import { ColorPicker } from 'primereact/colorpicker';
-// Icon Imports
-import { HiOutlinePlusCircle, HiOutlineMinusCircle } from 'react-icons/hi';
+import { Checkbox } from 'primereact/checkbox';
+import { InputSwitch } from 'primereact/inputswitch';
+import SettingsTimeTile from './settingsTimeTile';
 // Hook Imports
 import { useAppContext } from '../../../hooks/useAppContext';
 import { usePersistSettings } from '../../../hooks/usePersistSettings';
@@ -45,6 +46,7 @@ const Settings = () => {
 		shortBreakTime: settings.shortBreakTime,
 		longBreakTime: settings.longBreakTime,
 		timerColor: settings.timerColor,
+		darkMode: settings.darkMode
 	});
 
 	// For Showing Timer in Tab Info
@@ -66,91 +68,37 @@ const Settings = () => {
 
 	return (
 		<div
-			className={`bg-white flex flex-col p-4 2xl:w-1/3 xl:w-2/5 md:w-3/5 w-11/12 h-[50vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
-				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-			}`}
+			className={`${settings.darkMode ? 'bg-zinc-700' : 'bg-white'} flex flex-col p-4 2xl:w-1/3 xl:w-2/5 md:w-3/5 w-11/12 h-[50vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				}`}
 		>
 			<h1 className='flex text-2xl select-none'>User Settings</h1>
 			<div className='flex flex-col items-center justify-center space-y-2 flex-1'>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
-					<p className='select-none text-md'>Timer Color:</p>
+					<p className='select-none text-md'>Timer Color</p>
 					<ColorPicker
 						className='outline-none focus:outline-none ring-0 focus:ring-0 focus:shadow-none'
 						inputClassName='h-5 w-5'
-						onChange={(e) => settings.settimerColor(e.value as string)}
+						onChange={(e) => settings.setTimerColor(e.value as string)}
 						defaultColor={`#${settings.timerColor}`}
 					/>
 				</div>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
-					<HiOutlineMinusCircle
-						className='size-6 sm:mt-1 hover:stroke-slate-600'
-						onClick={() => {
-							if (settings.workingTime > 60) {
-								settings.setWorkingTime(settings.workingTime - 60);
-							}
-						}}
-					/>
-					<p className='text-center align-middle select-none w-3/5 lg:w-2/5 3xl:w-1/6'>
-						Working Minutes: {Math.floor(settings.workingTime / 60)}
-					</p>
-					<HiOutlinePlusCircle
-						className='size-6 sm:mt-1 hover:stroke-slate-600'
-						onClick={() => settings.setWorkingTime(settings.workingTime + 60)}
-					/>
+					<p className='select-none text-md'>Dark Mode</p>
+					<InputSwitch checked={settings.darkMode} onChange={(e) => settings.setDarkMode(e.value)} />
 				</div>
-				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center  w-full'>
-					<HiOutlineMinusCircle
-						className='size-6 sm:mt-1 hover:stroke-slate-600'
-						onClick={() => {
-							if (settings.shortBreakTime > 60) {
-								settings.setShortBreakTime(settings.shortBreakTime - 60);
-							}
-						}}
-					/>
-					<p className='text-center align-middle select-none w-3/5 lg:w-2/5 3xl:w-1/6'>
-						Short Break Minutes: {Math.floor(settings.shortBreakTime / 60)}
-					</p>
-					<HiOutlinePlusCircle
-						className='size-6 sm:mt-1 hover:stroke-slate-600'
-						onClick={() => settings.setShortBreakTime(settings.shortBreakTime + 60)}
-					/>
+				<SettingsTimeTile label='Working Minutes' value={settings.workingTime} setter={settings.setWorkingTime} />
+				<SettingsTimeTile label='Short Break Minutes' value={settings.shortBreakTime} setter={settings.setShortBreakTime} />
+				<SettingsTimeTile label='Long Break Minutes' value={settings.longBreakTime} setter={settings.setLongBreakTime} />
+				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
+					<p className='text-center align-middle select-none'>Show Timer in Tab</p>
+					< Checkbox checked={settings.showTabTimer}
+						onChange={handleTabCheckboxChange} />
+
 				</div>
-				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center  w-full'>
-					<HiOutlineMinusCircle
-						className='size-6 sm:mt-1 hover:stroke-slate-600'
-						onClick={() => {
-							if (settings.longBreakTime > 60) {
-								settings.setLongBreakTime(settings.longBreakTime - 60);
-							}
-						}}
-					/>
-					<p className='text-center align-middle select-none  w-3/5 lg:w-2/5 3xl:w-1/6'>
-						Long Break Minutes: {Math.floor(settings.longBreakTime / 60)}
-					</p>
-					<HiOutlinePlusCircle
-						className='size-6 sm:mt-1 hover:stroke-slate-600'
-						onClick={() => settings.setLongBreakTime(settings.longBreakTime + 60)}
-					/>
-				</div>
-				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-3/5 lg:w-2/5 3xl:w-1/6'>
-					<p className='text-center align-middle select-none '>Show Timer in Tab</p>
-					<label>
-						<input
-							type='checkbox'
-							checked={settings.showTabTimer}
-							onChange={handleTabCheckboxChange}
-						/>
-					</label>
-				</div>
-				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-3/5 lg:w-2/5 3xl:w-1/6'>
+				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
 					<p className='text-center align-middle select-none'>Use Cloud Database</p>
-					<label>
-						<input
-							type='checkbox'
-							checked={settings.useCloudDatabase}
-							onChange={handleCloudCheckboxChange}
-						/>
-					</label>
+					< Checkbox checked={settings.useCloudDatabase}
+						onChange={handleCloudCheckboxChange} />
 				</div>
 			</div>
 		</div>

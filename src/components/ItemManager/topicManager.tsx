@@ -22,26 +22,31 @@ const TopicManager = () => {
 	return (
 		<div className='flex flex-col flex-1'>
 			<div className='flex flex-row items-center gap-2'>
-				<IconContext.Provider
-					value={{
-						className: 'fill-gray-600 hover:fill-gray-500 size-6 m-2',
-					}}
-				>
-					<PiPlus
-						onClick={() =>
-							handleAddTopic(settings, { name: newTopicName, color: newTopicColor })
-						}
-					/>
-				</IconContext.Provider>
+				<button className='m-2 cursor-pointer' onClick={() =>
+					handleAddTopic(settings, { name: newTopicName, color: newTopicColor })
+				}>
+					<IconContext.Provider
+						value={{
+							className: 'size-6',
+						}}
+					>
+						<PiPlus
 
+						/>
+					</IconContext.Provider>
+				</button>
 				<InputText
-					className='w-2/5'
+					className={`w-2/5 ${settings.darkMode ? 'dark-dropdown text-zinc-100' : 'light-dropdown text-black'}`}
 					id='newTopic'
 					placeholder='Add a new topic'
 					value={newTopicName}
 					onChange={(e) => setNewTopicName(e.target.value)}
+					style={{
+						backgroundColor: settings.darkMode ? '#52525B' : '#ffffff', // input background
+						color: settings.darkMode ? '#f9fafb' : '#000000',           // input text color
+						borderColor: settings.darkMode ? '#6b7280' : '#d1d5db',     // border color
+					}}
 				/>
-
 				<ColorPicker
 					value={newTopicColor}
 					onChange={(e) => setNewTopicColor(`#${e.value}`)}

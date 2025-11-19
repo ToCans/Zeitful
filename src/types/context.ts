@@ -27,6 +27,7 @@ export interface SettingsContextType {
 	cloudDatabase: SupabaseClient | null;
 	useCloudDatabase: boolean;
 	lastCloudDatabaseSync: string;
+	darkMode: boolean;
 	setActivePage: Dispatch<React.SetStateAction<Page>>;
 	setTabTimer: Dispatch<React.SetStateAction<boolean>>;
 	setWorkingTime: Dispatch<React.SetStateAction<number>>;
@@ -38,8 +39,9 @@ export interface SettingsContextType {
 	setWorkTopics: Dispatch<React.SetStateAction<WorkTopic[]>>;
 	setWorkEntries: Dispatch<React.SetStateAction<WorkEntry[]>>;
 	setActiveWorkTask: Dispatch<React.SetStateAction<WorkTask | null>>;
-	settimerColor: Dispatch<React.SetStateAction<string>>;
+	setTimerColor: Dispatch<React.SetStateAction<string>>;
 	setUseCloudDatabase: Dispatch<React.SetStateAction<boolean>>;
 	setCloudDatabase: Dispatch<React.SetStateAction<SupabaseClient | null>>;
 	setLastCloudDatabaseSync: Dispatch<React.SetStateAction<string>>;
+	setDarkMode: Dispatch<React.SetStateAction<boolean>>;
 }

@@ -23,32 +23,37 @@ const TaskManager = () => {
 	return (
 		<div className='flex flex-col flex-1'>
 			<div className='flex flex-row items-center gap-2 w-full'>
-				<IconContext.Provider
-					value={{
-						className: 'fill-gray-600 hover:fill-gray-500 size-6 m-2',
-					}}
-				>
-					<PiPlus
-						onClick={() => {
-							let selectedTopicName = selectedTopic?.id ?? selectedTopic;
-							handleAddTask(settings, {
-								topic_id: selectedTopicName,
-								name: newTaskName,
-							} as any);
+				<button className='m-2 cursor-pointer' onClick={() => {
+					let selectedTopicName = selectedTopic?.id ?? selectedTopic;
+					handleAddTask(settings, {
+						topic_id: selectedTopicName,
+						name: newTaskName,
+					} as any);
+				}
+				}>
+					<IconContext.Provider
+						value={{
+							className: 'size-6',
 						}}
-					/>
-				</IconContext.Provider>
+					>
+						<PiPlus
 
+						/>
+					</IconContext.Provider>
+				</button>
 				<InputText
-					className='w-2/5'
+					className={`w-2/5 ${settings.darkMode ? 'dark-dropdown text-zinc-100' : 'light-dropdown text-black'}`}
 					id='newTask'
 					placeholder='Add a new task'
 					value={newTaskName}
 					onChange={(e) => setNewTaskName(e.target.value)}
+					style={{
+						backgroundColor: settings.darkMode ? '#52525B' : '#ffffff', // input background
+						borderColor: settings.darkMode ? '#6b7280' : '#d1d5db',     // border color
+					}}
 				/>
 				<p>under</p>
 				<Dropdown
-					className='w-2/5'
 					value={selectedTopic}
 					onChange={(e) => {
 						setSelectedTopic(e.value);
@@ -58,6 +63,13 @@ const TaskManager = () => {
 					optionLabel='name'
 					itemTemplate={workTopicOptionTemplate}
 					valueTemplate={selectedWorkTopicOptionTemplate}
+					className={`w-2/5 ${settings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
+					style={{
+						backgroundColor: settings.darkMode ? '#52525B' : '#ffffff',
+						borderColor: settings.darkMode ? '#6b7280' : '#d1d5db',
+					}}
+					panelClassName={settings.darkMode ? 'dark-dropdown-panel' : 'light-dropdown-panel'}
+					panelStyle={{ backgroundColor: settings.darkMode ? '#52525B' : '#ffffff' }}
 				/>
 			</div>
 			<div className='flex flex-col w-full h-full py-2'>

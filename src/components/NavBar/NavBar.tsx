@@ -26,12 +26,12 @@ const NavBar = ({ activePage, timerWorker, setActivePage, setTimerRunning }: Nav
 
 	return (
 		<div className='flex flex-col absolute bottom-0 w-full justify-center items-center min-h-14'>
-			<div className='relative flex flex-row justify-center bg-zinc-100 rounded-t-lg inset-shadow-md gap-2 p-2'>
+			<div className='relative flex flex-row justify-center rounded-t-lg inset-shadow-md gap-2 p-2'>
 				{/* Timer Button */}
 				<div className='flex flex-col items-center'>
 					<IconContext.Provider
 						value={{
-							className: `fill-gray-600 size-10 transition-opacity ${activePage === 'Timer'
+							className: `size-10 transition-opacity ${activePage === 'Timer'
 								? 'opacity-70'
 								: 'opacity-50 hover:opacity-85'
 								}`,
@@ -46,7 +46,7 @@ const NavBar = ({ activePage, timerWorker, setActivePage, setTimerRunning }: Nav
 				<div className='flex flex-col items-center'>
 					<IconContext.Provider
 						value={{
-							className: `fill-gray-600 size-10 transition-opacity ${activePage === 'Statistics'
+							className: `size-10 transition-opacity ${activePage === 'Statistics'
 								? 'opacity-70'
 								: 'opacity-50 hover:opacity-85'
 								}`,
@@ -61,7 +61,7 @@ const NavBar = ({ activePage, timerWorker, setActivePage, setTimerRunning }: Nav
 				<div className='flex flex-col items-center'>
 					<IconContext.Provider
 						value={{
-							className: `fill-gray-600 size-10 transition-opacity ${activePage === 'UserPage'
+							className: `size-10 transition-opacity ${activePage === 'UserPage'
 								? 'opacity-70'
 								: 'opacity-50 hover:opacity-85'
 								}`,
@@ -76,7 +76,7 @@ const NavBar = ({ activePage, timerWorker, setActivePage, setTimerRunning }: Nav
 				<div className='flex flex-col items-center'>
 					<IconContext.Provider
 						value={{
-							className: `fill-gray-600 size-10 transition-opacity ${activePage === 'Settings'
+							className: `size-10 transition-opacity ${activePage === 'Settings'
 								? 'opacity-70'
 								: 'opacity-50 hover:opacity-85'
 								}`,

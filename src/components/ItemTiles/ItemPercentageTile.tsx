@@ -29,11 +29,11 @@ const ItemPercentageTile = ({
 				<p className='text-sm'>{itemName}</p>
 			</div>
 			<div className='flex w-1/2 flex-row justify-between items-center'>
-				<p className='text-xs text-left text-gray-500 font-semibold'>
+				<p className='text-xs text-left font-semibold'>
 					{formatMinutes(itemDuration)}
 				</p>
 				{/* Last item aligned to the right */}
-				<p className='text-xs text-gray-500 font-semibold text-right'>
+				<p className='text-xs font-semibold text-right'>
 					{topicPercentage.toFixed(2)}%
 				</p>
 			</div>

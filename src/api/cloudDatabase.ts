@@ -3,7 +3,6 @@ import type { CloudDatabase, WorkEntry, WorkTopic } from '../types/types';
 import type { SettingsContextType } from '../types/context';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-
 // Supabase Request
 export async function getFromSupabaseDatabase(supabaseClient: SupabaseClient) {
     const [{ data: topics, error: topicsError },

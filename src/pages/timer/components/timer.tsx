@@ -141,7 +141,7 @@ const Timer = () => {
 	return (
 		<div
 			className={`relative p-4 md:w-3/5 xl:w-2/5 h-[50vh] w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+				} `}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation progress={progressBarValue} timerColor={settings.timerColor} />
@@ -156,7 +156,7 @@ const Timer = () => {
 				</p>
 			</div>
 
-			<div className='absolute inset-0 bg-white rounded-lg z-0'></div>
+			<div className={`absolute inset-0 ${settings.darkMode ? 'bg-zinc-700' : 'bg-white'} rounded-lg z-0`}></div>
 		</div>
 	);
 };

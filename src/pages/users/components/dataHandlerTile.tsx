@@ -48,14 +48,14 @@ const DataHandlerTile = () => {
 			/>
 			<IconContext.Provider
 				value={{
-					className: 'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon',
+					className: `${settings.darkMode ? 'fill-gray-200 hover:fill-gray-400' : 'fill-gray-600 hover:fill-gray-400'} size-5 custom-target-icon`
 				}}
 			>
 				<PiUpload onClick={handleDataImportClick} />
 			</IconContext.Provider>
 			<IconContext.Provider
 				value={{
-					className: 'fill-gray-600 hover:fill-gray-400 size-5 custom-target-icon',
+					className: `${settings.darkMode ? 'fill-gray-200 hover:fill-gray-400' : 'fill-gray-600 hover:fill-gray-400'} size-5 custom-target-icon`
 				}}
 			>
 				<PiDownloadSimple onClick={handleDataDownloadClick} />

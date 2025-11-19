@@ -47,12 +47,12 @@ const WorkEntryTile = ({ workEntry, workTasks, workTopics }: WorkEntryTileProps)
 						<p className='text-sm text-nowrap md:w-2/5 w-full'>{tileTopicName}</p>
 					</div>
 					<div className='flex flex-row md:w-2/5 w-1/2 justify-between items-center'>
-						<p className='text-gray-500 text-sm'>{formatMinutes(workEntry.duration)}</p>
+						<p className='text-sm'>{formatMinutes(workEntry.duration)}</p>
 						<div className='flex md:flex-row flex-col md:space-x-1 items-center'>
-							<p className='text-gray-500 text-sm'>{date}</p>
+							<p className='text-sm'>{date}</p>
 							<div className='flex flex-row space-x-1'>
-								<p className='text-gray-500 text-sm'>@</p>
-								<p className='text-gray-500 text-sm'>{time}</p>
+								<p className='text-sm'>@</p>
+								<p className='text-sm'>{time}</p>
 							</div>
 
 						</div></div>

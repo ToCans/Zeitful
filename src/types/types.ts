@@ -46,6 +46,7 @@ export type PersistedSettings = Pick<
 	| 'timerColor'
 	| 'useCloudDatabase'
 	| 'lastCloudDatabaseSync'
+	| 'darkMode'
 >;
 
 export type WorkTask = {

@@ -1,3 +1,8 @@
+// Hook Imports
+import { useAppContext } from '../../../hooks/useAppContext';
+// Utils Imports
+import getWaveFillColor from '../utils/waveAnimation';
+
 // Interface Defintion
 interface WavesAnimationProps {
 	progress: number;
@@ -6,6 +11,7 @@ interface WavesAnimationProps {
 
 // Component Definition
 const WavesAnimation = ({ progress, timerColor }: WavesAnimationProps) => {
+	const settings = useAppContext();
 	// Handling animation offset when the container is nearly full
 	const nearlyFullProgress = (progress: number): number => {
 		let fillHeightOffset: number;
@@ -45,28 +51,28 @@ const WavesAnimation = ({ progress, timerColor }: WavesAnimationProps) => {
 							href='#gentle-wave'
 							x='48'
 							y='0'
-							fill='rgba(255,255,255,0.7)'
+							fill={getWaveFillColor(settings.darkMode, 0.7)}
 							className='animate-move-forever [animation-delay:-2s] [animation-duration:7s]'
 						/>
 						<use
 							href='#gentle-wave'
 							x='48'
 							y='3'
-							fill='rgba(255,255,255,0.5)'
+							fill={getWaveFillColor(settings.darkMode, 0.5)}
 							className='animate-move-forever [animation-delay:-3s] [animation-duration:10s]'
 						/>
 						<use
 							href='#gentle-wave'
 							x='48'
 							y='5'
-							fill='rgba(255,255,255,0.3)'
+							fill={getWaveFillColor(settings.darkMode, 0.3)}
 							className='animate-move-forever [animation-delay:-4s] [animation-duration:13s]'
 						/>
 						<use
 							href='#gentle-wave'
 							x='48'
 							y='7'
-							fill='#fff'
+							fill={getWaveFillColor(settings.darkMode, 1.0)}
 							className='animate-move-forever [animation-delay:-5s] [animation-duration:20s]'
 						/>
 					</g>

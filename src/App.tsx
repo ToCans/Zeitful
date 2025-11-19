@@ -77,9 +77,13 @@ function App() {
 		const value = checkLocalStorage('longBreakTime', 15 * 60);
 		return typeof value === 'number' ? value : 15 * 60;
 	});
-	const [timerColor, settimerColor] = useState<string>(() => {
+	const [timerColor, setTimerColor] = useState<string>(() => {
 		const value = checkLocalStorage('timerColor', 'bfdbfe');
 		return typeof value === 'string' ? value : 'bfdbfe';
+	});
+	const [darkMode, setDarkMode] = useState<boolean>(() => {
+		const value = checkLocalStorage('darkMode', false);
+		return typeof value === 'boolean' ? value : false;
 	});
 	const [useCloudDatabase, setUseCloudDatabase] = useState<boolean>(() => {
 		const value = checkLocalStorage('useCloudDatabase', false);
@@ -151,7 +155,7 @@ function App() {
 	}, []); // Empty dependency array, so this runs only once on mount.
 
 	return (
-		<div className='flex flex-col h-dvh w-dvw bg-zinc-100 overflow-hidden'>
+		<div className={`flex flex-col h-dvh w-dvw ${darkMode ? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400' : 'bg-zinc-100 text-black fill-gray-400'} overflow-hidden`}>
 			<PrimeReactProvider>
 				<SettingsContext.Provider
 					value={{
@@ -177,6 +181,7 @@ function App() {
 						cloudDatabase,
 						useCloudDatabase,
 						lastCloudDatabaseSync,
+						darkMode,
 						setActivePage,
 						setTabTimer,
 						setWorkingTime,
@@ -188,10 +193,11 @@ function App() {
 						setWorkTopics,
 						setWorkEntries,
 						setActiveWorkTask,
-						settimerColor,
+						setTimerColor,
 						setCloudDatabase,
 						setUseCloudDatabase,
 						setLastCloudDatabaseSync,
+						setDarkMode
 					}}
 				>
 					{/* Main content grows and centers */}
