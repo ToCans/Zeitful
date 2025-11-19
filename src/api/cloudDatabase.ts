@@ -1,5 +1,3 @@
-// Utility Imports
-import { v4 as uuidv4 } from 'uuid';
 // Type Imports
 import type { CloudDatabase, WorkEntry, WorkTopic } from '../types/types';
 import type { SettingsContextType } from '../types/context';
@@ -67,16 +65,16 @@ async function sendToWorkEntrySupabaseDatabase(supabaseClient: SupabaseClient, w
 }
 
 export const handleAddWorkEntryToCloudDatabase = async (
+    uuid: string,
     settings: SettingsContextType,
     workEntry: Omit<WorkEntry, 'id' | 'duration' | 'topic_name' | 'completion_time'>,
     workTopics: WorkTopic[]
 ) => {
     // Non Selected Data
     if (settings.cloudDatabase) {
-        const id = uuidv4();
         const matchedTopic = workTopics.find((workTopic) => workTopic.id === workEntry.topic_id);
         await sendToWorkEntrySupabaseDatabase(settings.cloudDatabase, {
-            id: id,
+            id: uuid,
             task_id: workEntry.task_id,
             topic_id: workEntry.topic_id,
             task_name: workEntry.task_name,

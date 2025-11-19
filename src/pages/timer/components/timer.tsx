@@ -14,6 +14,7 @@ import { useState, useEffect, useRef } from 'react';
 // Utils Imports
 import { playAudio } from '../utils/audio';
 import { formatTime } from '../../../utils/utils';
+import { v4 as uuidv4 } from 'uuid';
 
 // Component Definition
 const Timer = () => {
@@ -64,8 +65,12 @@ const Timer = () => {
 					settings.workingTimeCompleted.current += Math.floor(settings.workingTime / 60);
 					settings.workingCyclesCompleted.current += 1;
 
+					// Defininig Shared UUID between local and cloud entries
+					const id = uuidv4();
+
 					// Storing Work Entry Data locally
 					await handleAddWorkEntry(
+						id,
 						settings,
 						{
 							task_id: settings.activeWorkTask?.id ?? null,
@@ -78,6 +83,7 @@ const Timer = () => {
 					// Storing Work Entry to  Cloud Database
 					if (settings.cloudDatabase) {
 						await handleAddWorkEntryToCloudDatabase(
+							id,
 							settings,
 							{
 								task_id: settings.activeWorkTask?.id ?? null,
@@ -134,9 +140,8 @@ const Timer = () => {
 
 	return (
 		<div
-			className={`relative p-4 md:w-3/5 xl:w-2/5 h-[50vh] w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
-				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-			}`}
+			className={`relative p-4 md:w-3/5 xl:w-2/5 h-[50vh] w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				}`}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation progress={progressBarValue} timerColor={settings.timerColor} />

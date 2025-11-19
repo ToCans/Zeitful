@@ -1,5 +1,4 @@
 // Function Imports
-import { v4 as uuidv4 } from 'uuid';
 import { getDatabase, saveDatabase } from './database';
 // Type Imports
 import type { DatabaseActionResponse, WorkEntry, WorkTopic } from '../types/types';
@@ -37,16 +36,16 @@ export async function addWorkEntry(workEntry: WorkEntry): Promise<DatabaseAction
 }
 
 export const handleAddWorkEntry = async (
+	uuid: string,
 	settings: SettingsContextType,
 	workEntry: Omit<WorkEntry, 'id' | 'duration' | 'topic_name' | 'completion_time'>,
 	workTopics: WorkTopic[]
 ) => {
 	// Non Selected Data
-	const id = uuidv4();
 	const matchedTopic = workTopics.find((workTopic) => workTopic.id === workEntry.topic_id);
 
 	const response = await addWorkEntry({
-		id: id,
+		id: uuid,
 		task_id: workEntry.task_id,
 		topic_id: workEntry.topic_id,
 		task_name: workEntry.task_name,
