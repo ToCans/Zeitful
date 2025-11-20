@@ -59,7 +59,7 @@ const TopicManager = () => {
 			</div>
 			<div className='flex flex-col h-full w-full py-2'>
 				<h2 className='font-semibold'>Work Topics</h2>
-				<div className='flex flex-col h-[90%] overflow-y-auto'>
+				<div className='flex flex-col md:h-7/8 h-7/10 overflow-y-auto'>
 					{settings.workTopics.map((topic) => (
 						<TopicTile key={topic.id} topic={topic} />
 					))}

@@ -10,7 +10,7 @@ const WorkEntryManager = () => {
 	return (
 		<div className='flex flex-col h-full w-full'>
 			<h2 className='font-semibold'>Work Entries</h2>
-			<div className='flex flex-col w-full md:h-3/4 h-4/5  overflow-y-auto p-2'>
+			<div className='flex flex-col w-full md:h-3/4 h-4/5 overflow-y-auto p-2'>
 				{settings.workEntries.map((workEntry) => (
 					<WorkEntryTile
 						key={workEntry.id}

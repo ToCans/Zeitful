@@ -81,7 +81,7 @@ const TaskManager = () => {
 			</div>
 			<div className='flex flex-col w-full h-full py-2'>
 				<h2 className='font-semibold'>Work Tasks</h2>
-				<div className='flex flex-col h-[90%] overflow-y-auto'>
+				<div className='flex flex-col md:h-7/8 h-7/10 overflow-y-auto'>
 					{settings.workTasks.map((task) => (
 						<TaskTile key={task.id} task={task} topics={settings.workTopics} />
 					))}
