@@ -96,27 +96,27 @@ function App() {
 
 	// Push
 	useEffect(() => {
-		if ("serviceWorker" in navigator) {
+		if ('serviceWorker' in navigator) {
 			(async () => {
 				try {
-					const swRegistration = await navigator.serviceWorker.register("/sw.js");
-					console.log("SW registered", swRegistration);
+					const swRegistration = await navigator.serviceWorker.register('/sw.js');
+					console.log('SW registered', swRegistration);
 
 					const pushManager = swRegistration.pushManager;
 					if (!pushManager) {
-						console.warn("Push manager unsupported");
+						console.warn('Push manager unsupported');
 						return;
 					}
 
 					let permissionState = await pushManager.permissionState();
 					permission.current = permissionState;
 
-					if (permissionState === "granted") {
+					if (permissionState === 'granted') {
 						subscription.current = await pushManager.getSubscription();
-						console.log("Push registered", subscription.current);
+						console.log('Push registered', subscription.current);
 					}
 				} catch (e) {
-					console.error("SW registration failed:", e);
+					console.error('SW registration failed:', e);
 				}
 			})();
 		}
@@ -155,7 +155,13 @@ function App() {
 	}, []); // Empty dependency array, so this runs only once on mount.
 
 	return (
-		<div className={`flex flex-col h-dvh w-dvw ${darkMode ? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400' : 'bg-zinc-100 text-black fill-gray-400'} overflow-hidden`}>
+		<div
+			className={`flex flex-col h-dvh w-dvw ${
+				darkMode
+					? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
+					: 'bg-zinc-100 text-black fill-gray-400'
+			} overflow-hidden`}
+		>
 			<PrimeReactProvider>
 				<SettingsContext.Provider
 					value={{
@@ -197,7 +203,7 @@ function App() {
 						setCloudDatabase,
 						setUseCloudDatabase,
 						setLastCloudDatabaseSync,
-						setDarkMode
+						setDarkMode,
 					}}
 				>
 					{/* Main content grows and centers */}

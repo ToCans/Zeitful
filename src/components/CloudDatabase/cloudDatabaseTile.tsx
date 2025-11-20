@@ -76,10 +76,15 @@ const CloudDatabaseTile = () => {
 			/>
 			<IconContext.Provider
 				value={{
-					className: `${settings.darkMode ? 'fill-gray-200 hover:fill-gray-400' : 'fill-gray-600 hover:fill-gray-400'} size-5 custom-target-icon ${settings.cloudDatabase === null && settings.useCloudDatabase === true
-						? 'animate-bounce'
-						: ''
-						}`,
+					className: `${
+						settings.darkMode
+							? 'fill-gray-200 hover:fill-gray-400'
+							: 'fill-gray-600 hover:fill-gray-400'
+					} size-5 custom-target-icon ${
+						settings.cloudDatabase === null && settings.useCloudDatabase === true
+							? 'animate-bounce'
+							: ''
+					}`,
 				}}
 			>
 				<PiCloud
@@ -92,7 +97,11 @@ const CloudDatabaseTile = () => {
 			{settings.useCloudDatabase === true && settings.cloudDatabase !== null ? (
 				<IconContext.Provider
 					value={{
-						className: `${settings.darkMode ? 'fill-gray-200 hover:fill-gray-400' : 'fill-gray-600 hover:fill-gray-400'} size-5 custom-target-icon`
+						className: `${
+							settings.darkMode
+								? 'fill-gray-200 hover:fill-gray-400'
+								: 'fill-gray-600 hover:fill-gray-400'
+						} size-5 custom-target-icon`,
 					}}
 				>
 					<PiArrowsClockwise
@@ -102,15 +111,11 @@ const CloudDatabaseTile = () => {
 					/>
 				</IconContext.Provider>
 			) : null}
-			{settings.lastCloudDatabaseSync !== null && settings.useCloudDatabase === true ? (
+			{settings.lastCloudDatabaseSync !== 'None' && settings.useCloudDatabase === true ? (
 				<div className='flex flex-row space-x-1'>
 					<p className='text-xs'>Last Synced:</p>
-					<p className='text-xs'>
-						{formatDate(settings.lastCloudDatabaseSync).date}
-					</p>
-					<p className='text-xs'>
-						@ {formatDate(settings.lastCloudDatabaseSync).time}
-					</p>
+					<p className='text-xs'>{formatDate(settings.lastCloudDatabaseSync).date}</p>
+					<p className='text-xs'>@ {formatDate(settings.lastCloudDatabaseSync).time}</p>
 				</div>
 			) : null}
 		</div>
