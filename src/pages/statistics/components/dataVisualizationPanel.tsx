@@ -17,7 +17,7 @@ interface DataVisualizationPanelProps {
 const DataVisualizationPanel = ({ itemData }: DataVisualizationPanelProps) => {
 	const settings = useAppContext();
 	return (
-		<div className='flex md:flex-row flex-col w-full h-full overflow-y-auto md:gap-4 gap-2'>
+		<div className='flex md:flex-row flex-col w-full h-full overflow-y-auto md:gap-4 gap-2 p-2'>
 			{/* Chart and Topic Breakdown */}
 			<div className='flex flex-col md:w-1/2 md:h-full w-full gap-4 items-center'>
 				<p className='font-semibold text-sm w-full '>Topic Breakdown</p>
