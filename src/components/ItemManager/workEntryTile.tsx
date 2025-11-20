@@ -42,7 +42,7 @@ const WorkEntryTile = ({ workEntry, workTasks, workTopics }: WorkEntryTileProps)
 			<div className='flex flex-row space-x-2 items-center w-full p-0.5'>
 				<ColorIcon color={tileColor} />
 				<div className='flex flex-row justify-between items-center w-full'>
-					<div className='flex md:flex-row flex-col md:w-3/5 w-1/2 md:items-center'>
+					<div className='flex md:flex-row flex-col md:w-4/5 w-1/2 md:items-centerspace-x-2 overflow-x-hidden'>
 						<p className='text-sm text-nowrap md:w-2/5 w-full'>{tileTaskName}</p>
 						<p className='text-sm text-nowrap md:w-2/5 w-full'>{tileTopicName}</p>
 					</div>
@@ -54,9 +54,8 @@ const WorkEntryTile = ({ workEntry, workTasks, workTopics }: WorkEntryTileProps)
 								<p className='text-sm'>@</p>
 								<p className='text-sm'>{time}</p>
 							</div>
-
-						</div></div>
-
+						</div>
+					</div>
 				</div>
 			</div>
 		);

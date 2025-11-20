@@ -17,7 +17,7 @@ const ItemPercentageBreakdown = ({ itemData }: ItemPercentageBreakdownProps) => 
 	}
 	const itemDataWithPercentage = calculateTopicPercentages(itemData);
 	return (
-		<div className='flex flex-col w-full h-2/5 overflow-y-auto'>
+		<div className='flex flex-col w-full h-full overflow-y-auto'>
 			{itemData.itemIds.map((id, index) => (
 				<ItemPercentageTile
 					key={id}

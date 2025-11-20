@@ -50,8 +50,11 @@ const Statistics = () => {
 
 	return (
 		<div
-			className={`${settings.darkMode ? 'bg-zinc-700' : 'bg-white'} gap-1 flex flex-col relative p-4 2xl:w-1/3 xl:w-2/5 lg:w-3/5 md:w-4/5 w-11/12 md:h-[50vh] h-[70vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+			className={`${
+				settings.darkMode ? 'bg-zinc-700' : 'bg-white'
+			} gap-1 flex flex-col relative p-4 3xl:w-1/3 xl:w-2/5 lg:w-3/5 md:w-4/5 w-11/12 md:h-[50vh] h-[70vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${
+				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+			}`}
 		>
 			<div className='flex flex-col flex-1 items-center min-h-0'>
 				<TimeFrameSelection timeFrame={timeFrame} setTimeFrame={setTimeFrame} />
@@ -60,14 +63,17 @@ const Statistics = () => {
 					value={selectedPeriod}
 					options={periodOptions}
 					onChange={(e) => setSelectedPeriod(e.value)}
-					placeholder={`Select ${timeFrame === 'W' ? 'week' : timeFrame === 'M' ? 'month' : 'year'
-						}`}
+					placeholder={`Select ${
+						timeFrame === 'W' ? 'week' : timeFrame === 'M' ? 'month' : 'year'
+					}`}
 					className={`w-full ${settings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
 					style={{
 						backgroundColor: settings.darkMode ? '#52525B' : '#ffffff',
 						borderColor: settings.darkMode ? '#6b7280' : '#d1d5db',
 					}}
-					panelClassName={settings.darkMode ? 'dark-dropdown-panel' : 'light-dropdown-panel'}
+					panelClassName={
+						settings.darkMode ? 'dark-dropdown-panel' : 'light-dropdown-panel'
+					}
 					panelStyle={{ backgroundColor: settings.darkMode ? '#52525B' : '#ffffff' }}
 				/>
 

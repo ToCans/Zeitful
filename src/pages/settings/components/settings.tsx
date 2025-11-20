@@ -46,7 +46,7 @@ const Settings = () => {
 		shortBreakTime: settings.shortBreakTime,
 		longBreakTime: settings.longBreakTime,
 		timerColor: settings.timerColor,
-		darkMode: settings.darkMode
+		darkMode: settings.darkMode,
 	});
 
 	// For Showing Timer in Tab Info
@@ -68,8 +68,11 @@ const Settings = () => {
 
 	return (
 		<div
-			className={`${settings.darkMode ? 'bg-zinc-700' : 'bg-white'} flex flex-col p-4 2xl:w-1/3 xl:w-2/5 md:w-3/5 w-11/12 h-[50vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+			className={`${
+				settings.darkMode ? 'bg-zinc-700' : 'bg-white'
+			} flex flex-col p-4 3xl:w-1/3 xl:w-2/5 md:w-3/5 w-11/12 h-[50vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
+				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+			}`}
 		>
 			<h1 className='flex text-2xl select-none'>User Settings</h1>
 			<div className='flex flex-col items-center justify-center space-y-2 flex-1'>
@@ -84,21 +87,36 @@ const Settings = () => {
 				</div>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
 					<p className='select-none text-md'>Dark Mode</p>
-					<InputSwitch checked={settings.darkMode} onChange={(e) => settings.setDarkMode(e.value)} />
+					<InputSwitch
+						checked={settings.darkMode}
+						onChange={(e) => settings.setDarkMode(e.value)}
+					/>
 				</div>
-				<SettingsTimeTile label='Working Minutes' value={settings.workingTime} setter={settings.setWorkingTime} />
-				<SettingsTimeTile label='Short Break Minutes' value={settings.shortBreakTime} setter={settings.setShortBreakTime} />
-				<SettingsTimeTile label='Long Break Minutes' value={settings.longBreakTime} setter={settings.setLongBreakTime} />
+				<SettingsTimeTile
+					label='Working Minutes'
+					value={settings.workingTime}
+					setter={settings.setWorkingTime}
+				/>
+				<SettingsTimeTile
+					label='Short Break Minutes'
+					value={settings.shortBreakTime}
+					setter={settings.setShortBreakTime}
+				/>
+				<SettingsTimeTile
+					label='Long Break Minutes'
+					value={settings.longBreakTime}
+					setter={settings.setLongBreakTime}
+				/>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
 					<p className='text-center align-middle select-none'>Show Timer in Tab</p>
-					< Checkbox checked={settings.showTabTimer}
-						onChange={handleTabCheckboxChange} />
-
+					<Checkbox checked={settings.showTabTimer} onChange={handleTabCheckboxChange} />
 				</div>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
 					<p className='text-center align-middle select-none'>Use Cloud Database</p>
-					< Checkbox checked={settings.useCloudDatabase}
-						onChange={handleCloudCheckboxChange} />
+					<Checkbox
+						checked={settings.useCloudDatabase}
+						onChange={handleCloudCheckboxChange}
+					/>
 				</div>
 			</div>
 		</div>
