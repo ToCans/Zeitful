@@ -24,9 +24,11 @@ const TopicManager = () => {
 			<div className='flex flex-row items-center gap-2'>
 				<button
 					className='m-2 cursor-pointer'
-					onClick={() =>
-						handleAddTopic(settings, { name: newTopicName, color: newTopicColor })
-					}
+					onClick={() => {
+						console.log('Fixing Topic Manager');
+						// const id = uuidv4();
+						// handleAddTopic(settings, { name: newTopicName, color: newTopicColor });
+					}}
 				>
 					<IconContext.Provider
 						value={{

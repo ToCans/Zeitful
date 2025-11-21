@@ -3,7 +3,7 @@ import 'primereact/resources/themes/tailwind-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import './index.css';
 // API Imports
-import { getTasks } from './api/tasks';
+import { getTasks } from './api/localDatabase';
 import { getTopics } from './api/topics';
 import { getWorkEntries } from './api/workEntries';
 // Icon Imports
@@ -134,7 +134,7 @@ function App() {
 	useEffect(() => {
 		(async () => {
 			setWorkTopics(await getTopics());
-			setWorkTasks(await getTasks());
+			setWorkTasks((await getTasks()).item as WorkTask[]);
 			setWorkEntries(await getWorkEntries());
 		})();
 	}, []);

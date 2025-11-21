@@ -1,12 +1,15 @@
 // Function Imports
 import { v4 as uuidv4 } from 'uuid';
-import { getDatabase, saveDatabase } from './database';
+import { getDatabase, saveLocalDatabase } from './database';
 // Type Imports
-import type { DatabaseActionResponse, WorkTopic } from '../types/types';
+import type { Action, DatabaseActionResponse, NewWorkTopic, WorkTopic } from '../types/types';
 import type { SettingsContextType } from '../types/context';
 
 // --- Topics ---
-export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse> {
+export async function addTopic(
+	topicID: string,
+	topic: NewWorkTopic
+): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getDatabase();
 
@@ -14,7 +17,6 @@ export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse
 		const existing = db.exec(
 			'SELECT * FROM work_topics WHERE name = "' + topic.name.replace(/"/g, '""') + '"'
 		);
-		console.log(existing);
 
 		if (existing.length > 0) {
 			return {
@@ -26,12 +28,12 @@ export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse
 		// If not found, insert new
 		db.run(
 			`INSERT INTO work_topics 
-        (id, name, color) 
-        VALUES (?, ?, ?)`,
-			[topic.id, topic.name, topic.color]
+        (id, name, color, last_action) 
+        VALUES (?, ?, ?, ?)`,
+			[topicID, topic.name, topic.color, 'Added']
 		);
 
-		await saveDatabase();
+		await saveLocalDatabase();
 		return {
 			status: 'Success',
 			message: `Topic "${topic.name}" inserted into database.`,
@@ -48,10 +50,11 @@ export async function getTopics(): Promise<WorkTopic[]> {
 	const db = await getDatabase();
 	const res = db.exec('SELECT * FROM work_topics');
 	if (res.length === 0) return [];
-	return res[0].values.map(([id, name, color]) => ({
+	return res[0].values.map(([id, name, color, last_action]) => ({
 		id: id as string,
 		name: name as string,
 		color: color as string,
+		last_action: last_action as Action,
 	}));
 }
 
@@ -62,7 +65,7 @@ export const handleAddTopic = async (
 ) => {
 	if (topic.name !== '') {
 		const id = uuidv4();
-		const response = await addTopic({ id: id, name: topic.name, color: topic.color });
+		const response = await addTopic(id, { name: topic.name, color: topic.color });
 		console.log(response.status, response.message);
 		settings.setWorkTopics(await getTopics());
 	} else {

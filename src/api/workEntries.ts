@@ -1,5 +1,5 @@
 // Function Imports
-import { getDatabase, saveDatabase } from './database';
+import { getDatabase, saveLocalDatabase } from './database';
 // Type Imports
 import type { DatabaseActionResponse, WorkEntry, WorkTopic } from '../types/types';
 import type { SettingsContextType } from '../types/context';
@@ -22,7 +22,7 @@ export async function addWorkEntry(workEntry: WorkEntry): Promise<DatabaseAction
 				workEntry.completion_time.toISOString(),
 			]
 		);
-		await saveDatabase();
+		await saveLocalDatabase();
 		return {
 			status: 'Success',
 			message: `Work Entry inserted into database.`,

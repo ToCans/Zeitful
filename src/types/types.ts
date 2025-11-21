@@ -2,6 +2,7 @@
 import type { SettingsContextType } from './context';
 
 // Type Defintions
+export type Action = 'Added' | 'Edited' | 'Deleted';
 export type DatabaseActionStatus = 'Success' | 'Failure';
 export type Item = 'Task' | 'Topic' | 'User';
 export type Page = 'Timer' | 'Statistics' | 'UserPage' | 'Settings';
@@ -15,6 +16,7 @@ export type CloudDatabase = {
 export type DatabaseActionResponse = {
 	status: DatabaseActionStatus;
 	message: string;
+	item?: WorkTask[] | WorkTopic[] | WorkEntry[];
 };
 
 export type DurationByTopic = {
@@ -49,17 +51,29 @@ export type PersistedSettings = Pick<
 	| 'darkMode'
 >;
 
+export type NewWorkTask = {
+	topic_id: string | null;
+	name: string;
+};
+
 export type WorkTask = {
 	id: string;
 	topic_id: string | null;
 	name: string;
 	status: WorkTaskStatus;
+	last_action: Action;
+};
+
+export type NewWorkTopic = {
+	name: string;
+	color: string;
 };
 
 export type WorkTopic = {
 	id: string;
 	name: string;
 	color: string;
+	last_action: Action;
 };
 
 export type WorkEntry = {

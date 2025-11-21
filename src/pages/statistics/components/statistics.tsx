@@ -79,7 +79,7 @@ const Statistics = () => {
 
 				<div className='flex w-full h-full min-h-0'>
 					{itemData?.itemIds.length === 0 ? (
-						<p className='text-sm'>No data found for this period.</p>
+						<p className='text-sm p-2'>No data found for this period.</p>
 					) : (
 						<DataVisualizationPanel itemData={itemData} />
 					)}

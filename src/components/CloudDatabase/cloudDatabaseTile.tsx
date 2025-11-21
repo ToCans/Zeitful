@@ -4,9 +4,9 @@ import {
 	sendToSupabaseDatabase,
 	getFromSupabaseDatabase,
 } from '../../api/cloudDatabase';
-import { gatherDatabaseData, importDatabaseHelper } from '../../api/database';
+import { getLocalDatabaseData, importDatabaseHelper } from '../../api/database';
 import { getTopics } from '../../api/topics';
-import { getTasks } from '../../api/tasks';
+import { getTasks } from '../../api/localDatabase';
 import { getWorkEntries } from '../../api/workEntries';
 // Hook Imports
 import { useAppContext } from '../../hooks/useAppContext';
@@ -19,6 +19,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useRef } from 'react';
 // Utils Imports
 import { formatDate } from '../../utils/date';
+import type { WorkTask } from '../../types/types';
 
 // Component Definition
 const CloudDatabaseTile = () => {
@@ -48,7 +49,7 @@ const CloudDatabaseTile = () => {
 		if (settings.cloudDatabase) {
 			try {
 				// Syncing Mechanism
-				const localData = await gatherDatabaseData();
+				const localData = await getLocalDatabaseData();
 				await sendToSupabaseDatabase(settings.cloudDatabase, localData);
 				const cloudData = await getFromSupabaseDatabase(settings.cloudDatabase);
 				await importDatabaseHelper(cloudData);
@@ -56,7 +57,7 @@ const CloudDatabaseTile = () => {
 
 				// Setting All Items
 				settings.setWorkTopics(await getTopics());
-				settings.setWorkTasks(await getTasks());
+				settings.setWorkTasks((await getTasks()).item as WorkTask[]);
 				settings.setWorkEntries(await getWorkEntries());
 				console.log('Successful database sync');
 			} catch (e) {

@@ -52,14 +52,14 @@ function createTables(db: Database) {
 }
 
 // Saving Database Functionality
-export async function saveDatabase() {
+export async function saveLocalDatabase() {
 	const db = await getDatabase();
 	const data = db.export();
 	localStorage.setItem('zeitful_db', btoa(String.fromCharCode(...data)));
 }
 
 // Gathers all of the local database data from each table
-export async function gatherDatabaseData() {
+export async function getLocalDatabaseData() {
 	const db = await getDatabase();
 
 	function queryAll(sql: string) {
@@ -79,7 +79,7 @@ export async function gatherDatabaseData() {
 
 // Converts the database to a downloadable json file
 export async function downloadDataJson() {
-	const data = await gatherDatabaseData();
+	const data = await getLocalDatabaseData();
 	const blob = new Blob([JSON.stringify(data, null, 2)], {
 		type: 'application/json',
 	});
@@ -142,7 +142,7 @@ export async function importDatabaseHelper(jsonData: any) {
 	}
 	upsertEntry.free();
 
-	await saveDatabase();
+	await saveLocalDatabase();
 }
 
 // Tries to import a json file as a database
