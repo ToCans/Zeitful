@@ -1,9 +1,8 @@
 // API Imports
-import { getTasks } from '../../../api/localDatabase';
 import { getTopics } from '../../../api/topics';
 import { getWorkEntries } from '../../../api/workEntries';
 // DB Utils
-import { importJsonFile, downloadDataJson } from '../../../api/database';
+import { getTasks, importDatabaseDataHelper, downloadDataJson } from '../../../api/localDatabase';
 // Icon Imports
 import { PiUpload, PiDownloadSimple } from 'react-icons/pi';
 // Hook Imports
@@ -24,9 +23,10 @@ const DataHandlerTile = () => {
 
 	async function handleDataImport(e: React.ChangeEvent<HTMLInputElement>) {
 		const file = e.target.files?.[0];
+
 		if (!file) return;
 		try {
-			await importJsonFile(file);
+			await importDatabaseDataHelper(file);
 			settings.setWorkTopics(await getTopics());
 			settings.setWorkTasks((await getTasks()).item as WorkTask[]);
 			settings.setWorkEntries(await getWorkEntries());
@@ -49,22 +49,20 @@ const DataHandlerTile = () => {
 			/>
 			<IconContext.Provider
 				value={{
-					className: `${
-						settings.darkMode
-							? 'fill-gray-200 hover:fill-gray-400'
-							: 'fill-gray-600 hover:fill-gray-400'
-					} size-5 custom-target-icon`,
+					className: `${settings.darkMode
+						? 'fill-gray-200 hover:fill-gray-400'
+						: 'fill-gray-600 hover:fill-gray-400'
+						} size-5 custom-target-icon`,
 				}}
 			>
 				<PiUpload onClick={handleDataImportClick} />
 			</IconContext.Provider>
 			<IconContext.Provider
 				value={{
-					className: `${
-						settings.darkMode
-							? 'fill-gray-200 hover:fill-gray-400'
-							: 'fill-gray-600 hover:fill-gray-400'
-					} size-5 custom-target-icon`,
+					className: `${settings.darkMode
+						? 'fill-gray-200 hover:fill-gray-400'
+						: 'fill-gray-600 hover:fill-gray-400'
+						} size-5 custom-target-icon`,
 				}}
 			>
 				<PiDownloadSimple onClick={handleDataDownloadClick} />

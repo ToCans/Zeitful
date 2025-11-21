@@ -3,11 +3,7 @@ import { IconContext } from 'react-icons';
 import { PiPlus } from 'react-icons/pi';
 import TaskTile from './taskTile';
 import { Dropdown } from 'primereact/dropdown';
-import { DataTable } from 'primereact/datatable';
-import type { DataTableRowEditCompleteEvent } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { ColorPicker } from 'primereact/colorpicker';
-import type { ColumnEditorOptions } from 'primereact/column';
+
 import { InputText } from 'primereact/inputtext';
 // Hook Imports
 import { useState } from 'react';
@@ -18,7 +14,7 @@ import { useCallback } from 'react';
 import { addTask, getTasks } from '../../api/localDatabase';
 // Utils Imports
 import { useAppContext } from '../../hooks/useAppContext';
-import type { NewWorkTask, WorkTask, WorkTopic } from '../../types/types';
+import type { AddedWorkTask, WorkTask, WorkTopic } from '../../types/types';
 import {
 	selectedWorkTopicOptionTemplate,
 	workTopicOptionTemplate,
@@ -51,39 +47,17 @@ const TaskManager = () => {
 		[]
 	);
 
-	const onRowEditComplete = (e: DataTableRowEditCompleteEvent) => {
-		let _workTasks = [...settings.workTasks];
-		let { newData, index } = e;
-
-		_workTasks[index] = newData as WorkTask;
-
-		console.log(_workTasks[index]);
-	};
-
-	const textEditor = (options: ColumnEditorOptions) => {
-		return (
-			<InputText
-				style={{ width: '20%' }}
-				type='text'
-				value={options.value}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-					options.editorCallback!(e.target.value)
-				}
-			/>
-		);
-	};
-
 	return (
 		<div className='flex flex-col flex-1'>
 			<div className='flex flex-row items-center gap-2 w-full'>
 				<button
 					className='m-2 cursor-pointer'
 					onClick={async () => {
-						let selectedTopiId = selectedTopic?.id ?? selectedTopic;
+						let selectedTopicId = selectedTopic?.id ?? selectedTopic;
 						await handleAddTask(settings, {
-							topic_id: selectedTopiId,
+							topic_id: selectedTopicId,
 							name: newTaskName,
-						} as NewWorkTask);
+						} as AddedWorkTask);
 					}}
 				>
 					<IconContext.Provider
@@ -95,11 +69,10 @@ const TaskManager = () => {
 					</IconContext.Provider>
 				</button>
 				<InputText
-					className={`w-2/5 ${
-						settings.darkMode
-							? 'dark-dropdown text-zinc-100'
-							: 'light-dropdown text-black'
-					}`}
+					className={`w-2/5 ${settings.darkMode
+						? 'dark-dropdown text-zinc-100'
+						: 'light-dropdown text-black'
+						}`}
 					id='newTask'
 					placeholder='Add a new task'
 					value={newTaskName}
@@ -135,39 +108,13 @@ const TaskManager = () => {
 			<div className='flex flex-col w-full h-full py-2'>
 				<h2 className='font-semibold'>Work Tasks</h2>
 				<div className='flex flex-col md:h-7/8 h-7/10 overflow-y-auto'>
-					{settings.workTasks.map((task) => (
-						<TaskTile key={task.id} task={task} topics={settings.workTopics} />
+					{settings.workTasks.filter(task => task.last_action !== "Deleted").map((task) => (
+						<TaskTile key={task.id} workTask={task} workTopics={settings.workTopics} />
 					))}
 
-					<DataTable
-						value={settings.workTasks}
-						editMode='row'
-						dataKey='id'
-						onRowEditComplete={onRowEditComplete}
-						tableStyle={{ minWidth: '100%' }}
-					>
-						<Column
-							field='name'
-							header='Code'
-							editor={(options) => textEditor(options)}
-							style={{ width: '20%' }}
-						></Column>
-						<Column
-							field='name'
-							header='Name'
-							editor={(options) => textEditor(options)}
-							style={{ width: '20%' }}
-						></Column>
-
-						<Column
-							rowEditor={true}
-							headerStyle={{ width: '10%', minWidth: '5%' }}
-							bodyStyle={{ textAlign: 'center' }}
-						></Column>
-					</DataTable>
 				</div>
 			</div>
-		</div>
+		</div >
 	);
 };
 

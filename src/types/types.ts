@@ -51,9 +51,16 @@ export type PersistedSettings = Pick<
 	| 'darkMode'
 >;
 
-export type NewWorkTask = {
+export type AddedWorkTask = {
 	topic_id: string | null;
 	name: string;
+};
+
+export type EditedWorkTask = {
+	topic_id: string | null;
+	name: string;
+	status: WorkTaskStatus;
+	last_action: Action;
 };
 
 export type WorkTask = {
@@ -64,9 +71,15 @@ export type WorkTask = {
 	last_action: Action;
 };
 
-export type NewWorkTopic = {
+export type AddedWorkTopic = {
 	name: string;
 	color: string;
+};
+
+export type EditedWorkTopic = {
+	name: string;
+	color: string;
+	last_action: Action;
 };
 
 export type WorkTopic = {

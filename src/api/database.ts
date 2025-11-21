@@ -97,7 +97,7 @@ export async function importDatabaseHelper(jsonData: any) {
 
 	// Helper: Upsert for topics
 	const upsertTopic = db.prepare(`
-    INSERT INTO work_topics (id, name, color) 
+    INSERT INTO work_topics (id, name, color, ) 
     VALUES (?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET name=excluded.name, color=excluded.color
   `);

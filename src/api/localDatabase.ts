@@ -4,10 +4,14 @@ import initSqlJs from 'sql.js';
 import type { Database } from 'sql.js';
 import type {
 	Action,
+	AddedWorkTask,
+	AddedWorkTopic,
 	DatabaseActionResponse,
-	NewWorkTask,
+	EditedWorkTask,
+	EditedWorkTopic,
 	WorkTask,
 	WorkTaskStatus,
+	WorkTopic,
 } from '../types/types';
 
 // Consts
@@ -112,7 +116,8 @@ export async function importDatabaseDataHelper(jsonData: any) {
     ON CONFLICT(id) DO UPDATE SET name=excluded.name, color=excluded.color, last_action=excluded.last_action
   `);
 	for (const t of jsonData.topics || []) {
-		upsertTopic.run([t.id, t.name, t.color]);
+		console.log(t);
+		upsertTopic.run([t.id, t.name, t.color, t.last_action]);
 	}
 	upsertTopic.free();
 
@@ -123,6 +128,7 @@ export async function importDatabaseDataHelper(jsonData: any) {
     ON CONFLICT(id) DO UPDATE SET topic_id=excluded.topic_id, name=excluded.name, status=excluded.status, last_action=excluded.last_action
   `);
 	for (const t of jsonData.tasks || []) {
+		console.log(t);
 		upsertTask.run([t.id, t.topic_id, t.name, t.status, t.last_action]);
 	}
 	upsertTask.free();
@@ -140,6 +146,7 @@ export async function importDatabaseDataHelper(jsonData: any) {
       completion_time=excluded.completion_time
   `);
 	for (const e of jsonData.workEntries || []) {
+		console.log(e);
 		upsertEntry.run([
 			e.id,
 			e.task_id,
@@ -163,7 +170,7 @@ export async function importLocalDatabaseDataFromJson(file: File) {
 
 // Local Database Functions for Tasks
 // Adding Task to local database
-export async function addTask(taskId: string, task: NewWorkTask): Promise<DatabaseActionResponse> {
+export async function addTask(taskId: string, task: AddedWorkTask): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
@@ -200,7 +207,7 @@ export async function addTask(taskId: string, task: NewWorkTask): Promise<Databa
 }
 
 // Editing task in local database
-export async function editTask(taskId: string, task: WorkTask): Promise<DatabaseActionResponse> {
+export async function editTask(taskId: string, workTask: EditedWorkTask): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
@@ -220,23 +227,22 @@ export async function editTask(taskId: string, task: WorkTask): Promise<Database
 			`UPDATE work_tasks
              SET topic_id = ?, 
                  name = ?, 
-                 color = ?, 
                  status = ?, 
                  last_action = ?
              WHERE id = ?`,
-			[task.topic_id ?? null, task.name, task.status, 'Edited', taskId]
+			[workTask.topic_id ?? null, workTask.name, workTask.status, 'Edited', taskId]
 		);
 
 		await saveLocalDatabase();
 
 		return {
 			status: 'Success',
-			message: `Task "${task.name}" was updated.`,
+			message: `Task "${workTask.name}" was updated.`,
 		};
 	} catch (e) {
 		return {
 			status: 'Failure',
-			message: `Task "${task.name}" wasn't updated. ${e}`,
+			message: `Task "${workTask.name}" wasn't updated. ${e}`,
 		};
 	}
 }
@@ -299,7 +305,7 @@ export async function getTasks(): Promise<DatabaseActionResponse> {
 			topic_id: topic_id as string | null,
 			name: name as string,
 			status: status as WorkTaskStatus,
-			last_action: last_action as Action,
+			last_action: last_action as Action
 		}));
 
 		return {
@@ -311,6 +317,159 @@ export async function getTasks(): Promise<DatabaseActionResponse> {
 		return {
 			status: 'Failure',
 			message: `Couldn't retrieve work tasks from local database. ${e}`,
+		};
+	}
+}
+
+// Local Database Functions for Topics
+// Adding Topic to local database
+export async function addTopic(topicId: string, topic: AddedWorkTopic): Promise<DatabaseActionResponse> {
+	try {
+		const db = await getLocalDatabase();
+
+		// Check if topic already exists
+		const existing = db.exec(
+			'SELECT * FROM work_topics WHERE name = "' + topic.name.replace(/"/g, '""') + '"'
+		);
+
+		if (existing.length > 0) {
+			return {
+				status: 'Failure',
+				message: `Topic "${topic.name}" already exists — skipping insert.`,
+			};
+		}
+
+		// If not found, insert new
+		db.run(
+			`INSERT INTO work_topics 
+			(id, name, color, last_action) 
+			VALUES (?, ?, ?, ?)`,
+			[topicId, topic.name, topic.color, 'Added']
+		);
+
+		await saveLocalDatabase();
+		return {
+			status: 'Success',
+			message: `Topic "${topic.name}" inserted into database.`,
+		};
+	} catch (e) {
+		return {
+			status: 'Failure',
+			message: `Topic "${topic.name}" wasn't inserted into database. ${e}`,
+		};
+	}
+}
+
+// Editing topic in local database
+export async function editTopic(topicId: string, workTopic: EditedWorkTopic): Promise<DatabaseActionResponse> {
+	try {
+		const db = await getLocalDatabase();
+
+		// Check if task exists
+		const existing = db.exec(
+			`SELECT * FROM work_topics WHERE id = "${topicId.replace(/"/g, '""')}"`
+		);
+
+		if (existing.length === 0) {
+			return {
+				status: 'Failure',
+				message: `Task with id "${topicId}" not found — cannot update.`,
+			};
+		}
+
+		db.run(
+			`UPDATE work_topics
+             SET 
+                 name = ?, 
+                 color = ?,
+				 last_action = ?
+             WHERE id = ?`,
+			[workTopic.name, workTopic.color, 'Edited', topicId]
+		);
+
+		await saveLocalDatabase();
+
+		return {
+			status: 'Success',
+			message: `Topic "${workTopic.name}" was updated.`,
+		};
+	} catch (e) {
+		return {
+			status: 'Failure',
+			message: `Topic "${workTopic.name}" wasn't updated. ${e}`,
+		};
+	}
+}
+
+// Deleting Task in local database ()
+export async function deleteTopic(topicId: string, topic: WorkTopic): Promise<DatabaseActionResponse> {
+	try {
+		const db = await getLocalDatabase();
+
+		// Check if task exists
+		const existing = db.exec(
+			`SELECT * FROM work_topics WHERE id = "${topicId.replace(/"/g, '""')}"`
+		);
+
+		if (existing.length === 0) {
+			return {
+				status: 'Failure',
+				message: `Task with id "${topicId}" not found — cannot delete.`,
+			};
+		}
+
+		db.run(
+			`UPDATE work_topics
+             SET last_action = ?
+             WHERE id = ?`,
+			['Deleted', topicId]
+		);
+
+		await saveLocalDatabase();
+
+		return {
+			status: 'Success',
+			message: `Topic "${topic.name}" was deleted.`,
+		};
+	} catch (e) {
+		return {
+			status: 'Failure',
+			message: `Tppic "${topic.name}" wasn't deleted. ${e}`,
+		};
+	}
+}
+
+export async function getTopics(): Promise<DatabaseActionResponse> {
+	try {
+		const db = await getLocalDatabase();
+		const res = db.exec(`
+            SELECT t.id, t.name, t.color, t.last_action
+            FROM work_topics t
+        `);
+
+		if (res.length === 0)
+			return {
+				status: 'Success',
+				message: `No tasks available in local database.`,
+				item: [],
+			};
+
+		const localWorkTopics = res[0].values.map(([id, name, color, last_action]) => ({
+			id: id as string,
+			name: name as string,
+			color: color as string,
+			last_action: last_action as Action
+		}));
+
+		return {
+			status: 'Success',
+			message: `Local topics available in local database.`,
+			item: localWorkTopics,
+		};
+	} catch (e) {
+		return {
+			status: 'Failure',
+			message: `Couldn't retrieve work topics from local database. ${e}`,
 		};
 	}
 }

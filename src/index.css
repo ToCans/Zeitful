@@ -74,6 +74,11 @@ body,
   color: white !important;
 }
 
+.dark-dropdown-panel .p-dropdown-empty-message {
+  color: white;
+  background-color: #3F3F46;
+}
+
 .dark-dropdown-panel .p-dropdown-item.p-highlight {
   color: white;
   background-color: #3F3F46;
