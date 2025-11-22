@@ -1,8 +1,6 @@
 // API Imports
-import { getTopics } from '../../../api/topics';
-import { getWorkEntries } from '../../../api/workEntries';
-// DB Utils
-import { getTasks, importDatabaseDataHelper, downloadDataJson } from '../../../api/localDatabase';
+import { getTopics, getWorkEntries } from '../../../api/localDatabase';
+import { getTasks, importLocalDatabaseDataFromJson, downloadDataJson } from '../../../api/localDatabase';
 // Icon Imports
 import { PiUpload, PiDownloadSimple } from 'react-icons/pi';
 // Hook Imports
@@ -10,7 +8,7 @@ import { useAppContext } from '../../../hooks/useAppContext';
 import { IconContext } from 'react-icons';
 // React Imports
 import { useRef } from 'react';
-import type { WorkTask } from '../../../types/types';
+import type { WorkEntry, WorkTask, WorkTopic } from '../../../types/types';
 
 // Component Defintion
 const DataHandlerTile = () => {
@@ -26,10 +24,10 @@ const DataHandlerTile = () => {
 
 		if (!file) return;
 		try {
-			await importDatabaseDataHelper(file);
-			settings.setWorkTopics(await getTopics());
+			await importLocalDatabaseDataFromJson(file);
+			settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
 			settings.setWorkTasks((await getTasks()).item as WorkTask[]);
-			settings.setWorkEntries(await getWorkEntries());
+			settings.setWorkEntries((await getWorkEntries()).item as WorkEntry[]);
 		} catch (err) {
 			console.error(err);
 		}

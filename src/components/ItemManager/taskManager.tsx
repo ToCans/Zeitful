@@ -14,12 +14,13 @@ import { useCallback } from 'react';
 import { addTask, getTasks } from '../../api/localDatabase';
 // Utils Imports
 import { useAppContext } from '../../hooks/useAppContext';
-import type { AddedWorkTask, WorkTask, WorkTopic } from '../../types/types';
+import type { WorkTask, WorkTopic } from '../../types/types';
 import {
 	selectedWorkTopicOptionTemplate,
 	workTopicOptionTemplate,
 } from './workTopicOptionTemplate';
 import type { SettingsContextType } from '../../types/context';
+import { addWorkTaskSupabaseDatabase } from '../../api/cloudDatabase';
 
 // Component Definition
 const TaskManager = () => {
@@ -30,18 +31,32 @@ const TaskManager = () => {
 	const handleAddTask = useCallback(
 		async (
 			settings: SettingsContextType,
-			task: Omit<WorkTask, 'id' | 'status' | 'last_action'>
+			workTask: WorkTask
 		) => {
-			if (task.name !== '') {
-				const id = uuidv4();
-				const response = await addTask(id, {
-					topic_id: task.topic_id,
-					name: task.name,
-				});
+			if (workTask.name !== '') {
+				const response = await addTask(workTask);
 				console.log(response.status, response.message);
 				settings.setWorkTasks((await getTasks()).item as WorkTask[]);
 			} else {
 				console.log('Please enter a task name');
+			}
+		},
+		[]
+	);
+
+	const handleAddTaskToCloudDatabase = useCallback(
+		async (
+			settings: SettingsContextType,
+			workTask: WorkTask
+		) => {
+			if (workTask.name !== '') {
+				if (settings.cloudDatabase) {
+					const response = await addWorkTaskSupabaseDatabase(settings.cloudDatabase, workTask);
+					console.log(response.status, response.message);
+					settings.setWorkTasks((await getTasks()).item as WorkTask[]);
+				} else {
+					console.log('Please enter a task name');
+				}
 			}
 		},
 		[]
@@ -53,11 +68,24 @@ const TaskManager = () => {
 				<button
 					className='m-2 cursor-pointer'
 					onClick={async () => {
-						let selectedTopicId = selectedTopic?.id ?? selectedTopic;
+						const id = uuidv4();
+						const selectedTopicId = selectedTopic?.id ?? null;
 						await handleAddTask(settings, {
+							id: id,
 							topic_id: selectedTopicId,
 							name: newTaskName,
-						} as AddedWorkTask);
+							status: 'Open',
+							last_action: 'Added'
+						});
+						if (settings.cloudDatabase) {
+							await handleAddTaskToCloudDatabase(settings, {
+								id: id,
+								topic_id: selectedTopicId,
+								name: newTaskName,
+								status: 'Open',
+								last_action: 'Added'
+							});
+						}
 					}}
 				>
 					<IconContext.Provider
@@ -90,7 +118,7 @@ const TaskManager = () => {
 						setSelectedTopic(e.value);
 					}}
 					placeholder='"Select a Work Topic'
-					options={settings.workTopics}
+					options={settings.workTopics.filter(topic => topic.last_action !== "Deleted")}
 					optionLabel='name'
 					itemTemplate={workTopicOptionTemplate}
 					valueTemplate={selectedWorkTopicOptionTemplate}

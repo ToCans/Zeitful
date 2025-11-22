@@ -12,14 +12,14 @@ import {
 } from 'date-fns';
 // Type Imports
 import type {
-	ChartData,
+	PiChartData,
 	WorkTopic,
 	WorkEntry,
 	DurationByTopic,
-	ItemData,
+	TopicData,
 } from '../../../types/types';
 // Type Defintion
-export type PeriodOption = { label: string; value: Date | number };
+export type PeriodOption = { label: string; value: Date | number; };
 
 // Gathers the data for the most recent month
 export const gatherMostRecentData = (timeFrame: 'W' | 'M' | 'Y') => {
@@ -91,7 +91,7 @@ function getWeekRange(date: Date) {
 	return { startDate, endDate };
 }
 
-function getMonthRange(month: number): { startDate: Date; endDate: Date } {
+function getMonthRange(month: number): { startDate: Date; endDate: Date; } {
 	const year = new Date().getFullYear();
 
 	// month in Date constructor is 0-based (Jan = 0)
@@ -103,7 +103,7 @@ function getMonthRange(month: number): { startDate: Date; endDate: Date } {
 	return { startDate, endDate };
 }
 
-function getYearRange(year: number): { startDate: Date; endDate: Date } {
+function getYearRange(year: number): { startDate: Date; endDate: Date; } {
 	// month in Date constructor is 0-based (Jan = 0)
 	const firstDayOfMonth = new Date(year, 0, 1);
 
@@ -115,7 +115,7 @@ function getYearRange(year: number): { startDate: Date; endDate: Date } {
 
 // Depending on the timeframe selected, a start and end date are generated
 export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y', selectedPeriod: any) => {
-	let dateRange: { startDate: Date; endDate: Date };
+	let dateRange: { startDate: Date; endDate: Date; };
 
 	// 🎯 Determine start and end date based on timeframe & selected period
 	switch (timeFrame) {
@@ -141,7 +141,7 @@ export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y', selectedPeriod: an
 // Filters the work entries based on a range defined by the time frame
 export const filterWorkEntriesByDateRange = (
 	workEntries: WorkEntry[],
-	dateRange: { startDate: Date; endDate: Date }
+	dateRange: { startDate: Date; endDate: Date; }
 ) => {
 	const start = new Date(dateRange.startDate);
 	const end = new Date(dateRange.endDate);
@@ -167,7 +167,7 @@ export const getTotalDurationByTopicForSelectedPeriod = (
 export const matchItemToTopics = (
 	durationsPerItem: DurationByTopic,
 	workTopics: WorkTopic[]
-): ItemData => {
+): TopicData => {
 	// Extract the labels and data values
 	const itemIds = Object.keys(durationsPerItem);
 	const itemDurations = Object.values(durationsPerItem);
@@ -187,38 +187,38 @@ export const matchItemToTopics = (
 	});
 
 	// Construct Topic Data
-	const itemData: ItemData = {
+	const topicData: TopicData = {
 		itemIds: itemIds,
 		itemNames: itemNames,
 		itemDurations: itemDurations,
 		itemColors: colors,
 	};
 
-	return itemData;
+	return topicData;
 };
 
-export function calculateTopicPercentages(itemData: ItemData): ItemData {
-	const totalDuration = itemData.itemDurations.reduce((sum, dur) => sum + dur, 0);
+export function calculateTopicPercentages(topicData: TopicData): TopicData {
+	const totalDuration = topicData.itemDurations.reduce((sum, dur) => sum + dur, 0);
 
-	const topicPercentage = itemData.itemDurations.map((dur) =>
+	const topicPercentage = topicData.itemDurations.map((dur) =>
 		totalDuration === 0 ? 0 : (dur / totalDuration) * 100
 	);
 
 	return {
-		...itemData,
+		...topicData,
 		topicPercentage,
 	};
 }
 
 // Extracts and formats the data for the Pi Chart
-export const piChartDataFormatter = (itemData: ItemData): ChartData => {
+export const piChartDataFormatter = (topicData: TopicData): PiChartData => {
 	// Construct Chart Data
 	const chartData = {
-		labels: itemData.itemNames,
+		labels: topicData.itemNames,
 		datasets: [
 			{
-				data: itemData.itemDurations,
-				backgroundColor: itemData.itemColors,
+				data: topicData.itemDurations,
+				backgroundColor: topicData.itemColors,
 			},
 		],
 	};
@@ -226,14 +226,14 @@ export const piChartDataFormatter = (itemData: ItemData): ChartData => {
 	return chartData;
 };
 
-export function getTotalTimeWorked(data: ItemData): number {
+export function getTotalTimeWorked(data: TopicData): number {
 	return data.itemDurations.reduce((sum, duration) => sum + duration, 0);
 }
 
 /**
  * Returns the item with the most time worked on
  */
-export function getMostWorkedOn(data: ItemData) {
+export function getMostWorkedOn(data: TopicData) {
 	if (data.itemDurations.length === 0) return null;
 
 	const maxDuration = Math.max(...data.itemDurations);
@@ -251,7 +251,7 @@ export function getMostWorkedOn(data: ItemData) {
 /**
  * Returns the item with the least time worked on
  */
-export function getLeastWorkedOn(data: ItemData) {
+export function getLeastWorkedOn(data: TopicData) {
 	if (data.itemDurations.length === 0) return null;
 
 	const minDuration = Math.min(...data.itemDurations);

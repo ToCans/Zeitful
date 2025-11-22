@@ -1,16 +1,19 @@
 //  API Imports
 import { sendPushNotification } from '../api/push-notification';
-import { handleAddWorkEntry } from '../../../api/workEntries';
-import { handleAddWorkEntryToCloudDatabase } from '../../../api/cloudDatabase';
+import { addWorkEntry, getWorkEntries } from '../../../api/localDatabase';
+import { addWorkEntrySupabaseDatabase } from '../../../api/cloudDatabase';
 // Component Imports
 import TimeDisplay from './timeDisplay';
 import TimerControls from './timeControls';
 import WavesAnimation from './wavesAnimation';
 import TaskFocus from './taskFocus';
 // Hook Imports
-import { useAppContext } from '../../../hooks/useAppContext';
+import { useAppContext, } from '../../../hooks/useAppContext';
 // React Imports
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+// Type Imports
+import type { SettingsContextType } from '../../../types/context';
+import type { WorkEntry, WorkTopic } from '../../../types/types';
 // Utils Imports
 import { playAudio } from '../utils/audio';
 import { formatTime } from '../../../utils/utils';
@@ -29,6 +32,49 @@ const Timer = () => {
 	// References
 	const progressBarTotalRef = useRef<number>(settings.workingTime);
 	const timeRemainingRef = useRef<number>(timeRemaining);
+
+	// Helper Functions Memos
+	const handleAddWorkEntry = useCallback(async (
+		uuid: string,
+		settings: SettingsContextType,
+		workEntry: Omit<WorkEntry, 'id' | 'duration' | 'topic_name' | 'completion_time'>,
+		workTopics: WorkTopic[]
+	) => {
+		const matchedTopic = workTopics.find((workTopic) => workTopic.id === workEntry.topic_id);
+		const response = await addWorkEntry({
+			id: uuid,
+			task_id: workEntry.task_id,
+			topic_id: workEntry.topic_id,
+			task_name: workEntry.task_name,
+			topic_name: matchedTopic?.name ?? null,
+			duration: settings.workingTime / 60,
+			completion_time: new Date().toISOString(),
+		});
+
+		console.log(response.status, response.message);
+		settings.setWorkEntries((await getWorkEntries()).item as WorkEntry[]);
+	}, []);
+
+	const handleAddWorkEntryToCloudDatabase = useCallback(async (
+		uuid: string,
+		settings: SettingsContextType,
+		workEntry: Omit<WorkEntry, 'id' | 'duration' | 'topic_name' | 'completion_time'>,
+		workTopics: WorkTopic[]
+	) => {
+		if (settings.cloudDatabase) {
+			const matchedTopic = workTopics.find((workTopic) => workTopic.id === workEntry.topic_id);
+			const response = await addWorkEntrySupabaseDatabase(settings.cloudDatabase, {
+				id: uuid,
+				task_id: workEntry.task_id,
+				topic_id: workEntry.topic_id,
+				task_name: workEntry.task_name,
+				topic_name: matchedTopic?.name ?? null,
+				duration: settings.workingTime / 60,
+				completion_time: new Date().toISOString(),
+			});
+			console.log(response.status, response.message);
+		}
+	}, []);
 
 	// Trigger the slide-in animation on component mount
 	useEffect(() => {
@@ -140,9 +186,8 @@ const Timer = () => {
 
 	return (
 		<div
-			className={`relative p-4 h-[50vh] xl:w-2/5 md:w-3/5 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
-				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-			} `}
+			className={`relative p-4 h-[50vh] xl:w-2/5 md:w-3/5 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				} `}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation progress={progressBarValue} timerColor={settings.timerColor} />
@@ -158,9 +203,8 @@ const Timer = () => {
 			</div>
 
 			<div
-				className={`absolute inset-0 ${
-					settings.darkMode ? 'bg-zinc-700' : 'bg-white'
-				} rounded-lg z-0`}
+				className={`absolute inset-0 ${settings.darkMode ? 'bg-zinc-700' : 'bg-white'
+					} rounded-lg z-0`}
 			></div>
 		</div>
 	);

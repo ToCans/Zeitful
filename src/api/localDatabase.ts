@@ -4,14 +4,14 @@ import initSqlJs from 'sql.js';
 import type { Database } from 'sql.js';
 import type {
 	Action,
-	AddedWorkTask,
-	AddedWorkTopic,
 	DatabaseActionResponse,
 	EditedWorkTask,
 	EditedWorkTopic,
 	WorkTask,
 	WorkTaskStatus,
 	WorkTopic,
+	WorkEntry,
+	CloudDatabaseData
 } from '../types/types';
 
 // Consts
@@ -42,7 +42,7 @@ function createTables(db: Database) {
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       color TEXT NOT NULL,
-      last_action TEXT NOT NULL
+      last_action TEXT
     );
 
     CREATE TABLE IF NOT EXISTS work_tasks (
@@ -50,7 +50,7 @@ function createTables(db: Database) {
       topic_id TEXT,
       name TEXT,
       status TEXT NOT NULL CHECK(status IN ('Open', 'Active', 'Closed')),
-      last_action TEXT NOT NULL
+      last_action TEXT
     );
 
     CREATE TABLE IF NOT EXISTS work_entries (
@@ -66,6 +66,7 @@ function createTables(db: Database) {
 }
 
 // Saving Local Database
+// TODO: Wrap in Try Catch
 export async function saveLocalDatabase() {
 	const db = await getLocalDatabase();
 	const data = db.export();
@@ -73,6 +74,7 @@ export async function saveLocalDatabase() {
 }
 
 // Gathers all of the local database data from each table
+// TODO: Wrap in Try Catch
 export async function getLocalDatabaseData() {
 	const db = await getLocalDatabase();
 
@@ -92,6 +94,7 @@ export async function getLocalDatabaseData() {
 }
 
 // Converts the database to a downloadable json file
+// TODO: Wrap in Try Catch
 export async function downloadDataJson() {
 	const data = await getLocalDatabaseData();
 	const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -106,35 +109,35 @@ export async function downloadDataJson() {
 }
 
 // Import JSON data back into the database
-export async function importDatabaseDataHelper(jsonData: any) {
-	const db = await getLocalDatabase();
+// TODO: Wrap in Try Catch
+export async function updataLocalDatabaseFromJson(jsonData: CloudDatabaseData) {
+	try {
+		const db = await getLocalDatabase();
 
-	// Helper: Upsert for topics
-	const upsertTopic = db.prepare(`
+		// Helper: Upsert for topics
+		const upsertTopic = db.prepare(`
     INSERT INTO work_topics (id, name, color, last_action) 
     VALUES (?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET name=excluded.name, color=excluded.color, last_action=excluded.last_action
   `);
-	for (const t of jsonData.topics || []) {
-		console.log(t);
-		upsertTopic.run([t.id, t.name, t.color, t.last_action]);
-	}
-	upsertTopic.free();
+		for (const t of jsonData.topics || []) {
+			upsertTopic.run([t.id, t.name, t.color, t.last_action]);
+		}
+		upsertTopic.free();
 
-	// Upsert for tasks
-	const upsertTask = db.prepare(`
+		// Upsert for tasks
+		const upsertTask = db.prepare(`
     INSERT INTO work_tasks (id, topic_id, name, status, last_action)
     VALUES (?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET topic_id=excluded.topic_id, name=excluded.name, status=excluded.status, last_action=excluded.last_action
   `);
-	for (const t of jsonData.tasks || []) {
-		console.log(t);
-		upsertTask.run([t.id, t.topic_id, t.name, t.status, t.last_action]);
-	}
-	upsertTask.free();
+		for (const t of jsonData.tasks || []) {
+			upsertTask.run([t.id, t.topic_id, t.name, t.status, t.last_action]);
+		}
+		upsertTask.free();
 
-	// Upsert for work entries
-	const upsertEntry = db.prepare(`
+		// Upsert for work entries
+		const upsertEntry = db.prepare(`
     INSERT INTO work_entries (id, task_id, topic_id, task_name, topic_name, duration, completion_time)
     VALUES (?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
@@ -145,32 +148,36 @@ export async function importDatabaseDataHelper(jsonData: any) {
       duration=excluded.duration,
       completion_time=excluded.completion_time
   `);
-	for (const e of jsonData.workEntries || []) {
-		console.log(e);
-		upsertEntry.run([
-			e.id,
-			e.task_id,
-			e.topic_id,
-			e.task_name,
-			e.topic_name,
-			e.duration,
-			e.completion_time,
-		]);
+		for (const e of jsonData.workEntries || []) {
+			upsertEntry.run([
+				e.id,
+				e.task_id ?? null,
+				e.topic_id ?? null,
+				e.task_name ?? null,
+				e.topic_name ?? null,
+				e.duration ?? 10,
+				e.completion_time ?? new Date().toISOString(),
+			]);
+		}
+		upsertEntry.free();
+		await saveLocalDatabase();
+	} catch (e) {
+		console.log("Failed to import data into local database. Error:", e);
 	}
-	upsertEntry.free();
-	await saveLocalDatabase();
 }
 
 // Imports Database Data from Json File
+// TODO: Wrap in Try Catch
 export async function importLocalDatabaseDataFromJson(file: File) {
 	const text = await file.text();
 	const jsonData = JSON.parse(text);
-	await importDatabaseDataHelper(jsonData);
+	console.log(jsonData);
+	await updataLocalDatabaseFromJson(jsonData);
 }
 
 // Local Database Functions for Tasks
 // Adding Task to local database
-export async function addTask(taskId: string, task: AddedWorkTask): Promise<DatabaseActionResponse> {
+export async function addTask(task: WorkTask): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
@@ -189,7 +196,7 @@ export async function addTask(taskId: string, task: AddedWorkTask): Promise<Data
 		db.run(
 			`INSERT INTO work_tasks (id, topic_id, name, status, last_action)
              VALUES (?, ?, ?, ?, ?)`,
-			[taskId, task?.topic_id ?? null, task.name, 'Open', 'Added']
+			[task.id, task?.topic_id ?? null, task.name, 'Open', 'Added']
 		);
 
 		await saveLocalDatabase();
@@ -323,7 +330,7 @@ export async function getTasks(): Promise<DatabaseActionResponse> {
 
 // Local Database Functions for Topics
 // Adding Topic to local database
-export async function addTopic(topicId: string, topic: AddedWorkTopic): Promise<DatabaseActionResponse> {
+export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
@@ -344,7 +351,7 @@ export async function addTopic(topicId: string, topic: AddedWorkTopic): Promise<
 			`INSERT INTO work_topics 
 			(id, name, color, last_action) 
 			VALUES (?, ?, ?, ?)`,
-			[topicId, topic.name, topic.color, 'Added']
+			[topic.id, topic.name, topic.color, 'Added']
 		);
 
 		await saveLocalDatabase();
@@ -470,6 +477,79 @@ export async function getTopics(): Promise<DatabaseActionResponse> {
 		return {
 			status: 'Failure',
 			message: `Couldn't retrieve work topics from local database. ${e}`,
+		};
+	}
+}
+
+// Work Entires
+export async function addWorkEntry(workEntry: WorkEntry): Promise<DatabaseActionResponse> {
+	try {
+		const db = await getLocalDatabase();
+		db.run(
+			`INSERT INTO work_entries 
+        (id, task_id, topic_id, task_name, topic_name, duration, completion_time) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			[
+				workEntry.id,
+				workEntry.task_id,
+				workEntry.topic_id,
+				workEntry.task_name,
+				workEntry.topic_name,
+				workEntry.duration,
+				workEntry.completion_time,
+			]
+		);
+		await saveLocalDatabase();
+		return {
+			status: 'Success',
+			message: `Work Entry inserted into database.`,
+		};
+	} catch (e) {
+		return {
+			status: 'Failure',
+			message: `Work Entry wasn't inserted into database. ${e}`,
+		};
+	}
+}
+
+export async function getWorkEntries(): Promise<DatabaseActionResponse> {
+	try {
+		const db = await getLocalDatabase();
+		const res = db.exec(`
+    SELECT t.id, t.task_id, t.topic_id, t.task_name, t.topic_name, t.duration, t.completion_time
+    FROM work_entries t
+  `);
+
+		if (res.length === 0) return {
+			status: 'Success',
+			message: `No work entries available in local database.`,
+			item: [],
+		};
+		;
+
+		const localWorkEntries = res[0].values.map(
+			([id, task_id, topic_id, task_name, topic_name, duration, completion_time]) => ({
+				id: id as string,
+				task_id: task_id as string | null,
+				topic_id: topic_id as string | null,
+				task_name: task_name as string | null,
+				topic_name: topic_name as string | null,
+				duration: duration as number,
+				completion_time: completion_time as string,
+			})
+		);
+
+		return {
+			status: 'Success',
+			message: `Local entries available in local database.`,
+			item: localWorkEntries,
+		};
+
+
+	} catch (e) {
+		return {
+			status: 'Failure',
+			message: `Work Entry wasn't inserted into database. ${e}`,
 		};
 	}
 }

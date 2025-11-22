@@ -8,22 +8,28 @@ export type Item = 'Task' | 'Topic' | 'User';
 export type Page = 'Timer' | 'Statistics' | 'UserPage' | 'Settings';
 export type WorkTaskStatus = 'Open' | 'Active' | 'Closed';
 
-export type CloudDatabase = {
+export type CloudDatabaseCredentials = {
 	api_key: string;
 	database_url: string;
+};
+
+export type CloudDatabaseData = {
+	tasks: WorkTask[];
+	topics: WorkTopic[];
+	workEntries: WorkEntry[];
 };
 
 export type DatabaseActionResponse = {
 	status: DatabaseActionStatus;
 	message: string;
-	item?: WorkTask[] | WorkTopic[] | WorkEntry[];
+	item?: WorkTask[] | WorkTopic[] | WorkEntry[] | CloudDatabaseData;
 };
 
 export type DurationByTopic = {
 	[topic_id: string]: number;
 };
 
-export type ChartData = {
+export type PiChartData = {
 	labels: string[];
 	datasets: {
 		data: number[];
@@ -31,7 +37,7 @@ export type ChartData = {
 	}[];
 };
 
-export type ItemData = {
+export type TopicData = {
 	itemIds: string[];
 	itemNames: string[];
 	itemDurations: number[];
@@ -51,11 +57,7 @@ export type PersistedSettings = Pick<
 	| 'darkMode'
 >;
 
-export type AddedWorkTask = {
-	topic_id: string | null;
-	name: string;
-};
-
+// Work Tasks //
 export type EditedWorkTask = {
 	topic_id: string | null;
 	name: string;
@@ -71,11 +73,7 @@ export type WorkTask = {
 	last_action: Action;
 };
 
-export type AddedWorkTopic = {
-	name: string;
-	color: string;
-};
-
+// Work Topics //
 export type EditedWorkTopic = {
 	name: string;
 	color: string;
@@ -89,6 +87,7 @@ export type WorkTopic = {
 	last_action: Action;
 };
 
+// Work Entries //
 export type WorkEntry = {
 	id: string;
 	task_id: WorkTask['id'] | null;
@@ -96,5 +95,5 @@ export type WorkEntry = {
 	task_name: WorkTask['name'] | null;
 	topic_name: WorkTopic['name'] | null;
 	duration: number;
-	completion_time: Date;
+	completion_time: string;
 };

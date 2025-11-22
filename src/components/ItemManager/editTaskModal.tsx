@@ -83,7 +83,7 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
                             <Dropdown
                                 value={matchedTopic}
                                 onChange={(e) => setEditValues({ ...editValues, topic_id: e.target.value.id })}
-                                options={settings.workTopics}
+                                options={settings.workTopics.filter(topic => topic.last_action !== "Deleted")}
                                 placeholder='None' // Hacky way of triggering default option without having it in options
                                 itemTemplate={workTopicOptionTemplate}
                                 valueTemplate={selectedWorkTopicOptionTemplate}

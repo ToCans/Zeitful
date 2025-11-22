@@ -6,8 +6,7 @@ import { InputText } from 'primereact/inputtext';
 import { useState, useCallback, type SetStateAction } from 'react';
 import { editTopic, getTopics } from '../../api/localDatabase';
 import type { Dispatch } from 'react';
-// API Imports
-
+import { ColorPicker } from 'primereact/colorpicker';
 
 interface EditTopicModalProps {
     setEditMode: Dispatch<SetStateAction<boolean>>;
@@ -57,6 +56,11 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
                 <div className='flex flex-1 items-center justify-center'>
                     <div className='flex flex-col items-center w-full '>
                         <div className='flex flex-col w-full'>
+                            <p className='font-semibold'>Topic Color</p>
+                            <ColorPicker
+                                value={editValues.color}
+                                onChange={(e) => setEditValues({ ...editValues, color: `#${e.value}` })}
+                            />
                             <p className='font-semibold'>Topic Name</p>
                             <InputText
                                 className={`${settings.darkMode

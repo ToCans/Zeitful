@@ -1,13 +1,11 @@
 // DB Utils
 import {
-	importCloudDatabaseCredentialile,
-	sendToSupabaseDatabase,
-	getFromSupabaseDatabase,
+	importCloudDatabaseCredentials,
+	syncLocalDataToSupabaseDatabase,
+	getDataFromSupabaseDatabase,
 } from '../../api/cloudDatabase';
-import { getLocalDatabaseData, importDatabaseHelper } from '../../api/database';
-import { getTopics } from '../../api/topics';
-import { getTasks } from '../../api/localDatabase';
-import { getWorkEntries } from '../../api/workEntries';
+import { getTasks, getTopics, getLocalDatabaseData, getWorkEntries, updataLocalDatabaseFromJson } from '../../api/localDatabase';
+
 // Hook Imports
 import { useAppContext } from '../../hooks/useAppContext';
 // Icon Imports
@@ -19,7 +17,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useRef } from 'react';
 // Utils Imports
 import { formatDate } from '../../utils/date';
-import type { WorkTask } from '../../types/types';
+import type { CloudDatabaseData, WorkEntry, WorkTask, WorkTopic } from '../../types/types';
 
 // Component Definition
 const CloudDatabaseTile = () => {
@@ -31,13 +29,17 @@ const CloudDatabaseTile = () => {
 	}
 
 	async function handleCloudDatabaseFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-		const file = e.target.files?.[0];
-		if (!file) return;
 		try {
-			const cloudDatabaseCredentials = await importCloudDatabaseCredentialile(file);
+			const file = e.target.files?.[0];
+			if (!file) {
+				console.log("Error: Cloud Credentials File not found.");
+				return;
+			}
+			const response = await importCloudDatabaseCredentials(file);
+			console.log(response.status, response.message);
 			const supabaseClient = createClient(
-				cloudDatabaseCredentials['database_url'],
-				cloudDatabaseCredentials['api_key']
+				response.cloudCredentials['database_url'],
+				response.cloudCredentials['api_key']
 			);
 			settings.setCloudDatabase(supabaseClient);
 		} catch (err) {
@@ -50,16 +52,24 @@ const CloudDatabaseTile = () => {
 			try {
 				// Syncing Mechanism
 				const localData = await getLocalDatabaseData();
-				await sendToSupabaseDatabase(settings.cloudDatabase, localData);
-				const cloudData = await getFromSupabaseDatabase(settings.cloudDatabase);
-				await importDatabaseHelper(cloudData);
-				settings.setLastCloudDatabaseSync(new Date().toISOString());
+				// Syncing Local Data to the supabase (adding/updating missing entries)
+				const syncReponse = await syncLocalDataToSupabaseDatabase(settings.cloudDatabase, localData);
+				console.log(syncReponse.status, syncReponse.message);
 
-				// Setting All Items
-				settings.setWorkTopics(await getTopics());
-				settings.setWorkTasks((await getTasks()).item as WorkTask[]);
-				settings.setWorkEntries(await getWorkEntries());
-				console.log('Successful database sync');
+				// Getting the most recent data from supabase
+				const response = await getDataFromSupabaseDatabase(settings.cloudDatabase);
+				if (response.status === "Success" && response.item) {
+					await updataLocalDatabaseFromJson(response.item as CloudDatabaseData);
+					settings.setLastCloudDatabaseSync(new Date().toISOString());
+
+					// Setting All Items
+					settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
+					settings.setWorkTasks((await getTasks()).item as WorkTask[]);
+					settings.setWorkEntries((await getWorkEntries()).item as WorkEntry[]);
+					console.log('Successful database sync');
+
+				}
+
 			} catch (e) {
 				console.log('Experience error syncing databases', e);
 			}
@@ -77,20 +87,19 @@ const CloudDatabaseTile = () => {
 			/>
 			<IconContext.Provider
 				value={{
-					className: `${
-						settings.darkMode
-							? 'fill-gray-200 hover:fill-gray-400'
-							: 'fill-gray-600 hover:fill-gray-400'
-					} size-5 custom-target-icon ${
-						settings.cloudDatabase === null && settings.useCloudDatabase === true
+					className: `${settings.darkMode
+						? 'fill-gray-200 hover:fill-gray-400'
+						: 'fill-gray-600 hover:fill-gray-400'
+						} size-5 custom-target-icon ${settings.cloudDatabase === null && settings.useCloudDatabase === true
 							? 'animate-bounce'
 							: ''
-					}`,
+						}`,
 				}}
 			>
 				<PiCloud
-					onClick={() => {
-						handleCloudCredentialsImportClick();
+					onClick={async () => {
+						await handleCloudCredentialsImportClick();
+						await handleCloudDatabaseDataSync();
 					}}
 				/>
 			</IconContext.Provider>
@@ -98,11 +107,10 @@ const CloudDatabaseTile = () => {
 			{settings.useCloudDatabase === true && settings.cloudDatabase !== null ? (
 				<IconContext.Provider
 					value={{
-						className: `${
-							settings.darkMode
-								? 'fill-gray-200 hover:fill-gray-400'
-								: 'fill-gray-600 hover:fill-gray-400'
-						} size-5 custom-target-icon`,
+						className: `${settings.darkMode
+							? 'fill-gray-200 hover:fill-gray-400'
+							: 'fill-gray-600 hover:fill-gray-400'
+							} size-5 custom-target-icon`,
 					}}
 				>
 					<PiArrowsClockwise

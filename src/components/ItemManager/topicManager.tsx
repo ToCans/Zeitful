@@ -16,8 +16,9 @@ import { useAppContext } from '../../hooks/useAppContext';
 
 // Library Imports
 import { v4 as uuidv4 } from 'uuid';
-import type { AddedWorkTopic, WorkTopic } from '../../types/types';
+import type { WorkTopic } from '../../types/types';
 import type { SettingsContextType } from '../../types/context';
+import { addWorkTopicSupabaseDatabase } from '../../api/cloudDatabase';
 
 // Component Definition
 const TopicManager = () => {
@@ -28,19 +29,32 @@ const TopicManager = () => {
 	const handleAddTopic = useCallback(
 		async (
 			settings: SettingsContextType,
-			workTopic: Omit<WorkTopic, 'id' | 'last_action'>
+			workTopic: WorkTopic
 		) => {
 			if (workTopic.name !== '') {
-				const id = uuidv4();
-				const response = await addTopic(id, {
-
-					name: workTopic.name,
-					color: workTopic.color
-				});
+				const response = await addTopic(workTopic);
 				console.log(response.status, response.message);
 				settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
 			} else {
 				console.log('Please enter a task name');
+			}
+		},
+		[]
+	);
+
+	const handleAddTopicToCloudDatabase = useCallback(
+		async (
+			settings: SettingsContextType,
+			workTopic: WorkTopic
+		) => {
+			if (workTopic.name !== '') {
+				if (settings.cloudDatabase) {
+					const response = await addWorkTopicSupabaseDatabase(settings.cloudDatabase, workTopic);
+					console.log(response.status, response.message);
+					settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
+				} else {
+					console.log('Please enter a task name');
+				}
 			}
 		},
 		[]
@@ -52,7 +66,11 @@ const TopicManager = () => {
 				<button
 					className='m-2 cursor-pointer'
 					onClick={async () => {
-						await handleAddTopic(settings, { name: newTopicName, color: newTopicColor } as AddedWorkTopic);
+						const id = uuidv4();
+						await handleAddTopic(settings, { id: id, name: newTopicName, color: newTopicColor, last_action: "Added" });
+						if (settings.cloudDatabase) {
+							await handleAddTopicToCloudDatabase(settings, { id: id, name: newTopicName, color: newTopicColor, last_action: "Added" });
+						}
 					}}
 				>
 					<IconContext.Provider

@@ -1,86 +1,188 @@
 // Type Imports
-import type { CloudDatabase, WorkEntry, WorkTopic } from '../types/types';
-import type { SettingsContextType } from '../types/context';
+import type { DatabaseActionResponse, WorkTask, WorkEntry, WorkTopic, CloudDatabaseData } from '../types/types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-// Supabase Request
-export async function getFromSupabaseDatabase(supabaseClient: SupabaseClient) {
-    const [{ data: topics, error: topicsError },
-        { data: tasks, error: tasksError },
-        { data: workEntries, error: entriesError }] = await Promise.all([
-            supabaseClient.from('work_topics').select('*'),
-            supabaseClient.from('work_tasks').select('*'),
-            supabaseClient.from('work_entries').select('*')
-        ]);
+// Get Data from Local Supabase connection
+export async function getDataFromSupabaseDatabase(supabaseClient: SupabaseClient): Promise<DatabaseActionResponse> {
+    try {
+        const [{ data: topics, error: topicsError },
+            { data: tasks, error: tasksError },
+            { data: workEntries, error: entriesError }] = await Promise.all([
+                supabaseClient.from('work_topics').select('*'),
+                supabaseClient.from('work_tasks').select('*'),
+                supabaseClient.from('work_entries').select('*')
+            ]);
 
-    if (topicsError || tasksError || entriesError)
-        throw topicsError || tasksError || entriesError;
 
-    return { topics, tasks, workEntries };
+        if (topicsError || tasksError || entriesError) {
+            return {
+                status: 'Failure',
+                message: `Data cannot be gathered from supabase database. Topics Error: ${topicsError}. Tasks Error: ${tasksError}. Entries Error: ${entriesError}.`,
+            };
+        }
+
+        return {
+            status: 'Success',
+            message: `Local entries available in local database.`,
+            item: { tasks: tasks, topics: topics, workEntries: workEntries } as CloudDatabaseData,
+        };
+
+    } catch (e) {
+        return {
+            status: 'Failure',
+            message: `Data cannot be gathered from supabase database. Error ${e}.`,
+        };
+    }
+
 }
 
-export async function sendToSupabaseDatabase(supabaseClient: SupabaseClient, localData: any) {
-    // 1️⃣ Sync topics
-    const { error: topicsError } = await supabaseClient
-        .from('work_topics')
-        .upsert(localData['topics'], { onConflict: 'id' });
+// Local Data Sync with supabase database
+export async function syncLocalDataToSupabaseDatabase(supabaseClient: SupabaseClient, localData: any) {
+    try {
+        const { error: topicsError } = await supabaseClient
+            .from('work_topics')
+            .upsert(localData['topics'], { onConflict: 'id' });
 
-    if (topicsError) throw topicsError;
+        if (topicsError) {
+            return {
+                status: 'Failure',
+                message: `Data could not be synced to supabase database. Topics Error: ${topicsError}.`,
+            };
+        }
 
-    // 2️⃣ Sync tasks
-    const { error: tasksError } = await supabaseClient
-        .from('work_tasks')
-        .upsert(localData['tasks'], { onConflict: 'id' });
+        // 2️⃣ Sync tasks
+        const { error: tasksError } = await supabaseClient
+            .from('work_tasks')
+            .upsert(localData['tasks'], { onConflict: 'id' });
 
-    if (tasksError) throw tasksError;
+        if (tasksError) {
+            return {
+                status: 'Failure',
+                message: `Data could not be synced to supabase database. Tasks Error: ${tasksError}.`,
+            };
+        }
 
-    // 3️⃣ Sync work entries
-    const { error: entriesError } = await supabaseClient
-        .from('work_entries')
-        .upsert(localData['workEntries'], { onConflict: 'id' });
+        // 3️⃣ Sync work entries
+        const { error: entriesError } = await supabaseClient
+            .from('work_entries')
+            .upsert(localData['workEntries'], { onConflict: 'id' });
 
-    if (entriesError) throw entriesError;
+        if (entriesError) {
+            return {
+                status: 'Failure',
+                message: `Data could not be synced to supabase database. Work Entries Error: ${entriesError}.`,
+            };
+        };
+
+        return {
+            status: 'Success',
+            message: `Local data synced to supabase database.`,
+        };
+
+    } catch (e) {
+        return {
+            status: 'Failure',
+            message: `Data could not be synced to supabase database. Error ${e}.`,
+        };
+    }
 
     console.log('Sync complete!');
 }
 
 // Tries to import a json file as a database
-export async function importCloudDatabaseCredentialile(file: File): Promise<CloudDatabase> {
-    const text = await file.text();
-    const jsonData = JSON.parse(text);
-    return jsonData;
+export async function importCloudDatabaseCredentials(file: File) {
+    try {
+        const text = await file.text();
+        const jsonData = JSON.parse(text);
+        return {
+            status: 'Success',
+            message: `Cloud Database credentials uploaded.`,
+            cloudCredentials: jsonData
+        };
+    } catch (e) {
+        return {
+            status: 'Failure',
+            message: `Cloud Database credentials could not be uploaded.`,
+        };
+    }
 }
 
 // Sending individual Work Entry to Supabase Database
-async function sendToWorkEntrySupabaseDatabase(supabaseClient: SupabaseClient, workEntry: WorkEntry) {
-    // 3️⃣ Sync work entries
-    const { error: entryError } = await supabaseClient
-        .from('work_entries')
-        .upsert(workEntry, { onConflict: 'id' });
+export const addWorkTaskSupabaseDatabase = async (supabaseClient: SupabaseClient, workTask: WorkTask): Promise<DatabaseActionResponse> => {
+    try {
+        const { error: entryError } = await supabaseClient
+            .from('work_tasks')
+            .upsert(workTask, { onConflict: 'id' });
 
-    if (entryError) throw entryError;
-
-    console.log('Work Entry added to Cloud Database!');
-}
-
-export const handleAddWorkEntryToCloudDatabase = async (
-    uuid: string,
-    settings: SettingsContextType,
-    workEntry: Omit<WorkEntry, 'id' | 'duration' | 'topic_name' | 'completion_time'>,
-    workTopics: WorkTopic[]
-) => {
-    // Non Selected Data
-    if (settings.cloudDatabase) {
-        const matchedTopic = workTopics.find((workTopic) => workTopic.id === workEntry.topic_id);
-        await sendToWorkEntrySupabaseDatabase(settings.cloudDatabase, {
-            id: uuid,
-            task_id: workEntry.task_id,
-            topic_id: workEntry.topic_id,
-            task_name: workEntry.task_name,
-            topic_name: matchedTopic?.name ?? null,
-            duration: settings.workingTime / 60,
-            completion_time: new Date(),
-        });
+        if (entryError) {
+            return {
+                status: 'Failure',
+                message: `Work Topic wasn't inserted into supabase database. ${entryError}`,
+            };
+        }
+        return {
+            status: 'Success',
+            message: `Work Task inserted into supabase database.`,
+        };
+    } catch (e) {
+        return {
+            status: 'Failure',
+            message: `Work Topic wasn't inserted into supabase database. ${e}`,
+        };
     }
 };
+
+// Sending individual Work Entry to Supabase Database
+export const addWorkTopicSupabaseDatabase = async (supabaseClient: SupabaseClient, workTopic: WorkTopic): Promise<DatabaseActionResponse> => {
+    try {
+        const { error: entryError } = await supabaseClient
+            .from('work_topics')
+            .upsert(workTopic, { onConflict: 'id' });
+
+        if (entryError) {
+            return {
+                status: 'Failure',
+                message: `Work Topic wasn't inserted into supabase database. ${entryError}`,
+            };
+        }
+        return {
+            status: 'Success',
+            message: `Work Topic inserted into supabase database.`,
+        };
+    } catch (e) {
+        return {
+            status: 'Failure',
+            message: `Work Topic wasn't inserted into supabase database. ${e}`,
+        };
+    }
+};
+
+// Adding individual Work Entry to Supabase Database
+export const addWorkEntrySupabaseDatabase = async (supabaseClient: SupabaseClient, workEntry: WorkEntry): Promise<DatabaseActionResponse> => {
+    try {
+        const { error: entryError } = await supabaseClient
+            .from('work_entries')
+            .upsert(workEntry, { onConflict: 'id' });
+
+        if (entryError) {
+            return {
+                status: 'Failure',
+                message: `Work Entry wasn't inserted into supabase database. ${entryError}`,
+            };
+        }
+        return {
+            status: 'Success',
+            message: `Work Entry inserted into supabase database.`,
+        };
+    } catch (e) {
+        return {
+            status: 'Failure',
+            message: `Work Entry wasn't inserted into supabase database. ${e}`,
+        };
+    }
+};
+
+
+
+
 

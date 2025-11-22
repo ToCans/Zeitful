@@ -3,9 +3,7 @@ import 'primereact/resources/themes/tailwind-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import './index.css';
 // API Imports
-import { getTasks } from './api/localDatabase';
-import { getTopics } from './api/topics';
-import { getWorkEntries } from './api/workEntries';
+import { getTasks, getTopics, getWorkEntries } from './api/localDatabase';
 // Icon Imports
 import { PrimeReactProvider } from 'primereact/api';
 // React Imports
@@ -133,9 +131,9 @@ function App() {
 	// Get the latest topics and tasks
 	useEffect(() => {
 		(async () => {
-			setWorkTopics(await getTopics());
+			setWorkTopics((await getTopics()).item as WorkTopic[]);
 			setWorkTasks((await getTasks()).item as WorkTask[]);
-			setWorkEntries(await getWorkEntries());
+			setWorkEntries((await getWorkEntries()).item as WorkEntry[]);
 		})();
 	}, []);
 
@@ -156,11 +154,10 @@ function App() {
 
 	return (
 		<div
-			className={`flex flex-col h-dvh w-dvw ${
-				darkMode
-					? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
-					: 'bg-zinc-100 text-black fill-gray-400'
-			} overflow-hidden`}
+			className={`flex flex-col h-dvh w-dvw ${darkMode
+				? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
+				: 'bg-zinc-100 text-black fill-gray-400'
+				} overflow-hidden`}
 		>
 			<PrimeReactProvider>
 				<SettingsContext.Provider
