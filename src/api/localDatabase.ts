@@ -441,7 +441,7 @@ export async function deleteTopic(topicId: string, topic: WorkTopic): Promise<Da
 	} catch (e) {
 		return {
 			status: 'Failure',
-			message: `Tppic "${topic.name}" wasn't deleted. ${e}`,
+			message: `Topic "${topic.name}" wasn't deleted. ${e}`,
 		};
 	}
 }

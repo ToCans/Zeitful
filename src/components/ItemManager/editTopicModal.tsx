@@ -30,7 +30,7 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 
     return (
         <div className="absolute top-0 left-0 flex flex-col h-full w-full bg-black/60 z-30 p-2 justify-center items-center">
-            <div className='flex lg:size-96 size-80 rounded-lg bg-zinc-100 p-4 flex-col items-center'>
+            <div className='flex lg:size-96 size-80 rounded-lg p-4 flex-col items-center'>
                 <div className='flex w-full justify-end space-x-1'>
                     <IconContext.Provider
                         value={{
