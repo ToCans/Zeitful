@@ -25,4 +25,4 @@ dist-ssr
 
 # Environment Variables
 *.env
-*.json
+zeitful_supabase_credentials.json
