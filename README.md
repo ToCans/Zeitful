@@ -5,9 +5,8 @@
 Zeitful builds upon the classic pomodoro timer study technique with time tracking capabilities for tasks and topics you're working on. With Zeitful, users can view work statistics, personalize timer lengths and color, and remain confident that your data is truly yours. Zeitful gives you clear insights into your productivity.
 
 <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-  <img  alt="Zeitful Timer in Light Mode" src=".github/images/lightModeTimer.png" width="250px">
-  <img alt="Zeitful Settings in Dark Mode" src=".github/images/darkModeStatistics.png" width="250px">
-  <img alt="Zeitful Settings in Light Mode" src=".github/images/lightModeSettings.png" width="250px">
+  <img  alt="Zeitful Timer Collage" src=".github/images/zeitfulCollage.png" width="800px">
+
 </div>
 
 ---
