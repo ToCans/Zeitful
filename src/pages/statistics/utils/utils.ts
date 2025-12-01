@@ -19,7 +19,7 @@ import type {
 	TopicData,
 } from '../../../types/types';
 // Type Defintion
-export type PeriodOption = { label: string; value: Date | number; };
+export type PeriodOption = { label: string; value: Date | number };
 
 // Gathers the data for the most recent month
 export const gatherMostRecentData = (timeFrame: 'W' | 'M' | 'Y') => {
@@ -29,7 +29,9 @@ export const gatherMostRecentData = (timeFrame: 'W' | 'M' | 'Y') => {
 };
 
 // Generates the Period options based on the timeframe
-export const generatePeriodOptions = (timeframe: 'W' | 'M' | 'Y'): PeriodOption[] => {
+export const generatePeriodOptions = (
+	timeframe: 'W' | 'M' | 'Y'
+): PeriodOption[] => {
 	const now = new Date();
 
 	switch (timeframe) {
@@ -40,7 +42,10 @@ export const generatePeriodOptions = (timeframe: 'W' | 'M' | 'Y'): PeriodOption[
 
 			while (weekStart.getFullYear() === now.getFullYear()) {
 				const weekEnd = addDays(addWeeks(weekStart, 1), -1); // Sunday (end of the week)
-				const label = `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d')}`;
+				const label = `${format(weekStart, 'MMM d')} – ${format(
+					weekEnd,
+					'MMM d'
+				)}`;
 
 				weeks.push({ label, value: weekStart });
 				weekStart = addWeeks(weekStart, -1); // Go back 1 week
@@ -91,7 +96,7 @@ function getWeekRange(date: Date) {
 	return { startDate, endDate };
 }
 
-function getMonthRange(month: number): { startDate: Date; endDate: Date; } {
+function getMonthRange(month: number): { startDate: Date; endDate: Date } {
 	const year = new Date().getFullYear();
 
 	// month in Date constructor is 0-based (Jan = 0)
@@ -103,7 +108,7 @@ function getMonthRange(month: number): { startDate: Date; endDate: Date; } {
 	return { startDate, endDate };
 }
 
-function getYearRange(year: number): { startDate: Date; endDate: Date; } {
+function getYearRange(year: number): { startDate: Date; endDate: Date } {
 	// month in Date constructor is 0-based (Jan = 0)
 	const firstDayOfMonth = new Date(year, 0, 1);
 
@@ -114,8 +119,11 @@ function getYearRange(year: number): { startDate: Date; endDate: Date; } {
 }
 
 // Depending on the timeframe selected, a start and end date are generated
-export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y', selectedPeriod: any) => {
-	let dateRange: { startDate: Date; endDate: Date; };
+export const generateDateRange = (
+	timeFrame: 'W' | 'M' | 'Y',
+	selectedPeriod: any
+) => {
+	let dateRange: { startDate: Date; endDate: Date };
 
 	// 🎯 Determine start and end date based on timeframe & selected period
 	switch (timeFrame) {
@@ -141,7 +149,7 @@ export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y', selectedPeriod: an
 // Filters the work entries based on a range defined by the time frame
 export const filterWorkEntriesByDateRange = (
 	workEntries: WorkEntry[],
-	dateRange: { startDate: Date; endDate: Date; }
+	dateRange: { startDate: Date; endDate: Date }
 ) => {
 	const start = new Date(dateRange.startDate);
 	const end = new Date(dateRange.endDate);
@@ -173,8 +181,8 @@ export const matchItemToTopics = (
 	const itemDurations = Object.values(durationsPerItem);
 
 	// Topic Name and Color Extraction
-	let itemNames: string[] = [];
-	let colors: string[] = [];
+	const itemNames: string[] = [];
+	const colors: string[] = [];
 	itemIds.forEach((itemId) => {
 		const matchingWorkItem = workTopics.find((item) => item.id === itemId);
 		if (matchingWorkItem) {
@@ -198,7 +206,10 @@ export const matchItemToTopics = (
 };
 
 export function calculateTopicPercentages(topicData: TopicData): TopicData {
-	const totalDuration = topicData.itemDurations.reduce((sum, dur) => sum + dur, 0);
+	const totalDuration = topicData.itemDurations.reduce(
+		(sum, dur) => sum + dur,
+		0
+	);
 
 	const topicPercentage = topicData.itemDurations.map((dur) =>
 		totalDuration === 0 ? 0 : (dur / totalDuration) * 100
