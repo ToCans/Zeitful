@@ -23,7 +23,12 @@ import timerWorkerScript from './scripts/timerWorker';
 // Function Imports
 import { checkLocalStorage } from './utils/utils';
 //Type Imports
-import { type Page, type WorkEntry, type WorkTask, type WorkTopic } from './types/types';
+import {
+	type Page,
+	type WorkEntry,
+	type WorkTask,
+	type WorkTopic,
+} from './types/types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 // Utils Imports
 import { getCurrentDate } from './utils/utils';
@@ -40,7 +45,9 @@ function App() {
 	const [workEntries, setWorkEntries] = useState<WorkEntry[]>([]);
 
 	// Cloud Database
-	const [cloudDatabase, setCloudDatabase] = useState<SupabaseClient | null>(null);
+	const [cloudDatabase, setCloudDatabase] = useState<SupabaseClient | null>(
+		null
+	);
 
 	// Default References
 	const permission = useRef<string | null>(null);
@@ -87,17 +94,20 @@ function App() {
 		const value = checkLocalStorage('useCloudDatabase', false);
 		return typeof value === 'boolean' ? value : false;
 	});
-	const [lastCloudDatabaseSync, setLastCloudDatabaseSync] = useState<string>(() => {
-		const value = checkLocalStorage('lastCloudDatabaseSync', 'None');
-		return typeof value === 'string' ? value : 'None';
-	});
+	const [lastCloudDatabaseSync, setLastCloudDatabaseSync] = useState<string>(
+		() => {
+			const value = checkLocalStorage('lastCloudDatabaseSync', 'None');
+			return typeof value === 'string' ? value : 'None';
+		}
+	);
 
 	// Push
 	useEffect(() => {
 		if ('serviceWorker' in navigator) {
 			(async () => {
 				try {
-					const swRegistration = await navigator.serviceWorker.register('/sw.js');
+					const swRegistration =
+						await navigator.serviceWorker.register('/sw.js');
 					console.log('SW registered', swRegistration);
 
 					const pushManager = swRegistration.pushManager;
@@ -106,11 +116,12 @@ function App() {
 						return;
 					}
 
-					let permissionState = await pushManager.permissionState();
+					const permissionState = await pushManager.permissionState();
 					permission.current = permissionState;
 
 					if (permissionState === 'granted') {
-						subscription.current = await pushManager.getSubscription();
+						subscription.current =
+							await pushManager.getSubscription();
 						console.log('Push registered', subscription.current);
 					}
 				} catch (e) {
@@ -154,10 +165,11 @@ function App() {
 
 	return (
 		<div
-			className={`flex flex-col h-dvh w-dvw ${darkMode
-				? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
-				: 'bg-zinc-100 text-black fill-gray-400'
-				} overflow-hidden`}
+			className={`flex flex-col h-dvh w-dvw ${
+				darkMode
+					? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
+					: 'bg-zinc-100 text-black fill-gray-400'
+			} overflow-hidden`}
 		>
 			<PrimeReactProvider>
 				<SettingsContext.Provider

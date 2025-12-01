@@ -12,24 +12,34 @@ import { useAppContext } from '../../../hooks/useAppContext';
 const TaskFocus = () => {
 	const settings = useAppContext();
 	return (
-		<div className='flex rounded-lg items-center justify-center opacity-70'>
-			<Dropdown
-				value={settings.activeWorkTask}
-				onChange={(e: DropdownChangeEvent) => settings.setActiveWorkTask(e.value)}
-				options={settings.workTasks.filter(task => task.last_action !== "Deleted")}
-				optionLabel='name'
-				placeholder='Select a Work Task'
-				valueTemplate={selectedWorkTaskOptionTemplate}
-				itemTemplate={workTaskOptionTemplate}
-				className={`w-full ${settings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
-				style={{
-					backgroundColor: settings.darkMode ? '#52525B' : '#ffffff',
-					borderColor: settings.darkMode ? '#6b7280' : '#d1d5db',
-				}}
-				panelClassName={settings.darkMode ? 'dark-dropdown-panel' : 'light-dropdown-panel'}
-				panelStyle={{ backgroundColor: settings.darkMode ? '#52525B' : '#ffffff' }}
-			/>
-		</div>
+		<Dropdown
+			value={settings.activeWorkTask}
+			onChange={(e: DropdownChangeEvent) =>
+				settings.setActiveWorkTask(e.value)
+			}
+			options={settings.workTasks.filter(
+				(task) => task.last_action !== 'Deleted'
+			)}
+			optionLabel='name'
+			placeholder='Select a Work Task'
+			valueTemplate={selectedWorkTaskOptionTemplate}
+			itemTemplate={workTaskOptionTemplate}
+			className={`w-full ${
+				settings.darkMode ? 'dark-dropdown' : 'light-dropdown'
+			}`}
+			style={{
+				backgroundColor: settings.darkMode ? '#52525B' : '#ffffff',
+				borderColor: settings.darkMode ? '#6b7280' : '#d1d5db',
+			}}
+			panelClassName={
+				settings.darkMode
+					? 'dark-dropdown-panel'
+					: 'light-dropdown-panel'
+			}
+			panelStyle={{
+				backgroundColor: settings.darkMode ? '#52525B' : '#ffffff',
+			}}
+		/>
 	);
 };
 
