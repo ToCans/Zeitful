@@ -27,18 +27,20 @@ const PiChart = ({ topicData }: PiChartProps) => {
 	}
 
 	return (
-		<Chart
-			className='flex 3xl:size-72 size-48 justify-center items-center border-0'
-			type='doughnut'
-			data={piChartData}
-			options={{
-				plugins: {
-					legend: {
-						display: false,
+		<div className='flex justify-center items-center w-full h-1/2'>
+			<Chart
+				className='flex 5xl:size-72 4xl:size-52 size-48 justify-center items-center border-0'
+				type='doughnut'
+				data={piChartData}
+				options={{
+					plugins: {
+						legend: {
+							display: false,
+						},
 					},
-				},
-			}}
-		/>
+				}}
+			/>
+		</div>
 	);
 };
 

@@ -28,7 +28,7 @@ const DataVisualizationPanel = ({ topicData }: DataVisualizationPanelProps) => {
 				className={`md:h-full h-1 md:w-1 w-full ${settings.darkMode ? 'bg-gray-400' : 'bg-gray-200'
 					} rounded-b-lg`}
 			></div>
-			<div className='flex flex-col md:w-1/2 w-full gap-1 items-center'>
+			<div className='flex flex-col md:w-1/2 w-full gap-4 items-center'>
 				<p className='font-semibold text-sm w-full'>Overall Statistics</p>
 				{topicData && <OverallStats topicData={topicData} />}
 			</div>

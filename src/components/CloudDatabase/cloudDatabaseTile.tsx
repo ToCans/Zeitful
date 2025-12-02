@@ -77,7 +77,7 @@ const CloudDatabaseTile = () => {
 	}
 
 	return (
-		<div className='flex flex-row items-center gap-1'>
+		<div className='flex flex-row items-center gap-1 p-1'>
 			<input
 				type='file'
 				accept='application/json'

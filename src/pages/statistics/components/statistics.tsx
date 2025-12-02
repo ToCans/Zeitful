@@ -55,24 +55,25 @@ const Statistics = () => {
 				}`}
 		>
 			<div className='flex flex-col flex-1 items-center min-h-0'>
-				<TimeFrameSelection timeFrame={timeFrame} setTimeFrame={setTimeFrame} />
-
-				<Dropdown
-					value={selectedPeriod}
-					options={periodOptions}
-					onChange={(e) => setSelectedPeriod(e.value)}
-					placeholder={`Select ${timeFrame === 'W' ? 'week' : timeFrame === 'M' ? 'month' : 'year'
-						}`}
-					className={`w-full ${settings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
-					style={{
-						backgroundColor: settings.darkMode ? '#52525B' : '#ffffff',
-						borderColor: settings.darkMode ? '#6b7280' : '#d1d5db',
-					}}
-					panelClassName={
-						settings.darkMode ? 'dark-dropdown-panel' : 'light-dropdown-panel'
-					}
-					panelStyle={{ backgroundColor: settings.darkMode ? '#52525B' : '#ffffff' }}
-				/>
+				<div className='flex flex-col w-full h-20'>
+					<TimeFrameSelection timeFrame={timeFrame} setTimeFrame={setTimeFrame} />
+					<Dropdown
+						value={selectedPeriod}
+						options={periodOptions}
+						onChange={(e) => setSelectedPeriod(e.value)}
+						placeholder={`Select ${timeFrame === 'W' ? 'week' : timeFrame === 'M' ? 'month' : 'year'
+							}`}
+						className={`w-full ${settings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
+						style={{
+							backgroundColor: settings.darkMode ? '#52525B' : '#ffffff',
+							borderColor: settings.darkMode ? '#6b7280' : '#d1d5db',
+						}}
+						panelClassName={
+							settings.darkMode ? 'dark-dropdown-panel' : 'light-dropdown-panel'
+						}
+						panelStyle={{ backgroundColor: settings.darkMode ? '#52525B' : '#ffffff' }}
+					/>
+				</div>
 
 				<div className='flex w-full h-full min-h-0'>
 					{topicData?.itemIds.length === 0 ? (

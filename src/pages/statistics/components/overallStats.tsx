@@ -15,17 +15,17 @@ const OverallStats = ({ topicData }: OverallStatsProps) => {
         return null;
     }
     return (
-        <div className="flex flex-col w-full h-2/5 space-y-2">
+        <div className="flex flex-col w-full h-1/2 space-y-1">
             <div className='flex flex- row items-center space-x-1 justify-between'>
-                <p className='text-xs text-left'>Total Working Time</p>
-                <p className='text-xs text-right'>{formatMinutes(getTotalTimeWorked(topicData))}</p></div>
+                <p className='text-sm text-left'>Total Working Time</p>
+                <p className='text-sm text-right font-semibold'>{formatMinutes(getTotalTimeWorked(topicData))}</p></div>
             <div className='flex flex- row items-center space-x-1 justify-between'>
-                <p className='text-xs text-left'>Most Worked On Topic</p>
-                <p className='text-xs text-right'>{getMostWorkedOn(topicData)?.name}</p>
+                <p className='text-sm text-left'>Most Worked On Topic</p>
+                <p className='text-sm text-right font-semibold'>{getMostWorkedOn(topicData)?.name}</p>
             </div>
             <div className='flex flex- row items-center space-x-1 justify-between'>
-                <p className='text-xs text-left'>Least Worked on Topic</p>
-                <p className='text-xs text-right'>{getLeastWorkedOn(topicData)?.name}</p>
+                <p className='text-sm text-left'>Least Worked on Topic</p>
+                <p className='text-sm text-right font-semibold'>{getLeastWorkedOn(topicData)?.name}</p>
 
             </div>
 

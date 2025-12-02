@@ -1,5 +1,5 @@
 // Component Imports
-import ItemPercentageTile from '../../../components/ItemTiles/ItemPercentageTile';
+import ItemPercentageTile from './itemPercentageTile';
 // Type Imports
 import type { TopicData } from '../../../types/types';
 // Utils Imports
@@ -17,7 +17,7 @@ const ItemPercentageBreakdown = ({ topicData }: ItemPercentageBreakdownProps) =>
 	}
 	const topicDataWithPercentage = calculateTopicPercentages(topicData);
 	return (
-		<div className='flex flex-col w-full h-full overflow-y-auto'>
+		<div className='flex flex-col w-full h-1/2 overflow-y-auto'>
 			{topicData.itemIds.map((id, index) => (
 				<ItemPercentageTile
 					key={id}

@@ -4,13 +4,13 @@ import WorkEntryTile from './workEntryTile';
 import { useAppContext } from '../../hooks/useAppContext';
 
 // Component Definition
-const WorkEntryManager = () => {
+const WorkEntryViewer = () => {
 	const settings = useAppContext();
 
 	return (
-		<div className='flex flex-col h-full w-full'>
-			<h2 className='font-semibold'>Work Entries</h2>
-			<div className='flex flex-col w-full md:h-3/4 h-4/5 overflow-y-auto p-2'>
+		<div className='flex flex-col w-full h-full space-y-2'>
+			<h2 className='h-6 font-semibold'>Work Entries</h2>
+			<div className='flex flex-col flex-1 overflow-y-auto'>
 				{settings.workEntries.map((workEntry) => (
 					<WorkEntryTile
 						key={workEntry.id}
@@ -24,4 +24,4 @@ const WorkEntryManager = () => {
 	);
 };
 
-export default WorkEntryManager;
+export default WorkEntryViewer;

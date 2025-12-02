@@ -1,7 +1,7 @@
 // Component Import
-import ColorIcon from '../ItemManager/colorIcon';
+import ColorIcon from '../../../components/ItemManager/colorIcon';
 // Utils Imports
-import { formatMinutes } from '../../utils/time';
+import { formatMinutes } from '../../../utils/time';
 
 // Interface Defintion
 interface ItemPercentageTileProps {
