@@ -7,16 +7,20 @@ import {
 } from '../../../components/ItemManager/workTaskOptionTemplate';
 // Hook Imports
 import { useAppContext } from '../../../hooks/useAppContext';
+// Utils Imports
+import { sortWorkTasks } from '../../../utils/items';
 
 // Component Definition
 const TaskFocus = () => {
 	const settings = useAppContext();
+	const sortedWorkTasks = sortWorkTasks(settings.workEntries, settings.workTasks);
+
 	return (
 		<div className='flex rounded-lg items-center justify-center opacity-70'>
 			<Dropdown
 				value={settings.activeWorkTask}
 				onChange={(e: DropdownChangeEvent) => settings.setActiveWorkTask(e.value)}
-				options={settings.workTasks.filter(task => task.last_action !== 3)}
+				options={sortedWorkTasks.filter(task => task.last_action !== 3)}
 				optionLabel='name'
 				placeholder='Select a Work Task'
 				valueTemplate={selectedWorkTaskOptionTemplate}

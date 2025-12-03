@@ -26,7 +26,7 @@ import { checkLocalStorage } from './utils/utils';
 import { type Page, type WorkEntry, type WorkTask, type WorkTopic } from './types/types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 // Utils Imports
-import { getCurrentDate } from './utils/utils';
+import { getCurrentDate } from './utils/time';
 
 // App Component
 function App() {

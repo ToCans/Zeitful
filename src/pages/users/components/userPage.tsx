@@ -63,7 +63,7 @@ const UserPage = () => {
 				</div>
 				{settings.useCloudDatabase && <CloudDatabaseTile />}
 			</div>
-			{itemManagement !== 'User' ? (
+			{itemManagement !== 'Entries' ? (
 				<div className='flex w-full h-14'>
 					{itemManagement === 'Task' && <TaskAdder />}
 					{itemManagement === 'Topic' && <TopicAdder />}
@@ -72,7 +72,7 @@ const UserPage = () => {
 			<div className={`flex w-full flex-1 min-h-0`}>
 				{itemManagement === 'Task' && <TaskViewer />}
 				{itemManagement === 'Topic' && <TopicViewer />}
-				{itemManagement === 'User' && <WorkEntryViewer />}
+				{itemManagement === 'Entries' && <WorkEntryViewer />}
 			</div>
 		</div>
 	);

@@ -4,7 +4,7 @@ import type { SettingsContextType } from './context';
 // Type Defintions
 export type Action = 1 | 2 | 3; // 1=Added, 2=Edited, 3=Deleted
 export type DatabaseActionStatus = 'Success' | 'Failure';
-export type Item = 'Task' | 'Topic' | 'User';
+export type Item = 'Task' | 'Topic' | 'Entries';
 export type Page = 'Timer' | 'Statistics' | 'UserPage' | 'Settings';
 export type WorkTaskStatus = 1 | 2 | 3; // 1=Open, 2=Active, 3=Closed
 

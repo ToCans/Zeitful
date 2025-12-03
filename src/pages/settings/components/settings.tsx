@@ -9,7 +9,7 @@ import { usePersistSettings } from '../../../hooks/usePersistSettings';
 // React Imports
 import { useEffect, useState } from 'react';
 // Utils Imports
-import { formatTime } from '../../../utils/utils';
+import { formatTime } from '../../../utils/time';
 
 // Component Definition
 const Settings = () => {
@@ -68,11 +68,9 @@ const Settings = () => {
 
 	return (
 		<div
-			className={`${
-				settings.darkMode ? 'bg-zinc-700' : 'bg-white'
-			} flex flex-col p-4 3xl:w-1/3 xl:w-2/5 md:w-3/5 w-11/12 h-[50vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
-				isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-			}`}
+			className={`${settings.darkMode ? 'bg-zinc-700' : 'bg-white'
+				} flex flex-col p-4 3xl:w-1/3 xl:w-2/5 md:w-3/5 w-11/12 h-[50vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				}`}
 		>
 			<h1 className='flex text-2xl select-none'>User Settings</h1>
 			<div className='flex flex-col items-center justify-center space-y-2 flex-1'>

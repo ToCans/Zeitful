@@ -1,5 +1,5 @@
 // Utils Imports
-import { formatTime } from '../../../utils/utils';
+import { formatTime } from '../../../utils/time';
 // Interface Definition
 interface TimeDisplayProps {
 	timeRemaining: number;

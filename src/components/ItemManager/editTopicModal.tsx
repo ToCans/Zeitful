@@ -9,7 +9,7 @@ import { IconContext } from 'react-icons';
 // Hook Imports
 import { useAppContext } from '../../hooks/useAppContext';
 // React Imports
-import { useState, useCallback, type SetStateAction } from 'react';
+import { useState, useCallback } from 'react';
 // Type Imports
 import type { Dispatch } from 'react';
 import type { EditedWorkTopic, WorkTopic } from '../../types/types';
@@ -18,7 +18,7 @@ import { colorToInt, intToColor } from '../../utils/colors';
 
 // Interface Definition
 interface EditTopicModalProps {
-    setEditMode: Dispatch<SetStateAction<boolean>>;
+    setEditMode: Dispatch<React.SetStateAction<boolean>>;
     workTopic: WorkTopic;
 }
 

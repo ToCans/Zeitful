@@ -15,10 +15,9 @@ import { v4 as uuidv4 } from 'uuid';
 import type { WorkTopic } from '../../types/types';
 import type { SettingsContextType } from '../../types/context';
 // Utils Imports
-import { colorToInt } from '../../utils/colors';
-import { getRandomHexColor } from '../../utils/utils';
+import { colorToInt, getRandomHexColor } from '../../utils/colors';
 
-
+// Component Definition
 const TopicAdder = () => {
     const settings = useAppContext();
     const [newTopicName, setNewTopicName] = useState<string>('');

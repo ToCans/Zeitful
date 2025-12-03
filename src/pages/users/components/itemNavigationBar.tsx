@@ -13,28 +13,25 @@ const ItemNavigationBar = ({ itemManagement, setItemManagement }: ItemNavigation
 	return (
 		<div className='flex flex-row gap-2'>
 			<button
-				className={`${
-					itemManagement == 'Task' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
-				}`}
+				className={`${itemManagement == 'Task' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
+					}`}
 				onClick={() => setItemManagement('Task')}
 			>
 				Task
 			</button>
 			<button
-				className={`${
-					itemManagement == 'Topic' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
-				}`}
+				className={`${itemManagement == 'Topic' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
+					}`}
 				onClick={() => setItemManagement('Topic')}
 			>
 				Topic
 			</button>
 			<button
-				className={`${
-					itemManagement == 'User' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
-				}`}
-				onClick={() => setItemManagement('User')}
+				className={`${itemManagement == 'Entries' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
+					}`}
+				onClick={() => setItemManagement('Entries')}
 			>
-				User
+				Entries
 			</button>
 		</div>
 	);

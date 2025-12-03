@@ -23,10 +23,16 @@ import type { CloudDatabaseData, WorkEntry, WorkTask, WorkTopic } from '../../ty
 const CloudDatabaseTile = () => {
 	const settings = useAppContext();
 	const credentialsInputRef = useRef<HTMLInputElement>(null);
+	const hasSyncedRef = useRef(false);
 
 	useEffect(() => {
-		if (settings.useCloudDatabase === true && settings.cloudDatabase !== null) {
+		if (
+			settings.useCloudDatabase === true &&
+			settings.cloudDatabase !== null &&
+			!hasSyncedRef.current
+		) {
 			handleCloudDatabaseDataSync();
+			hasSyncedRef.current = true; // mark as synced
 		}
 	}, [settings.cloudDatabase, settings.useCloudDatabase]);
 

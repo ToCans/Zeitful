@@ -16,7 +16,7 @@ import type { SettingsContextType } from '../../../types/context';
 import type { WorkEntry, WorkTopic } from '../../../types/types';
 // Utils Imports
 import { playAudio } from '../utils/audio';
-import { formatTime } from '../../../utils/utils';
+import { formatTime } from '../../../utils/time';
 import { v4 as uuidv4 } from 'uuid';
 
 // Component Definition
