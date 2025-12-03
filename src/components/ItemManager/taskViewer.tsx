@@ -1,5 +1,5 @@
 // Component Imports
-import FilterButton from '../../pages/timer/components/taskFilterButton';
+import TaskFilterButton from '../../pages/timer/components/taskFilterButton';
 import TaskTile from './taskTile';
 // React Imports
 import { useState } from 'react';
@@ -20,9 +20,9 @@ const TaskViewer = () => {
 			<div className='flex flex-row h-6 space-x-2'>
 				<h2 className='font-semibold'>Work Tasks</h2>
 				<div className='flex flex-row space-x-1'>
-					<FilterButton isActive={workTaskStatus === 1} value={1} setWorkTaskStatus={setWorkTaskStatus} />
-					<FilterButton isActive={workTaskStatus === 2} value={2} setWorkTaskStatus={setWorkTaskStatus} />
-					<FilterButton isActive={workTaskStatus === 3} value={3} setWorkTaskStatus={setWorkTaskStatus} />
+					<TaskFilterButton isActive={workTaskStatus === 1} value={1} setWorkTaskStatus={setWorkTaskStatus} />
+					<TaskFilterButton isActive={workTaskStatus === 2} value={2} setWorkTaskStatus={setWorkTaskStatus} />
+					<TaskFilterButton isActive={workTaskStatus === 3} value={3} setWorkTaskStatus={setWorkTaskStatus} />
 				</div>
 			</div>
 			<div className='flex flex-col flex-1 overflow-y-auto'>

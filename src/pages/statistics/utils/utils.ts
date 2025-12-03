@@ -13,15 +13,19 @@ import {
 // Type Imports
 import type {
 	PiChartData,
+	WorkTask,
 	WorkTopic,
 	WorkEntry,
+	DurationByTask,
 	DurationByTopic,
+	TaskData,
 	TopicData,
 } from '../../../types/types';
 // Type Defintion
 export type PeriodOption = { label: string; value: Date | number; };
 // Utils Imports
-import { intToColor } from '../../../utils/colors';
+import { formatHourWindow } from '../../../utils/time';
+import { intToColor, generateSimilarColor } from '../../../utils/colors';
 
 // Gathers the data for the most recent month
 export const gatherMostRecentData = (timeFrame: 'W' | 'M' | 'Y') => {
@@ -165,6 +169,17 @@ export const getTotalDurationByTopicForSelectedPeriod = (
 	}, {});
 };
 
+export const getTotalDurationByTaskForSelectedPeriod = (
+	workEntries: WorkEntry[]
+): DurationByTask => {
+	return workEntries.reduce<DurationByTask>((acc, workEntry) => {
+		const key = workEntry.task_id ?? 'no_task_id';
+		acc[key] = (acc[key] || 0) + workEntry.duration;
+		return acc;
+	}, {});
+};
+
+
 // Matches the topic durations of existing workTopics to extracted topic durations
 export const matchItemToTopics = (
 	durationsPerItem: DurationByTopic,
@@ -197,6 +212,54 @@ export const matchItemToTopics = (
 	};
 
 	return topicData;
+};
+
+export const matchItemToTasks = (
+	durationsPerItem: DurationByTask,
+	workTasks: WorkTask[],
+	workTopics: WorkTopic[]
+): TaskData => {
+	const itemIds = Object.keys(durationsPerItem);
+	const itemDurations = Object.values(durationsPerItem);
+
+	let itemNames: string[] = [];
+	let colors: number[] = [];
+
+	const seenColors = new Set<number>(); // to avoid duplicates
+
+	itemIds.forEach((itemId) => {
+		const matchingWorkItem = workTasks.find((task) => task.id === itemId);
+		const matchingWorkTopic = workTopics.find((topic) => topic.id === matchingWorkItem?.topic_id);
+
+		if (matchingWorkTopic) {
+			if (!seenColors.has(matchingWorkTopic.color)) {
+				colors.push(matchingWorkTopic.color);
+				seenColors.add(matchingWorkTopic.color);
+			}
+			else {
+				const similarColor = generateSimilarColor(matchingWorkTopic.color);
+				colors.push(similarColor);
+				seenColors.add(similarColor);
+			}
+		} else {
+			colors.push(8947848); // default gray
+		}
+
+		if (matchingWorkItem) {
+			itemNames.push(matchingWorkItem.name);
+		} else {
+			itemNames.push("No Task");
+		}
+	});
+
+	const taskData: TaskData = {
+		itemIds,
+		itemNames,
+		itemDurations,
+		itemColors: colors,
+	};
+
+	return taskData;
 };
 
 export function calculateTopicPercentages(topicData: TopicData): TopicData {
@@ -267,3 +330,102 @@ export function getLeastWorkedOn(data: TopicData) {
 		percentage: data.topicPercentage?.[index] ?? null,
 	};
 }
+
+export const getMostEffectiveTimeWindow = (entries: WorkEntry[]): {
+	timeWindow: string;
+	totalDuration: number;
+} | null => {
+	if (entries.length === 0) return null;
+
+	const buckets: Record<number, number> = {};
+
+	for (const e of entries) {
+		const hour = new Date(e.completion_time).getHours();
+		buckets[hour] = (buckets[hour] || 0) + e.duration;
+	}
+
+	const [hourStr, totalDuration] = Object.entries(buckets)
+		.sort((a, b) => b[1] - a[1])[0];
+
+	return {
+		timeWindow: formatHourWindow(Number(hourStr)),
+		totalDuration,
+	};
+};
+
+export const getBusiestDay = (entries: WorkEntry[]) => {
+	const totals: Record<string, number> = {};
+
+	for (const entry of entries) {
+		const day = entry.completion_time.split("T")[0];
+		totals[day] = (totals[day] || 0) + entry.duration;
+	}
+
+	let busiestDay = null;
+	let maxDuration = 0;
+
+	for (const [day, duration] of Object.entries(totals)) {
+		if (duration > maxDuration) {
+			maxDuration = duration;
+			busiestDay = day;
+		}
+	}
+
+	return {
+		date: busiestDay,     // "2024-09-09"
+		totalMinutes: maxDuration
+	};
+};
+
+export const getCurrentStreak = (entries: WorkEntry[]) => {
+	// Extract unique days
+	const days = new Set(entries.map(e => e.completion_time.split("T")[0]));
+
+	let streak = 0;
+	let checkDay = new Date();
+
+	while (true) {
+		const iso = checkDay.toISOString().split("T")[0];
+
+		if (days.has(iso)) {
+			streak++;
+		} else {
+			break;
+		}
+
+		// move back 1 day
+		checkDay.setDate(checkDay.getDate() - 1);
+	}
+
+	return streak;
+};
+
+export const getLongestStreak = (entries: WorkEntry[]) => {
+	// Extract unique days with activity
+	const days = Array.from(
+		new Set(entries.map(e => e.completion_time.split("T")[0]))
+	).sort();
+
+	let longest = 0;
+	let current = 1; // at least one day counts
+
+	for (let i = 1; i < days.length; i++) {
+		const prev = new Date(days[i - 1]);
+		const curr = new Date(days[i]);
+
+		const diff = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
+
+		if (diff === 1) {
+			current++;
+		} else {
+			longest = Math.max(longest, current);
+			current = 1;
+		}
+	}
+
+	longest = Math.max(longest, current);
+
+	return longest;
+};
+
+

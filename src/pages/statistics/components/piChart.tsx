@@ -1,26 +1,29 @@
 // Component Imports
 import { Chart } from 'primereact/chart';
+// React Imports
+import { useEffect, useState } from 'react';
 // Type Imports
-import type { PiChartData, TopicData } from '../../../types/types';
+import type { PiChartData, TaskData, TopicData } from '../../../types/types';
 // Utils Imports
 import { piChartDataFormatter } from '../utils/utils';
-import { useEffect, useState } from 'react';
+import { formatMinutes } from '../../../utils/time';
+
 
 // Interface Defintion
 interface PiChartProps {
-	topicData: TopicData | null;
+	itemData: TaskData | TopicData | null;
 }
 
 // Component Defintion
-const PiChart = ({ topicData }: PiChartProps) => {
+const PiChart = ({ itemData }: PiChartProps) => {
 	const [piChartData, setPiChartData] = useState<PiChartData | null>(null);
 
 	useEffect(() => {
-		if (topicData) {
-			const formattedData = piChartDataFormatter(topicData);
+		if (itemData) {
+			const formattedData = piChartDataFormatter(itemData);
 			setPiChartData(formattedData);
 		}
-	}, [topicData]);
+	}, [itemData]);
 
 	if (piChartData === null) {
 		return null;
@@ -36,6 +39,16 @@ const PiChart = ({ topicData }: PiChartProps) => {
 					plugins: {
 						legend: {
 							display: false,
+						},
+						tooltip: {
+							callbacks: {
+								label: function (tooltipItem: any) {
+									const dataset = tooltipItem.dataset;
+									const index = tooltipItem.dataIndex;
+									const rawValue = dataset.data[index] as number;
+									return `${formatMinutes(rawValue)}`;
+								},
+							},
 						},
 					},
 				}}

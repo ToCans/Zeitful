@@ -2,18 +2,17 @@
 import TimeFrameSelection from './timeFrameSelect';
 import { Dropdown } from 'primereact/dropdown';
 import DataVisualizationPanel from './dataVisualizationPanel';
+import ItemFilterButton from './itemFilterButton';
 // Hook Imports
 import { useAppContext } from '../../../hooks/useAppContext';
 // React Imports
 import { useEffect, useState } from 'react';
 // Type Imports
-import { type TopicData } from '../../../types/types';
+import { type WorkEntry } from '../../../types/types';
 // Utils Imports
 import {
 	filterWorkEntriesByDateRange,
 	generateDateRange,
-	getTotalDurationByTopicForSelectedPeriod,
-	matchItemToTopics,
 	gatherMostRecentData,
 } from '../utils/utils';
 
@@ -21,9 +20,10 @@ const Statistics = () => {
 	const settings = useAppContext();
 	const [isMounted, setIsMounted] = useState(false);
 	const [timeFrame, setTimeFrame] = useState<'W' | 'M' | 'Y'>('M');
+	const [itemFilter, setItemFilter] = useState<'Task' | 'Topic'>('Topic');
 	const [periodOptions, setPeriodOptions] = useState<any[]>([]);
 	const [selectedPeriod, setSelectedPeriod] = useState<any>(null);
-	const [topicData, setTopicData] = useState<TopicData | null>(null);
+	const [periodFilteredWorkEntries, setPeriodFilteredWorkEntries] = useState<WorkEntry[] | null>(null);
 
 	// Animate on mount
 	useEffect(() => {
@@ -43,9 +43,7 @@ const Statistics = () => {
 		if (!selectedPeriod) return;
 		const dateRange = generateDateRange(timeFrame, selectedPeriod);
 		const filteredWorkEntries = filterWorkEntriesByDateRange(settings.workEntries, dateRange);
-		const durationsByTopic = getTotalDurationByTopicForSelectedPeriod(filteredWorkEntries); //TODO: Later allow duration by  task
-		const topicData = matchItemToTopics(durationsByTopic, settings.workTopics);
-		setTopicData(topicData);
+		setPeriodFilteredWorkEntries(filteredWorkEntries);
 	}, [timeFrame, selectedPeriod]);
 
 	return (
@@ -55,7 +53,7 @@ const Statistics = () => {
 				}`}
 		>
 			<div className='flex flex-col flex-1 items-center min-h-0'>
-				<div className='flex flex-col w-full h-20'>
+				<div className='flex flex-col w-full h-30 space-y-2'>
 					<TimeFrameSelection timeFrame={timeFrame} setTimeFrame={setTimeFrame} />
 					<Dropdown
 						value={selectedPeriod}
@@ -73,17 +71,20 @@ const Statistics = () => {
 						}
 						panelStyle={{ backgroundColor: settings.darkMode ? '#52525B' : '#ffffff' }}
 					/>
+					<div className='flex flex-row space-x-1'>
+						<ItemFilterButton isActive={itemFilter == 'Task'} name={'Task'} setItemFilter={setItemFilter} />
+						<ItemFilterButton isActive={itemFilter == 'Topic'} name={'Topic'} setItemFilter={setItemFilter} />
+					</div>
 				</div>
-
 				<div className='flex w-full h-full min-h-0'>
-					{topicData?.itemIds.length === 0 ? (
+					{periodFilteredWorkEntries?.length === 0 ? (
 						<p className='text-sm p-2'>No data found for this period.</p>
 					) : (
-						<DataVisualizationPanel topicData={topicData} />
+						<DataVisualizationPanel itemFilter={itemFilter} periodFilteredData={periodFilteredWorkEntries} unfilteredWorkEntries={settings.workEntries} />
 					)}
 				</div>
 			</div>
-		</div>
+		</div >
 	);
 };
 

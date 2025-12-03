@@ -27,3 +27,18 @@ export function formatTime(timeRemaining: number): string {
 
 	return `${timerMinutes}:${timerSeconds}`;
 }
+
+// Formats the time window hour
+export const formatHourWindow = (hour: number): string => {
+	const format = (h: number) => {
+		const suffix = h >= 12 ? "PM" : "AM";
+		let normalized = h % 12;
+		if (normalized === 0) normalized = 12;
+		return `${normalized} ${suffix}`;
+	};
+
+	const start = format(hour);
+	const end = format((hour + 1) % 24);
+
+	return `${start} – ${end}`;
+};

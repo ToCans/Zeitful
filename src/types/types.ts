@@ -25,6 +25,11 @@ export type DatabaseActionResponse = {
 	item?: WorkTask[] | WorkTopic[] | WorkEntry[] | CloudDatabaseData;
 };
 
+
+export type DurationByTask = {
+	[task_id: string]: number;
+};
+
 export type DurationByTopic = {
 	[topic_id: string]: number;
 };
@@ -37,6 +42,14 @@ export type PiChartData = {
 	}[];
 };
 
+export type TaskData = {
+	itemIds: string[];
+	itemNames: string[];
+	itemDurations: number[];
+	itemColors: number[];
+	topicPercentage?: number[];
+};
+
 export type TopicData = {
 	itemIds: string[];
 	itemNames: string[];
@@ -44,6 +57,8 @@ export type TopicData = {
 	itemColors: number[];
 	topicPercentage?: number[];
 };
+
+
 
 export type PersistedSettings = Pick<
 	SettingsContextType,
