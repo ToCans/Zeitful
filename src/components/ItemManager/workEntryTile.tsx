@@ -5,6 +5,7 @@ import type { WorkEntry, WorkTask, WorkTopic } from '../../types/types';
 // Utils Imports
 import { formatMinutes } from '../../utils/time';
 import { formatDate } from '../../utils/date';
+import { intToColor } from '../../utils/colors';
 
 interface WorkEntryTileProps {
 	workEntry: WorkEntry;
@@ -35,12 +36,12 @@ const WorkEntryTile = ({ workEntry, workTasks, workTopics }: WorkEntryTileProps)
 			tileTopicName = 'No Topic';
 		}
 
-		const tileColor = matchedTopic ? matchedTopic.color : '#DBDBDB';
+		const tileColor = matchedTopic ? matchedTopic.color : 14408667;
 		const { date, time } = formatDate(String(workEntry.completion_time));
 
 		return (
 			<div className='flex flex-row space-x-2 items-center w-full p-0.5'>
-				<ColorIcon color={tileColor} />
+				<ColorIcon color={intToColor(tileColor)} />
 				<div className='flex flex-row justify-between items-center w-full'>
 					<div className='flex md:flex-row flex-col md:w-4/5 w-1/2 md:items-centerspace-x-2 overflow-x-hidden'>
 						<p className='text-sm text-nowrap md:w-2/5 w-full'>{tileTaskName}</p>

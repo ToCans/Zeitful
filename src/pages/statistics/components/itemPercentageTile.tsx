@@ -2,12 +2,13 @@
 import ColorIcon from '../../../components/ItemManager/colorIcon';
 // Utils Imports
 import { formatMinutes } from '../../../utils/time';
+import { intToColor } from '../../../utils/colors';
 
 // Interface Defintion
 interface ItemPercentageTileProps {
 	index: number;
 	id: string;
-	color: string;
+	color: number;
 	itemName: string;
 	itemDuration: number;
 	topicPercentage: number;
@@ -23,7 +24,7 @@ const ItemPercentageTile = ({
 }: ItemPercentageTileProps) => {
 	return (
 		<div key={id} className='flex flex-row items-center w-full space-x-1'>
-			<ColorIcon color={color} />
+			<ColorIcon color={intToColor(color)} />
 			{/* Wrap name and duration in a flex container with flex-1 */}
 			<div className='flex w-1/2 flex-row'>
 				<p className='text-sm'>{itemName}</p>

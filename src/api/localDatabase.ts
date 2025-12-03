@@ -38,30 +38,32 @@ export async function getLocalDatabase(): Promise<Database> {
 // Create the Local Database
 function createTables(db: Database) {
 	db.run(`
-    CREATE TABLE IF NOT EXISTS work_topics (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      color TEXT NOT NULL,
-      last_action TEXT
-    );
+     CREATE TABLE IF NOT EXISTS work_topics (
+		id BLOB(16) PRIMARY KEY, -- UUID as 16-byte BLOB
+		name TEXT NOT NULL,
+		color INTEGER NOT NULL, -- 0xRRGGBB stored as INTEGER
+		last_action INTEGER, -- 1=Added, 2=Edited, 3=Deleted
+		last_action_date TEXT
+	);
 
-    CREATE TABLE IF NOT EXISTS work_tasks (
-      id TEXT PRIMARY KEY,
-      topic_id TEXT,
-      name TEXT,
-      status TEXT NOT NULL CHECK(status IN ('Open', 'Active', 'Closed')),
-      last_action TEXT
-    );
+	CREATE TABLE IF NOT EXISTS work_tasks (
+		id BLOB(16) PRIMARY KEY, -- UUID
+		topic_id BLOB(16),
+		name TEXT NOT NULL,
+		status INTEGER NOT NULL CHECK(status IN (1,2,3)), -- 1=Open, 2=Active, 3=Closed
+		last_action INTEGER, -- same enum as above
+		last_action_date TEXT
+	);
 
-    CREATE TABLE IF NOT EXISTS work_entries (
-      id TEXT PRIMARY KEY,
-      task_id TEXT,
-      topic_id TEXT,
-      task_name TEXT,
-      topic_name TEXT,
-      duration REAL NOT NULL,
-      completion_time TEXT NOT NULL
-    );
+	CREATE TABLE IF NOT EXISTS work_entries (
+		id BLOB(16) PRIMARY KEY, -- UUID
+		task_id BLOB(16),
+		topic_id BLOB(16),
+		task_name TEXT,
+		topic_name TEXT,
+		duration REAL NOT NULL, -- minutes
+		completion_time TEXT NOT NULL
+	);
   `);
 }
 
@@ -109,45 +111,71 @@ export async function downloadDataJson() {
 }
 
 // Import JSON data back into the database
-// TODO: Wrap in Try Catch
 export async function updataLocalDatabaseFromJson(jsonData: CloudDatabaseData) {
 	try {
 		const db = await getLocalDatabase();
 
-		// Helper: Upsert for topics
+		// --- Upsert for topics ---
 		const upsertTopic = db.prepare(`
-    INSERT INTO work_topics (id, name, color, last_action) 
-    VALUES (?, ?, ?, ?)
-    ON CONFLICT(id) DO UPDATE SET name=excluded.name, color=excluded.color, last_action=excluded.last_action
-  `);
+      INSERT INTO work_topics (id, name, color, last_action, last_action_date) 
+      VALUES (?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        name = excluded.name,
+        color = excluded.color,
+        last_action = excluded.last_action,
+        last_action_date = excluded.last_action_date
+      WHERE excluded.last_action_date > work_topics.last_action_date
+    `);
+
 		for (const t of jsonData.topics || []) {
-			upsertTopic.run([t.id, t.name, t.color, t.last_action]);
+			upsertTopic.run([
+				t.id,
+				t.name,
+				t.color,
+				t.last_action,
+				t.last_action_date ?? new Date().toISOString()
+			]);
 		}
 		upsertTopic.free();
 
-		// Upsert for tasks
+		// --- Upsert for tasks ---
 		const upsertTask = db.prepare(`
-    INSERT INTO work_tasks (id, topic_id, name, status, last_action)
-    VALUES (?, ?, ?, ?, ?)
-    ON CONFLICT(id) DO UPDATE SET topic_id=excluded.topic_id, name=excluded.name, status=excluded.status, last_action=excluded.last_action
-  `);
+      INSERT INTO work_tasks (id, topic_id, name, status, last_action, last_action_date)
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        topic_id = excluded.topic_id,
+        name = excluded.name,
+        status = excluded.status,
+        last_action = excluded.last_action,
+        last_action_date = excluded.last_action_date
+      WHERE excluded.last_action_date > work_tasks.last_action_date
+    `);
+
 		for (const t of jsonData.tasks || []) {
-			upsertTask.run([t.id, t.topic_id, t.name, t.status, t.last_action]);
+			upsertTask.run([
+				t.id,
+				t.topic_id,
+				t.name,
+				t.status,
+				t.last_action,
+				t.last_action_date ?? new Date().toISOString()
+			]);
 		}
 		upsertTask.free();
 
-		// Upsert for work entries
+		// --- Upsert for work entries (always overwrite) ---
 		const upsertEntry = db.prepare(`
-    INSERT INTO work_entries (id, task_id, topic_id, task_name, topic_name, duration, completion_time)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(id) DO UPDATE SET
-      task_id=excluded.task_id,
-      topic_id=excluded.topic_id,
-      task_name=excluded.task_name,
-      topic_name=excluded.topic_name,
-      duration=excluded.duration,
-      completion_time=excluded.completion_time
-  `);
+      INSERT INTO work_entries (id, task_id, topic_id, task_name, topic_name, duration, completion_time)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        task_id = excluded.task_id,
+        topic_id = excluded.topic_id,
+        task_name = excluded.task_name,
+        topic_name = excluded.topic_name,
+        duration = excluded.duration,
+        completion_time = excluded.completion_time
+    `);
+
 		for (const e of jsonData.workEntries || []) {
 			upsertEntry.run([
 				e.id,
@@ -194,9 +222,9 @@ export async function addTask(task: WorkTask): Promise<DatabaseActionResponse> {
 		}
 
 		db.run(
-			`INSERT INTO work_tasks (id, topic_id, name, status, last_action)
-             VALUES (?, ?, ?, ?, ?)`,
-			[task.id, task?.topic_id ?? null, task.name, 'Open', 'Added']
+			`INSERT INTO work_tasks (id, topic_id, name, status, last_action, last_action_date)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+			[task.id, task?.topic_id ?? null, task.name, 1, 1, task?.last_action_date]
 		);
 
 		await saveLocalDatabase();
@@ -236,8 +264,9 @@ export async function editTask(taskId: string, workTask: EditedWorkTask): Promis
                  name = ?, 
                  status = ?, 
                  last_action = ?
+				 last_action_date = ?
              WHERE id = ?`,
-			[workTask.topic_id ?? null, workTask.name, workTask.status, 'Edited', taskId]
+			[workTask.topic_id ?? null, workTask.name, workTask.status, 2, workTask.last_action_date, taskId]
 		);
 
 		await saveLocalDatabase();
@@ -255,7 +284,7 @@ export async function editTask(taskId: string, workTask: EditedWorkTask): Promis
 }
 
 // Deleting Task in local database ()
-export async function deleteTask(taskId: string, task: WorkTask): Promise<DatabaseActionResponse> {
+export async function deleteTask(taskId: string, task: WorkTask, last_action_date: string): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
@@ -273,9 +302,10 @@ export async function deleteTask(taskId: string, task: WorkTask): Promise<Databa
 
 		db.run(
 			`UPDATE work_tasks
-             SET last_action = ?
+             SET last_action = ?,
+				last_action_date = ?
              WHERE id = ?`,
-			['Deleted', taskId]
+			[3, last_action_date, taskId]
 		);
 
 		await saveLocalDatabase();
@@ -296,7 +326,7 @@ export async function getTasks(): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 		const res = db.exec(`
-            SELECT t.id, t.topic_id, t.name, t.status, t.last_action
+            SELECT t.id, t.topic_id, t.name, t.status, t.last_action, t.last_action_date
             FROM work_tasks t
         `);
 
@@ -307,12 +337,13 @@ export async function getTasks(): Promise<DatabaseActionResponse> {
 				item: [],
 			};
 
-		const localWorkTasks = res[0].values.map(([id, topic_id, name, status, last_action]) => ({
+		const localWorkTasks = res[0].values.map(([id, topic_id, name, status, last_action, last_action_date]) => ({
 			id: id as string,
 			topic_id: topic_id as string | null,
 			name: name as string,
 			status: status as WorkTaskStatus,
-			last_action: last_action as Action
+			last_action: last_action as Action,
+			last_action_date: last_action_date as string,
 		}));
 
 		return {
@@ -349,9 +380,9 @@ export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse
 		// If not found, insert new
 		db.run(
 			`INSERT INTO work_topics 
-			(id, name, color, last_action) 
-			VALUES (?, ?, ?, ?)`,
-			[topic.id, topic.name, topic.color, 'Added']
+			(id, name, color, last_action, last_action_date) 
+			VALUES (?, ?, ?, ?, ?)`,
+			[topic.id, topic.name, topic.color, 1, topic.last_action_date]
 		);
 
 		await saveLocalDatabase();
@@ -389,9 +420,10 @@ export async function editTopic(topicId: string, workTopic: EditedWorkTopic): Pr
              SET 
                  name = ?, 
                  color = ?,
-				 last_action = ?
+				 last_action = ?,
+				 last_action_date = ?
              WHERE id = ?`,
-			[workTopic.name, workTopic.color, 'Edited', topicId]
+			[workTopic.name, workTopic.color, 2, topicId, workTopic.last_action_date]
 		);
 
 		await saveLocalDatabase();
@@ -409,7 +441,7 @@ export async function editTopic(topicId: string, workTopic: EditedWorkTopic): Pr
 }
 
 // Deleting Task in local database ()
-export async function deleteTopic(topicId: string, topic: WorkTopic): Promise<DatabaseActionResponse> {
+export async function deleteTopic(topicId: string, topic: WorkTopic, last_action_date: string): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
@@ -427,9 +459,10 @@ export async function deleteTopic(topicId: string, topic: WorkTopic): Promise<Da
 
 		db.run(
 			`UPDATE work_topics
-             SET last_action = ?
+             SET last_action = ?,
+			 	last_action_date = ?
              WHERE id = ?`,
-			['Deleted', topicId]
+			[3, last_action_date, topicId]
 		);
 
 		await saveLocalDatabase();
@@ -461,11 +494,12 @@ export async function getTopics(): Promise<DatabaseActionResponse> {
 				item: [],
 			};
 
-		const localWorkTopics = res[0].values.map(([id, name, color, last_action]) => ({
+		const localWorkTopics = res[0].values.map(([id, name, color, last_action, last_action_date]) => ({
 			id: id as string,
 			name: name as string,
-			color: color as string,
-			last_action: last_action as Action
+			color: color as number,
+			last_action: last_action as Action,
+			last_action_date: last_action_date as string,
 		}));
 
 		return {

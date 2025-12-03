@@ -13,7 +13,7 @@ const TaskViewer = () => {
 		<div className='flex flex-col w-full h-full space-y-2'>
 			<h2 className='h-6 font-semibold'>Work Tasks</h2>
 			<div className='flex flex-col flex-1 overflow-y-auto'>
-				{settings.workTasks.filter(task => task.last_action !== "Deleted").map((task) => (
+				{settings.workTasks.filter(task => task.last_action !== 3).map((task) => (
 					<TaskTile key={task.id} workTask={task} workTopics={settings.workTopics} />
 				))}
 

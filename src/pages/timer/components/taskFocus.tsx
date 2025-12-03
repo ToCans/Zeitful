@@ -16,7 +16,7 @@ const TaskFocus = () => {
 			<Dropdown
 				value={settings.activeWorkTask}
 				onChange={(e: DropdownChangeEvent) => settings.setActiveWorkTask(e.value)}
-				options={settings.workTasks.filter(task => task.last_action !== "Deleted")}
+				options={settings.workTasks.filter(task => task.last_action !== 3)}
 				optionLabel='name'
 				placeholder='Select a Work Task'
 				valueTemplate={selectedWorkTaskOptionTemplate}

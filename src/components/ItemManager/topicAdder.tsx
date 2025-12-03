@@ -4,18 +4,20 @@ import { addWorkTopicSupabaseDatabase } from '../../api/cloudDatabase';
 // Component Imports
 import { IconContext } from 'react-icons';
 import { PiPlus } from 'react-icons/pi';
-// Hook Imports
-import { InputText } from 'primereact/inputtext';
 import { ColorPicker } from 'primereact/colorpicker';
+import { InputText } from 'primereact/inputtext';
+// Hook Imports
 import { useState, useCallback } from 'react';
-// Utils Imports
-import { getRandomHexColor } from '../../utils/utils';
 import { useAppContext } from '../../hooks/useAppContext';
 // Library Imports
 import { v4 as uuidv4 } from 'uuid';
 // Type Imports
 import type { WorkTopic } from '../../types/types';
 import type { SettingsContextType } from '../../types/context';
+// Utils Imports
+import { colorToInt } from '../../utils/colors';
+import { getRandomHexColor } from '../../utils/utils';
+
 
 const TopicAdder = () => {
     const settings = useAppContext();
@@ -62,9 +64,9 @@ const TopicAdder = () => {
                 className='m-2 cursor-pointer'
                 onClick={async () => {
                     const id = uuidv4();
-                    await handleAddTopic(settings, { id: id, name: newTopicName, color: newTopicColor, last_action: "Added" });
+                    await handleAddTopic(settings, { id: id, name: newTopicName, color: colorToInt(newTopicColor), last_action: 1, last_action_date: new Date().toISOString() });
                     if (settings.cloudDatabase) {
-                        await handleAddTopicToCloudDatabase(settings, { id: id, name: newTopicName, color: newTopicColor, last_action: "Added" });
+                        await handleAddTopicToCloudDatabase(settings, { id: id, name: newTopicName, color: colorToInt(newTopicColor), last_action: 1, last_action_date: new Date().toISOString() });
                     }
                 }}
             >

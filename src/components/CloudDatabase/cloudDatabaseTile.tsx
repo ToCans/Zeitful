@@ -14,7 +14,7 @@ import { IconContext } from 'react-icons';
 // Library Imports
 import { createClient } from '@supabase/supabase-js';
 // React Imports
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 // Utils Imports
 import { formatDate } from '../../utils/date';
 import type { CloudDatabaseData, WorkEntry, WorkTask, WorkTopic } from '../../types/types';
@@ -23,6 +23,12 @@ import type { CloudDatabaseData, WorkEntry, WorkTask, WorkTopic } from '../../ty
 const CloudDatabaseTile = () => {
 	const settings = useAppContext();
 	const credentialsInputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		if (settings.useCloudDatabase === true && settings.cloudDatabase !== null) {
+			handleCloudDatabaseDataSync();
+		}
+	}, [settings.cloudDatabase, settings.useCloudDatabase]);
 
 	async function handleCloudCredentialsImportClick() {
 		credentialsInputRef.current?.click();

@@ -9,6 +9,8 @@ import { PiNotePencil } from 'react-icons/pi';
 import { PiTrash } from 'react-icons/pi';
 import { getTopics, deleteTopic } from '../../api/localDatabase';
 import EditTopicModal from './editTopicModal';
+// Utils Imports
+import { intToColor } from '../../utils/colors';
 
 // Interface Defintion
 interface TopicTileProps {
@@ -22,14 +24,14 @@ const TopicTile = ({ workTopic }: TopicTileProps) => {
 
 	// Memorized handlers
 	const handleDelete = useCallback(async () => {
-		const response = await deleteTopic(workTopic.id, workTopic);
+		const response = await deleteTopic(workTopic.id, workTopic, new Date().toISOString());
 		console.log(response.status, response.message);
 		settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
 	}, []);
 
 	return (
 		<div className='flex flex-row space-x-2 items-center w-full p-1'>
-			<ColorIcon color={workTopic.color} />
+			<ColorIcon color={intToColor(workTopic.color)} />
 			<div className='flex md:flex-row flex-col md:items-center flex-1 gap-1'>
 				<p className='text-sm text-nowrap w-3/6'>{workTopic.name}</p>
 

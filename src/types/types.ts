@@ -2,11 +2,11 @@
 import type { SettingsContextType } from './context';
 
 // Type Defintions
-export type Action = 'Added' | 'Edited' | 'Deleted';
+export type Action = 1 | 2 | 3; // 1=Added, 2=Edited, 3=Deleted
 export type DatabaseActionStatus = 'Success' | 'Failure';
 export type Item = 'Task' | 'Topic' | 'User';
 export type Page = 'Timer' | 'Statistics' | 'UserPage' | 'Settings';
-export type WorkTaskStatus = 'Open' | 'Active' | 'Closed';
+export type WorkTaskStatus = 1 | 2 | 3; // 1=Open, 2=Active, 3=Closed
 
 export type CloudDatabaseCredentials = {
 	api_key: string;
@@ -41,7 +41,7 @@ export type TopicData = {
 	itemIds: string[];
 	itemNames: string[];
 	itemDurations: number[];
-	itemColors: string[];
+	itemColors: number[];
 	topicPercentage?: number[];
 };
 
@@ -63,6 +63,7 @@ export type EditedWorkTask = {
 	name: string;
 	status: WorkTaskStatus;
 	last_action: Action;
+	last_action_date: string;
 };
 
 export type WorkTask = {
@@ -71,20 +72,23 @@ export type WorkTask = {
 	name: string;
 	status: WorkTaskStatus;
 	last_action: Action;
+	last_action_date: string;
 };
 
 // Work Topics //
 export type EditedWorkTopic = {
 	name: string;
-	color: string;
+	color: number;
 	last_action: Action;
+	last_action_date: string;
 };
 
 export type WorkTopic = {
 	id: string;
 	name: string;
-	color: string;
+	color: number;
 	last_action: Action;
+	last_action_date: string;
 };
 
 // Work Entries //

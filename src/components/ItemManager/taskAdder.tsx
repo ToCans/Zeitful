@@ -71,16 +71,18 @@ const TaskAdder = () => {
                         id: id,
                         topic_id: selectedTopicId,
                         name: newTaskName,
-                        status: 'Open',
-                        last_action: 'Added'
+                        status: 1,
+                        last_action: 1,
+                        last_action_date: new Date().toISOString()
                     });
                     if (settings.cloudDatabase) {
                         await handleAddTaskToCloudDatabase(settings, {
                             id: id,
                             topic_id: selectedTopicId,
                             name: newTaskName,
-                            status: 'Open',
-                            last_action: 'Added'
+                            status: 1,
+                            last_action: 1,
+                            last_action_date: new Date().toISOString()
                         });
                     }
                 }}
@@ -115,7 +117,7 @@ const TaskAdder = () => {
                     setSelectedTopic(e.value);
                 }}
                 placeholder='"Select a Work Topic'
-                options={settings.workTopics.filter(topic => topic.last_action !== "Deleted")}
+                options={settings.workTopics.filter(topic => topic.last_action !== 3)}
                 optionLabel='name'
                 itemTemplate={workTopicOptionTemplate}
                 valueTemplate={selectedWorkTopicOptionTemplate}

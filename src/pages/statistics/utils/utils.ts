@@ -20,6 +20,8 @@ import type {
 } from '../../../types/types';
 // Type Defintion
 export type PeriodOption = { label: string; value: Date | number; };
+// Utils Imports
+import { intToColor } from '../../../utils/colors';
 
 // Gathers the data for the most recent month
 export const gatherMostRecentData = (timeFrame: 'W' | 'M' | 'Y') => {
@@ -174,7 +176,7 @@ export const matchItemToTopics = (
 
 	// Topic Name and Color Extraction
 	let itemNames: string[] = [];
-	let colors: string[] = [];
+	let colors: number[] = [];
 	itemIds.forEach((itemId) => {
 		const matchingWorkItem = workTopics.find((item) => item.id === itemId);
 		if (matchingWorkItem) {
@@ -182,7 +184,7 @@ export const matchItemToTopics = (
 			colors.push(matchingWorkItem.color);
 		} else {
 			itemNames.push('No Topic');
-			colors.push('#888888'); // Default color if not found
+			colors.push(8947848); // Default color if not found
 		}
 	});
 
@@ -213,12 +215,12 @@ export function calculateTopicPercentages(topicData: TopicData): TopicData {
 // Extracts and formats the data for the Pi Chart
 export const piChartDataFormatter = (topicData: TopicData): PiChartData => {
 	// Construct Chart Data
-	const chartData = {
+	const chartData: PiChartData = {
 		labels: topicData.itemNames,
 		datasets: [
 			{
 				data: topicData.itemDurations,
-				backgroundColor: topicData.itemColors,
+				backgroundColor: topicData.itemColors.map((colorAsInt) => intToColor(colorAsInt)),
 			},
 		],
 	};
