@@ -26,9 +26,7 @@ const DataVisualizationPanel = ({ itemFilter, periodFilteredData }: DataVisualiz
 		if (!periodFilteredData) return null;
 		if (itemFilter === 'Task') {
 			const durationsByTask = getTotalDurationByTaskForSelectedPeriod(periodFilteredData);
-			console.log('durationsByTask', durationsByTask);
 			const taskData = matchItemToTasks(durationsByTask, settings.workTasks, settings.workTopics);
-			console.log('taskData', taskData);
 			return taskData;
 		} else {
 			const durationsByTopic = getTotalDurationByTopicForSelectedPeriod(periodFilteredData);
