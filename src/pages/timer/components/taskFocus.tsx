@@ -16,7 +16,7 @@ const TaskFocus = () => {
 	const sortedWorkTasks = sortWorkTasks(settings.workEntries, settings.workTasks);
 
 	return (
-		<div className='flex rounded-lg items-center justify-center opacity-70'>
+		<div className='flex rounded-lg items-center justify-center'>
 			<Dropdown
 				value={settings.activeWorkTask}
 				onChange={(e: DropdownChangeEvent) => settings.setActiveWorkTask(e.value)}
