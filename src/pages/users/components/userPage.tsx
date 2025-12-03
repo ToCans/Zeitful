@@ -5,7 +5,7 @@ import TaskAdder from '../../../components/ItemManager/taskAdder';
 import TaskViewer from '../../../components/ItemManager/taskViewer';
 import TopicAdder from '../../../components/ItemManager/topicAdder';
 import TopicViewer from '../../../components/ItemManager/topicViewer';
-import CloudDatabaseTile from '../../../components/CloudDatabase/cloudDatabaseTile';
+import CloudDatabaseTile from './cloudDatabaseTile';
 import WorkEntryViewer from '../../../components/ItemManager/workEntryViewer';
 // Hook Imports
 import { useAppContext } from '../../../hooks/useAppContext';

@@ -3,36 +3,37 @@ import {
 	importCloudDatabaseCredentials,
 	syncLocalDataToSupabaseDatabase,
 	getDataFromSupabaseDatabase,
-} from '../../api/cloudDatabase';
-import { getTasks, getTopics, getLocalDatabaseData, getWorkEntries, updataLocalDatabaseFromJson } from '../../api/localDatabase';
+} from '../../../api/cloudDatabase';
+import { getTasks, getTopics, getLocalDatabaseData, getWorkEntries, updataLocalDatabaseFromJson } from '../../../api/localDatabase';
 
 // Hook Imports
-import { useAppContext } from '../../hooks/useAppContext';
+import { useAppContext } from '../../../hooks/useAppContext';
 // Icon Imports
 import { PiArrowsClockwise, PiCloud } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
 // Library Imports
 import { createClient } from '@supabase/supabase-js';
 // React Imports
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 // Utils Imports
-import { formatDate } from '../../utils/date';
-import type { CloudDatabaseData, WorkEntry, WorkTask, WorkTopic } from '../../types/types';
+import { formatDate } from '../../../utils/date';
+import type { CloudDatabaseData, WorkEntry, WorkTask, WorkTopic } from '../../../types/types';
 
 // Component Definition
 const CloudDatabaseTile = () => {
 	const settings = useAppContext();
 	const credentialsInputRef = useRef<HTMLInputElement>(null);
-	const hasSyncedRef = useRef(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
 	useEffect(() => {
 		if (
 			settings.useCloudDatabase === true &&
 			settings.cloudDatabase !== null &&
-			!hasSyncedRef.current
+			!settings.hasSyncedRef.current
 		) {
 			handleCloudDatabaseDataSync();
-			hasSyncedRef.current = true; // mark as synced
+			settings.hasSyncedRef.current = true; // mark as synced
 		}
 	}, [settings.cloudDatabase, settings.useCloudDatabase]);
 
@@ -62,6 +63,7 @@ const CloudDatabaseTile = () => {
 	async function handleCloudDatabaseDataSync() {
 		if (settings.cloudDatabase) {
 			try {
+				setIsLoading(true);
 				// Syncing Mechanism
 				const localData = await getLocalDatabaseData();
 				// Syncing Local Data to the supabase (adding/updating missing entries)
@@ -81,9 +83,10 @@ const CloudDatabaseTile = () => {
 					console.log('Successful database sync');
 
 				}
-
 			} catch (e) {
 				console.log('Experience error syncing databases', e);
+			} finally {
+				setIsLoading(false);
 			}
 		}
 	}
@@ -126,6 +129,7 @@ const CloudDatabaseTile = () => {
 					}}
 				>
 					<PiArrowsClockwise
+						className={isLoading ? 'animate-spin' : ''}
 						onClick={() => {
 							handleCloudDatabaseDataSync();
 						}}

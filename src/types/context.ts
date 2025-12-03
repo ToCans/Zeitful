@@ -28,6 +28,7 @@ export interface SettingsContextType {
 	useCloudDatabase: boolean;
 	lastCloudDatabaseSync: string;
 	darkMode: boolean;
+	hasSyncedRef: RefObject<boolean>;
 	setActivePage: Dispatch<React.SetStateAction<Page>>;
 	setTabTimer: Dispatch<React.SetStateAction<boolean>>;
 	setWorkingTime: Dispatch<React.SetStateAction<number>>;

@@ -53,6 +53,7 @@ function App() {
 	const permission = useRef<string | null>(null);
 	const subscription = useRef<PushSubscription | null>(null);
 	const todayDate = useRef<string | null>(null);
+	const hasSyncedRef = useRef<boolean>(false);
 
 	// Refernces for Cookies
 	const workingTimeCompleted = useRef<number>(0);
@@ -165,11 +166,10 @@ function App() {
 
 	return (
 		<div
-			className={`flex flex-col h-dvh w-dvw ${
-				darkMode
+			className={`flex flex-col h-dvh w-dvw ${darkMode
 					? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
 					: 'bg-zinc-100 text-black fill-gray-400'
-			} overflow-hidden`}
+				} overflow-hidden`}
 		>
 			<PrimeReactProvider>
 				<SettingsContext.Provider
@@ -197,6 +197,7 @@ function App() {
 						useCloudDatabase,
 						lastCloudDatabaseSync,
 						darkMode,
+						hasSyncedRef,
 						setActivePage,
 						setTabTimer,
 						setWorkingTime,
