@@ -7,8 +7,9 @@ import TimeDisplay from './timeDisplay';
 import TimerControls from './timeControls';
 import WavesAnimation from './wavesAnimation';
 import TaskFocus from './taskFocus';
+import CloudSyncStatusTile from './cloudSyncStatus';
 // Hook Imports
-import { useAppContext, } from '../../../hooks/useAppContext';
+import { useAppContext } from '../../../hooks/useAppContext';
 // React Imports
 import { useState, useEffect, useRef, useCallback } from 'react';
 // Type Imports
@@ -26,7 +27,9 @@ const Timer = () => {
 
 	// Component States
 	const [isMounted, setIsMounted] = useState<boolean>(false);
-	const [timeRemaining, setTimeRemaining] = useState<number>(settings.workingTime);
+	const [timeRemaining, setTimeRemaining] = useState<number>(
+		settings.workingTime
+	);
 	const [progressBarValue, setProgressBarValue] = useState<number>(0);
 
 	// References
@@ -34,36 +37,20 @@ const Timer = () => {
 	const timeRemainingRef = useRef<number>(timeRemaining);
 
 	// Helper Functions Memos
-	const handleAddWorkEntry = useCallback(async (
-		uuid: string,
-		settings: SettingsContextType,
-		workEntry: Omit<WorkEntry, 'id' | 'duration' | 'topic_name' | 'completion_time'>,
-		workTopics: WorkTopic[]
-	) => {
-		const matchedTopic = workTopics.find((workTopic) => workTopic.id === workEntry.topic_id);
-		const response = await addWorkEntry({
-			id: uuid,
-			task_id: workEntry.task_id,
-			topic_id: workEntry.topic_id,
-			task_name: workEntry.task_name,
-			topic_name: matchedTopic?.name ?? null,
-			duration: settings.workingTime / 60,
-			completion_time: new Date().toISOString(),
-		});
-
-		console.log(response.status, response.message);
-		settings.setWorkEntries((await getWorkEntries()).item as WorkEntry[]);
-	}, []);
-
-	const handleAddWorkEntryToCloudDatabase = useCallback(async (
-		uuid: string,
-		settings: SettingsContextType,
-		workEntry: Omit<WorkEntry, 'id' | 'duration' | 'topic_name' | 'completion_time'>,
-		workTopics: WorkTopic[]
-	) => {
-		if (settings.cloudDatabase) {
-			const matchedTopic = workTopics.find((workTopic) => workTopic.id === workEntry.topic_id);
-			const response = await addWorkEntrySupabaseDatabase(settings.cloudDatabase, {
+	const handleAddWorkEntry = useCallback(
+		async (
+			uuid: string,
+			settings: SettingsContextType,
+			workEntry: Omit<
+				WorkEntry,
+				'id' | 'duration' | 'topic_name' | 'completion_time'
+			>,
+			workTopics: WorkTopic[]
+		) => {
+			const matchedTopic = workTopics.find(
+				(workTopic) => workTopic.id === workEntry.topic_id
+			);
+			const response = await addWorkEntry({
 				id: uuid,
 				task_id: workEntry.task_id,
 				topic_id: workEntry.topic_id,
@@ -72,9 +59,46 @@ const Timer = () => {
 				duration: settings.workingTime / 60,
 				completion_time: new Date().toISOString(),
 			});
+
 			console.log(response.status, response.message);
-		}
-	}, []);
+			settings.setWorkEntries(
+				(await getWorkEntries()).item as WorkEntry[]
+			);
+		},
+		[]
+	);
+
+	const handleAddWorkEntryToCloudDatabase = useCallback(
+		async (
+			uuid: string,
+			settings: SettingsContextType,
+			workEntry: Omit<
+				WorkEntry,
+				'id' | 'duration' | 'topic_name' | 'completion_time'
+			>,
+			workTopics: WorkTopic[]
+		) => {
+			if (settings.cloudDatabase) {
+				const matchedTopic = workTopics.find(
+					(workTopic) => workTopic.id === workEntry.topic_id
+				);
+				const response = await addWorkEntrySupabaseDatabase(
+					settings.cloudDatabase,
+					{
+						id: uuid,
+						task_id: workEntry.task_id,
+						topic_id: workEntry.topic_id,
+						task_name: workEntry.task_name,
+						topic_name: matchedTopic?.name ?? null,
+						duration: settings.workingTime / 60,
+						completion_time: new Date().toISOString(),
+					}
+				);
+				console.log(response.status, response.message);
+			}
+		},
+		[]
+	);
 
 	// Trigger the slide-in animation on component mount
 	useEffect(() => {
@@ -108,7 +132,9 @@ const Timer = () => {
 					playAudio(settings.workFinishAudio);
 
 					// Local Storage Completion
-					settings.workingTimeCompleted.current += Math.floor(settings.workingTime / 60);
+					settings.workingTimeCompleted.current += Math.floor(
+						settings.workingTime / 60
+					);
 					settings.workingCyclesCompleted.current += 1;
 
 					// Defininig Shared UUID between local and cloud entries
@@ -133,8 +159,10 @@ const Timer = () => {
 							settings,
 							{
 								task_id: settings.activeWorkTask?.id ?? null,
-								topic_id: settings.activeWorkTask?.topic_id ?? null,
-								task_name: settings.activeWorkTask?.name ?? null,
+								topic_id:
+									settings.activeWorkTask?.topic_id ?? null,
+								task_name:
+									settings.activeWorkTask?.name ?? null,
 							},
 							settings.workTopics
 						);
@@ -148,7 +176,7 @@ const Timer = () => {
 				settings.setCycleNumber(settings.cycleNumber + 1);
 			}
 		};
-	}, [settings]);
+	}, [settings, handleAddWorkEntry, handleAddWorkEntryToCloudDatabase]);
 
 	// Showing Tab Timer
 	useEffect(() => {
@@ -161,7 +189,8 @@ const Timer = () => {
 
 	// Timer Progress Handling
 	useEffect(() => {
-		let calculatedProgressBarValue = (1 - timeRemaining / progressBarTotalRef.current) * 100;
+		const calculatedProgressBarValue =
+			(1 - timeRemaining / progressBarTotalRef.current) * 100;
 		setProgressBarValue(calculatedProgressBarValue);
 	}, [timeRemaining, progressBarTotalRef]);
 
@@ -186,25 +215,42 @@ const Timer = () => {
 
 	return (
 		<div
-			className={`relative p-4 h-[50vh] xl:w-2/5 md:w-3/5 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				} `}
+			className={`relative p-4 h-[50vh] xl:w-2/5 md:w-3/5 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
+				isMounted
+					? 'translate-y-0 opacity-100'
+					: '-translate-y-full opacity-0'
+			} `}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
-			<WavesAnimation progress={progressBarValue} timerColor={settings.timerColor} />
+			<WavesAnimation
+				progress={progressBarValue}
+				timerColor={settings.timerColor}
+			/>
 
 			{/* Content Layer */}
 			<div className='relative z-20 w-full h-full flex flex-col rounded-lg p-5 justify-center items-center space-y-2'>
 				<TimeDisplay timeRemaining={timeRemaining} />
-				<TaskFocus />
-				<TimerControls timeRemaining={timeRemaining} setTimeRemaining={setTimeRemaining} />
+				<div className='relative flex rounded-lg items-center justify-center opacity-70'>
+					<TaskFocus />
+					{settings.useCloudDatabase ? (
+						<div className='absolute right-full mr-2'>
+							<CloudSyncStatusTile />
+						</div>
+					) : null}
+				</div>
+				<TimerControls
+					timeRemaining={timeRemaining}
+					setTimeRemaining={setTimeRemaining}
+				/>
 				<p className='sm:text-xl text-center select-none'>
 					Current Cycle: {Math.ceil(settings.cycleNumber / 2)}
 				</p>
 			</div>
 
 			<div
-				className={`absolute inset-0 ${settings.darkMode ? 'bg-zinc-700' : 'bg-white'
-					} rounded-lg z-0`}
+				className={`absolute inset-0 ${
+					settings.darkMode ? 'bg-zinc-700' : 'bg-white'
+				} rounded-lg z-0`}
 			></div>
 		</div>
 	);
