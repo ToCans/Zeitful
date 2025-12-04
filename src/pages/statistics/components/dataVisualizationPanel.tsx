@@ -38,7 +38,7 @@ const DataVisualizationPanel = ({ itemFilter, periodFilteredData }: DataVisualiz
 	return (
 		<div className='flex md:flex-row flex-col w-full h-full overflow-y-auto md:gap-4 gap-2 p-2'>
 			{/* Chart and Topic Breakdown */}
-			<div className='flex flex-col md:w-1/2 md:h-full h-1/2 w-full gap-4 items-center'>
+			<div className='flex flex-col md:w-1/2 md:h-full h-3/4 w-full gap-4 items-center'>
 				<p className='font-semibold text-sm w-full '>{itemFilter} Breakdown</p>
 				{workEntriesGroupedByItem && <PiChart itemData={workEntriesGroupedByItem} />}
 				{workEntriesGroupedByItem && <ItemPercentageBreakdown itemData={workEntriesGroupedByItem} />}
@@ -47,7 +47,7 @@ const DataVisualizationPanel = ({ itemFilter, periodFilteredData }: DataVisualiz
 				className={`md:h-full h-1 md:w-1 w-full ${settings.darkMode ? 'bg-gray-400' : 'bg-gray-200'
 					} rounded-b-lg`}
 			></div>
-			<div className='flex flex-col md:w-1/2 md:h-full h-1/2 w-full gap-4 items-center'>
+			<div className='flex flex-col md:w-1/2 md:h-full h-1/4 w-full gap-4 items-center'>
 				{workEntriesGroupedByItem && <OverallStats itemFilter={itemFilter} itemFilteredData={workEntriesGroupedByItem} periodFilteredData={periodFilteredData} unfilteredData={settings.workEntries} />}
 			</div>
 		</div>

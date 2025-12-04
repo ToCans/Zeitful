@@ -377,24 +377,39 @@ export const getBusiestDay = (entries: WorkEntry[]) => {
 	};
 };
 
-export const getCurrentStreak = (entries: WorkEntry[]) => {
-	// Extract unique days
-	const days = new Set(entries.map(e => e.completion_time.split("T")[0]));
+export const getCurrentStreak = (entries: WorkEntry[]): number => {
+	// Helper: local YYYY-MM-DD for a Date
+	const toLocalISODate = (d: Date) => {
+		const y = d.getFullYear();
+		const m = String(d.getMonth() + 1).padStart(2, '0');
+		const dd = String(d.getDate()).padStart(2, '0');
+		return `${y}-${m}-${dd}`;
+	};
+
+	// Build set of local-date strings from entries
+	const days = new Set(
+		entries.map(e => toLocalISODate(new Date(e.completion_time)))
+	);
 
 	let streak = 0;
-	let checkDay = new Date();
+	const today = new Date();
+	const todayIso = toLocalISODate(today);
+
+	// If there's no entry for today, start from yesterday (so streak can continue)
+	const startDay = days.has(todayIso) ? today : new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
+	let checkDay = new Date(startDay);
 
 	while (true) {
-		const iso = checkDay.toISOString().split("T")[0];
+		const iso = toLocalISODate(checkDay);
 
 		if (days.has(iso)) {
 			streak++;
+			// move back 1 day
+			checkDay.setDate(checkDay.getDate() - 1);
 		} else {
 			break;
 		}
-
-		// move back 1 day
-		checkDay.setDate(checkDay.getDate() - 1);
 	}
 
 	return streak;
