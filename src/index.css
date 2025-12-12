@@ -97,9 +97,9 @@ body,
 /* TailwindCSS styling */
 @theme {
   --animate-move-forever: move-forever 25s cubic-bezier(.55, .5, .45, .5) infinite;
-  --breakpoint-3xl: 1920px;
-  --breakpoint-4xl: 2560px;
-  --breakpoint-5xl: 3840px;
+  --breakpoint-3xl: 120rem;
+  --breakpoint-4xl: 160rem;
+  --breakpoint-5xl: 240rem;
   --inset-shadow-md: inset 0 2px 3px rgba(0, 0, 0, 0.25);
 
   @keyframes move-forever {
