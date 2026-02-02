@@ -8,7 +8,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 // React Imports
 import { useMemo, useState } from 'react';
 // Utils Imports
-import { sortWorkEntries } from '../../utils/items';
+import { sortWorkEntriesByCompletionTime } from '../../utils/items';
 
 // Component Definition
 const WorkEntryViewer = () => {
@@ -16,7 +16,7 @@ const WorkEntryViewer = () => {
 	const [sortMethod, setSortMethod] = useState<'dsc' | 'asc'>('dsc');
 
 	const sortedWorkEntries = useMemo(() => {
-		return sortWorkEntries(settings.workEntries, sortMethod);
+		return sortWorkEntriesByCompletionTime(settings.workEntries, sortMethod);
 	}, [settings.workEntries, sortMethod]);
 
 	return (

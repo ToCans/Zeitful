@@ -9,7 +9,6 @@ import UseGatherGroupedData from '../hooks/useGatherGroupedData';
 import { type WorkEntry } from '../../../types/types';
 import { Skeleton } from 'primereact/skeleton';
 
-
 // Interface Definition
 interface DataVisualizationPanelProps {
 	itemFilter: 'Task' | 'Topic';

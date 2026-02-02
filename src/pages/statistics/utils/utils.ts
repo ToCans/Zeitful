@@ -121,7 +121,6 @@ function getYearRange(year: number): { startDate: Date; endDate: Date; } {
 // Depending on the timeframe selected, a start and end date are generated
 export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y', selectedPeriod: any) => {
 	let dateRange;
-	console.log(selectedPeriod);
 
 	// 🎯 Determine start and end date based on timeframe & selected period
 	switch (timeFrame) {
@@ -140,7 +139,6 @@ export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y', selectedPeriod: an
 		default:
 			throw new Error('Invalid timeframe');
 	}
-	console.log(dateRange);
 
 	return dateRange;
 };
