@@ -75,7 +75,7 @@ export const generatePeriodOptions = (timeframe: 'W' | 'M' | 'Y'): PeriodOption[
 			// 📆 Generate the last 5 years (including current)
 			const currentYear = now.getFullYear();
 			const years: PeriodOption[] = Array.from({ length: 5 }, (_, i) => {
-				const year = currentYear - (4 - i); // e.g., 2021 → 2025
+				const year = currentYear - (4 - i);
 				return {
 					label: `${year}`,
 					value: year, // number
@@ -93,7 +93,6 @@ function getWeekRange(date: Date) {
 	// weekStartsOn: 0 = Sunday, 1 = Monday
 	const startDate = startOfWeek(date, { weekStartsOn: 1 });
 	const endDate = endOfWeek(date, { weekStartsOn: 1 });
-
 	return { startDate, endDate };
 }
 
@@ -121,7 +120,8 @@ function getYearRange(year: number): { startDate: Date; endDate: Date; } {
 
 // Depending on the timeframe selected, a start and end date are generated
 export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y', selectedPeriod: any) => {
-	let dateRange: { startDate: Date; endDate: Date; };
+	let dateRange;
+	console.log(selectedPeriod);
 
 	// 🎯 Determine start and end date based on timeframe & selected period
 	switch (timeFrame) {
@@ -140,6 +140,7 @@ export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y', selectedPeriod: an
 		default:
 			throw new Error('Invalid timeframe');
 	}
+	console.log(dateRange);
 
 	return dateRange;
 };

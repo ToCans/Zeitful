@@ -11,6 +11,10 @@ body,
 }
 
 /* Light mode styles */
+.light-spinner .p-progress-spinner-circle {
+  stroke: #71717a !important;
+}
+
 .light-dropdown::placeholder {
   color: #000000;
 }
@@ -50,6 +54,10 @@ body,
 
 
 /* Dark mode styles */
+.dark-spinner .p-progress-spinner-circle {
+  stroke: #F4F4F5 !important;
+}
+
 .dark-dropdown::placeholder {
   color: #F4F4F5;
 }

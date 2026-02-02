@@ -49,10 +49,10 @@ const UserPage = () => {
 	return (
 		<div
 			className={`${settings.darkMode ? 'bg-zinc-700' : 'bg-white'
-				} gap-1 flex flex-col relative p-4 3xl:w-1/3 xl:w-2/5 lg:w-3/5 md:w-4/5 w-11/12 md:h-[50vh] h-[65vh] rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				} gap-1 flex flex-col relative p-4 md:max-h-[60vh] max-h-[80vh] flex-1 xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
 				}`}
 		>
-			<div className={`flex flex-col w-full ${settings.useCloudDatabase ? 'h-20' : 'h-14'}`}>
+			<div className={`flex flex-col w-full ${settings.useCloudDatabase ? 'h-auto' : 'h-auto'}`}>
 				<p className='w-full text-2xl'>{itemManagement} Management</p>
 				<div className='flex flex-row justify-between'>
 					<ItemNavigationBar
@@ -64,7 +64,7 @@ const UserPage = () => {
 				{settings.useCloudDatabase && <CloudDatabaseTile />}
 			</div>
 			{itemManagement !== 'Entries' ? (
-				<div className='flex w-full h-14'>
+				<div className='flex w-full h-auto'>
 					{itemManagement === 'Task' && <TaskAdder />}
 					{itemManagement === 'Topic' && <TopicAdder />}
 				</div>
