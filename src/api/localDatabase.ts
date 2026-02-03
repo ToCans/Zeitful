@@ -263,7 +263,7 @@ export async function editTask(taskId: string, workTask: EditedWorkTask): Promis
              SET topic_id = ?, 
                  name = ?, 
                  status = ?, 
-                 last_action = ?
+                 last_action = ?,
 				 last_action_date = ?
              WHERE id = ?`,
 			[workTask.topic_id ?? null, workTask.name, workTask.status, 2, workTask.last_action_date, taskId]
@@ -283,7 +283,7 @@ export async function editTask(taskId: string, workTask: EditedWorkTask): Promis
 	}
 }
 
-// Deleting Task in local database ()
+// Deleting Task in local database
 export async function deleteTask(taskId: string, task: WorkTask, last_action_date: string): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
@@ -417,13 +417,19 @@ export async function editTopic(topicId: string, workTopic: EditedWorkTopic): Pr
 
 		db.run(
 			`UPDATE work_topics
-             SET 
-                 name = ?, 
-                 color = ?,
-				 last_action = ?,
-				 last_action_date = ?
-             WHERE id = ?`,
-			[workTopic.name, workTopic.color, 2, topicId, workTopic.last_action_date]
+			SET 
+				name = ?, 
+				color = ?,
+				last_action = ?,
+				last_action_date = ?
+			WHERE id = ?`,
+			[
+				workTopic.name,
+				workTopic.color,
+				workTopic.last_action,
+				workTopic.last_action_date,
+				topicId
+			]
 		);
 
 		await saveLocalDatabase();
