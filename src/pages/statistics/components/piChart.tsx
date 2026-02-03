@@ -31,7 +31,7 @@ const PiChart = ({ itemData }: PiChartProps) => {
 	return (
 		<div className='flex justify-center items-center'>
 			<Chart
-				className='flex xl:size-72 md:size-56 size-44 justify-center items-center border-0'
+				className='flex xl:size-60 md:size-56 size-44 justify-center items-center border-0'
 				type='doughnut'
 				data={piChartData}
 				options={{
