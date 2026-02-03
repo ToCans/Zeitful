@@ -6,7 +6,7 @@ import type { Dispatch } from 'react';
 interface ItemFilterButtonProps {
     isActive: boolean,
     name: 'Task' | 'Topic';
-    setItemFilter: Dispatch<React.SetStateAction<'Task' | 'Topic'>>;
+    setItemFilter: Dispatch<React.SetStateAction<string>>;
 }
 
 const ItemFilterButton = ({ isActive, name, setItemFilter }: ItemFilterButtonProps) => {

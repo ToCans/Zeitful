@@ -122,7 +122,7 @@ body,
 }
 
 @media (max-height: 905px) {
-  .short-laptop\:h-4\/5 {
+  .short-laptop\:h-70per {
     height: 70vh;
     max-height: 70vh;
   }

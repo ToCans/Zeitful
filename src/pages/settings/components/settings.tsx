@@ -47,6 +47,8 @@ const Settings = () => {
 		longBreakTime: settings.longBreakTime,
 		timerColor: settings.timerColor,
 		darkMode: settings.darkMode,
+		lastUsedPeriodTab: settings.lastUsedPeriodTab,
+		lastUsedItemTab: settings.lastUsedItemTab,
 	});
 
 	// For Showing Timer in Tab Info
@@ -69,7 +71,7 @@ const Settings = () => {
 	return (
 		<div
 			className={`${settings.darkMode ? 'bg-zinc-700' : 'bg-white'
-				} flex flex-col p-4 short-laptop:h-4/5 md:max-h-[66vh] md:h-[66vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				} flex flex-col p-4 short-laptop:h-70per md:max-h-[60vh] md:h-[60vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
 				}`}
 		>
 			<h1 className='flex text-2xl select-none'>User Settings</h1>

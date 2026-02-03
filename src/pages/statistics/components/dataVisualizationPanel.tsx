@@ -11,7 +11,7 @@ import { Skeleton } from 'primereact/skeleton';
 
 // Interface Definition
 interface DataVisualizationPanelProps {
-	itemFilter: 'Task' | 'Topic';
+	itemFilter: 'Task' | 'Topic' | string;
 	timeFilteredWorkEntries: WorkEntry[] | null;
 }
 

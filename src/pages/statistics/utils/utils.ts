@@ -28,14 +28,14 @@ import { formatHourWindow } from '../../../utils/time';
 import { intToColor, generateSimilarColor } from '../../../utils/colors';
 
 // Gathers the data for the most recent month
-export const gatherMostRecentData = (timeFrame: 'W' | 'M' | 'Y') => {
+export const gatherMostRecentData = (timeFrame: 'W' | 'M' | 'Y' | string) => {
 	const periodOptions = generatePeriodOptions(timeFrame);
 	const latestPeriod = periodOptions[periodOptions.length - 1]?.value ?? null;
 	return { periodOptions, latestPeriod };
 };
 
 // Generates the Period options based on the timeframe
-export const generatePeriodOptions = (timeframe: 'W' | 'M' | 'Y'): PeriodOption[] => {
+export const generatePeriodOptions = (timeframe: 'W' | 'M' | 'Y' | string): PeriodOption[] => {
 	const now = new Date();
 
 	switch (timeframe) {
@@ -119,7 +119,7 @@ function getYearRange(year: number): { startDate: Date; endDate: Date; } {
 }
 
 // Depending on the timeframe selected, a start and end date are generated
-export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y', selectedPeriod: any) => {
+export const generateDateRange = (timeFrame: 'W' | 'M' | 'Y' | string, selectedPeriod: any) => {
 	let dateRange;
 
 	// 🎯 Determine start and end date based on timeframe & selected period

@@ -18,8 +18,6 @@ import {
 const Statistics = () => {
 	const settings = useAppContext();
 	const [isMounted, setIsMounted] = useState(false);
-	const [timeFrame, setTimeFrame] = useState<'W' | 'M' | 'Y'>('M');
-	const [itemFilter, setItemFilter] = useState<'Task' | 'Topic'>('Topic');
 	const [periodOptions, setPeriodOptions] = useState<any[]>([]);
 	const [selectedPeriod, setSelectedPeriod] = useState<any>(null);
 
@@ -31,28 +29,28 @@ const Statistics = () => {
 
 	// Whenever the timeframe changes, recompute periods *and* selectedPeriod together
 	useEffect(() => {
-		const { periodOptions, latestPeriod } = gatherMostRecentData(timeFrame);
+		const { periodOptions, latestPeriod } = gatherMostRecentData(settings.lastUsedPeriodTab);
 		setPeriodOptions(periodOptions);
 		setSelectedPeriod(latestPeriod);
-	}, [timeFrame]);
+	}, [settings.lastUsedPeriodTab]);
 
 	// Date Ranges regenerated when selectedPeriod changes
-	const { timeFilteredWorkEntries, isLoading } = useGatherPeriodData({ selectedPeriod: selectedPeriod, timeFrame: timeFrame, workEntries: settings.workEntries });
+	const { timeFilteredWorkEntries, isLoading } = useGatherPeriodData({ selectedPeriod: selectedPeriod, timeFrame: settings.lastUsedPeriodTab, workEntries: settings.workEntries });
 
 	return (
 		<div
 			className={`${settings.darkMode ? 'bg-zinc-700' : 'bg-white'
-				} gap-1 flex flex-col relative p-4 short-laptop:h-4/5 md:max-h-[66vh] md:h-[66vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+				} gap-1 flex flex-col relative p-4 short-laptop:h-70per md:max-h-[60vh] md:h-[60vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
 				}`}
 		>
 			<div className='flex flex-col flex-1 items-center min-h-0'>
 				<div className='flex flex-col w-full h-30 space-y-2'>
-					<TimeFrameSelection timeFrame={timeFrame} setTimeFrame={setTimeFrame} />
+					<TimeFrameSelection timeFrame={settings.lastUsedPeriodTab} setTimeFrame={settings.setLastUsedPeriodTab} />
 					<Dropdown
 						value={selectedPeriod}
 						options={periodOptions}
 						onChange={(e) => setSelectedPeriod(e.value)}
-						placeholder={`Select ${timeFrame === 'W' ? 'week' : timeFrame === 'M' ? 'month' : 'year'
+						placeholder={`Select ${settings.lastUsedPeriodTab === 'W' ? 'week' : settings.lastUsedPeriodTab === 'M' ? 'month' : 'year'
 							}`}
 						className={`w-full ${settings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
 						style={{
@@ -65,8 +63,8 @@ const Statistics = () => {
 						panelStyle={{ backgroundColor: settings.darkMode ? '#52525B' : '#ffffff' }}
 					/>
 					<div className='flex flex-row space-x-1'>
-						<ItemFilterButton isActive={itemFilter == 'Task'} name={'Task'} setItemFilter={setItemFilter} />
-						<ItemFilterButton isActive={itemFilter == 'Topic'} name={'Topic'} setItemFilter={setItemFilter} />
+						<ItemFilterButton isActive={settings.lastUsedItemTab == 'Task'} name={'Task'} setItemFilter={settings.setLastUsedItemTab} />
+						<ItemFilterButton isActive={settings.lastUsedItemTab == 'Topic'} name={'Topic'} setItemFilter={settings.setLastUsedItemTab} />
 					</div>
 				</div>
 				{isLoading ?
@@ -77,7 +75,7 @@ const Statistics = () => {
 						{timeFilteredWorkEntries?.length === 0 ? (
 							<p className='text-sm p-2'>No data found for this period.</p>
 						) : (
-							<DataVisualizationPanel itemFilter={itemFilter} timeFilteredWorkEntries={timeFilteredWorkEntries} />
+							<DataVisualizationPanel itemFilter={settings.lastUsedItemTab} timeFilteredWorkEntries={timeFilteredWorkEntries} />
 						)}
 					</div>)}
 

@@ -9,7 +9,7 @@ import { filterWorkEntriesByDateRange } from '../utils/utils';
 // Interface Definition
 interface UseGatherPeriodDataProps {
     selectedPeriod: any;
-    timeFrame: 'W' | 'M' | 'Y';
+    timeFrame: 'W' | 'M' | 'Y' | string;
     workEntries: WorkEntry[];
 }
 

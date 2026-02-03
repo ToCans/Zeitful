@@ -101,6 +101,18 @@ function App() {
 			return typeof value === 'string' ? value : 'None';
 		}
 	);
+	const [lastUsedPeriodTab, setLastUsedPeriodTab] = useState<string>(
+		() => {
+			const value = checkLocalStorage('lastUsedPeriodTab', 'M');
+			return typeof value === 'string' ? value : 'M';
+		}
+	);
+	const [lastUsedItemTab, setLastUsedItemTab] = useState<string>(
+		() => {
+			const value = checkLocalStorage('lastUsedItemTab', 'Task');
+			return typeof value === 'string' ? value : 'Task';
+		}
+	);
 
 	// Push
 	useEffect(() => {
@@ -167,8 +179,8 @@ function App() {
 	return (
 		<div
 			className={`flex flex-col h-dvh w-dvw ${darkMode
-					? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
-					: 'bg-zinc-100 text-black fill-gray-400'
+				? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
+				: 'bg-zinc-100 text-black fill-gray-400'
 				} overflow-hidden`}
 		>
 			<PrimeReactProvider>
@@ -198,6 +210,8 @@ function App() {
 						lastCloudDatabaseSync,
 						darkMode,
 						hasSyncedRef,
+						lastUsedPeriodTab,
+						lastUsedItemTab,
 						setActivePage,
 						setTabTimer,
 						setWorkingTime,
@@ -214,6 +228,8 @@ function App() {
 						setUseCloudDatabase,
 						setLastCloudDatabaseSync,
 						setDarkMode,
+						setLastUsedPeriodTab,
+						setLastUsedItemTab,
 					}}
 				>
 					{/* Main content grows and centers */}

@@ -70,6 +70,8 @@ export type PersistedSettings = Pick<
 	| 'useCloudDatabase'
 	| 'lastCloudDatabaseSync'
 	| 'darkMode'
+	| 'lastUsedPeriodTab'
+	| 'lastUsedItemTab'
 >;
 
 // Work Tasks //

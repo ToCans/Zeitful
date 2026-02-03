@@ -10,7 +10,7 @@ import {
 
 // Interface Definition
 interface UseGatherGroupedDataProps {
-    itemFilter: 'Task' | 'Topic';
+    itemFilter: 'Task' | 'Topic' | string;
     workEntries: WorkEntry[] | null;
     workTasks: WorkTask[];
     workTopics: WorkTopic[];

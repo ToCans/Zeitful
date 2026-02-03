@@ -7,7 +7,7 @@ import { formatMinutes } from '../../../utils/time';
 // Interface Defintion
 interface OverallStatsProps {
     itemFilteredData: TopicData | TaskData | null,
-    itemFilter: 'Task' | 'Topic',
+    itemFilter: 'Task' | 'Topic' | string,
     periodFilteredData: WorkEntry[] | null,
     unfilteredData?: WorkEntry[] | null,
 }

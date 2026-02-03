@@ -29,6 +29,8 @@ export interface SettingsContextType {
 	lastCloudDatabaseSync: string;
 	darkMode: boolean;
 	hasSyncedRef: RefObject<boolean>;
+	lastUsedPeriodTab: 'W' | 'M' | 'Y' | string;
+	lastUsedItemTab: 'Task' | 'Topic' | string;
 	setActivePage: Dispatch<React.SetStateAction<Page>>;
 	setTabTimer: Dispatch<React.SetStateAction<boolean>>;
 	setWorkingTime: Dispatch<React.SetStateAction<number>>;
@@ -45,4 +47,6 @@ export interface SettingsContextType {
 	setCloudDatabase: Dispatch<React.SetStateAction<SupabaseClient | null>>;
 	setLastCloudDatabaseSync: Dispatch<React.SetStateAction<string>>;
 	setDarkMode: Dispatch<React.SetStateAction<boolean>>;
+	setLastUsedPeriodTab: Dispatch<React.SetStateAction<string>>;
+	setLastUsedItemTab: Dispatch<React.SetStateAction<string>>;
 }
