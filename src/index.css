@@ -121,9 +121,14 @@ body,
   }
 }
 
-@media (max-height: 905px) {
-  .short-laptop\:h-70per {
-    height: 70vh;
-    max-height: 70vh;
+@media (min-width: 710px) and (max-width: 1499px) and (min-height: 640px) and (max-height: 900px) {
+  .short-laptop\:h-75per {
+    height: 75vh;
+    max-height: 75vh;
+  }
+
+  .short-laptop\:size-40 {
+    width: 12rem;
+    height: 12rem;
   }
 }
