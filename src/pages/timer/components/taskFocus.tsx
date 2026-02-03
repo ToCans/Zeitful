@@ -20,9 +20,9 @@ const TaskFocus = () => {
 			<Dropdown
 				value={settings.activeWorkTask}
 				onChange={(e: DropdownChangeEvent) => settings.setActiveWorkTask(e.value)}
-				options={sortedWorkTasks.filter(task => task.last_action !== 3)}
+				options={sortedWorkTasks.filter(task => task.last_action !== 3 && task.status == 2)}
 				optionLabel='name'
-				placeholder='Select a Work Task'
+				placeholder='Select an active Work Task'
 				valueTemplate={selectedWorkTaskOptionTemplate}
 				itemTemplate={workTaskOptionTemplate}
 				className={`w-full ${settings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}

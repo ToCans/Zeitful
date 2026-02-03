@@ -32,5 +32,5 @@ export const selectedWorkTaskOptionTemplate = (workTask: WorkTask) => {
 		);
 	}
 
-	return <p>Select a Work Task</p>;
+	return <p>Select an active Work Task</p>;
 };
