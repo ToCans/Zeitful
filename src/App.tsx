@@ -13,6 +13,7 @@ import NavBar from './components/NavBar/NavBar';
 import UserPage from './pages/users/components/userPage';
 import Settings from './pages/settings/components/settings';
 import Statistics from './pages/statistics/components/statistics';
+import { Toast } from 'primereact/toast';
 import Timer from './pages/timer/components/timer';
 import SettingsContext from './context/settingsContext';
 // MP3 Imports
@@ -46,11 +47,11 @@ function App() {
 
 	// Cloud Database
 	const [cloudDatabase, setCloudDatabase] = useState<SupabaseClient | null>(
-		null
+		null,
 	);
 
 	// Default References
-	const permission = useRef<string | null>(null);
+	const permission = useRef<PermissionState | null>(null);
 	const subscription = useRef<PushSubscription | null>(null);
 	const todayDate = useRef<string | null>(null);
 	const hasSyncedRef = useRef<boolean>(false);
@@ -65,6 +66,9 @@ function App() {
 
 	// Reference for webworker
 	const timerWorker = useRef<Worker | null>(null);
+
+	// Toast Reference
+	const toast = useRef<Toast>(null!);
 
 	// Local Storage Checks
 	const [showTabTimer, setTabTimer] = useState<boolean>(() => {
@@ -99,20 +103,16 @@ function App() {
 		() => {
 			const value = checkLocalStorage('lastCloudDatabaseSync', 'None');
 			return typeof value === 'string' ? value : 'None';
-		}
+		},
 	);
-	const [lastUsedPeriodTab, setLastUsedPeriodTab] = useState<string>(
-		() => {
-			const value = checkLocalStorage('lastUsedPeriodTab', 'M');
-			return typeof value === 'string' ? value : 'M';
-		}
-	);
-	const [lastUsedItemTab, setLastUsedItemTab] = useState<string>(
-		() => {
-			const value = checkLocalStorage('lastUsedItemTab', 'Task');
-			return typeof value === 'string' ? value : 'Task';
-		}
-	);
+	const [lastUsedPeriodTab, setLastUsedPeriodTab] = useState<string>(() => {
+		const value = checkLocalStorage('lastUsedPeriodTab', 'M');
+		return typeof value === 'string' ? value : 'M';
+	});
+	const [lastUsedItemTab, setLastUsedItemTab] = useState<string>(() => {
+		const value = checkLocalStorage('lastUsedItemTab', 'Task');
+		return typeof value === 'string' ? value : 'Task';
+	});
 
 	// Push
 	useEffect(() => {
@@ -152,12 +152,48 @@ function App() {
 		};
 	}, []);
 
-	// Get the latest topics and tasks
+	// Get the latest topics, tasks, and work entries
 	useEffect(() => {
 		(async () => {
-			setWorkTopics((await getTopics()).item as WorkTopic[]);
-			setWorkTasks((await getTasks()).item as WorkTask[]);
-			setWorkEntries((await getWorkEntries()).item as WorkEntry[]);
+			const topicResponse = await getTopics();
+			const taskResponse = await getTasks();
+			const workEntryResponse = await getWorkEntries();
+
+			// Setting Topics
+			if (topicResponse.status == 'Failure') {
+				toast.current?.show({
+					severity: 'error',
+					summary: topicResponse.status,
+					detail: topicResponse.message,
+					life: 3000,
+				});
+			} else {
+				setWorkTopics(topicResponse.item as WorkTopic[]);
+			}
+
+			// Setting Tasks
+			if (taskResponse.status == 'Failure') {
+				toast.current?.show({
+					severity: 'error',
+					summary: taskResponse.status,
+					detail: taskResponse.message,
+					life: 3000,
+				});
+			} else {
+				setWorkTasks(taskResponse.item as WorkTask[]);
+			}
+
+			// Setting Work Entries
+			if (workEntryResponse.status == 'Failure') {
+				toast.current?.show({
+					severity: 'error',
+					summary: workEntryResponse.status,
+					detail: workEntryResponse.message,
+					life: 3000,
+				});
+			} else {
+				setWorkEntries(workEntryResponse.item as WorkEntry[]);
+			}
 		})();
 	}, []);
 
@@ -178,10 +214,11 @@ function App() {
 
 	return (
 		<div
-			className={`flex flex-col h-dvh w-dvw ${darkMode
-				? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
-				: 'bg-zinc-100 text-black fill-gray-400'
-				} overflow-hidden`}
+			className={`flex flex-col h-dvh w-dvw ${
+				darkMode
+					? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
+					: 'bg-zinc-100 text-black fill-gray-400'
+			} overflow-hidden`}
 		>
 			<PrimeReactProvider>
 				<SettingsContext.Provider
@@ -212,6 +249,7 @@ function App() {
 						hasSyncedRef,
 						lastUsedPeriodTab,
 						lastUsedItemTab,
+						toast: toast.current,
 						setActivePage,
 						setTabTimer,
 						setWorkingTime,
@@ -232,6 +270,7 @@ function App() {
 						setLastUsedItemTab,
 					}}
 				>
+					<Toast ref={toast}></Toast>
 					{/* Main content grows and centers */}
 					<div className='flex-1 flex flex-col justify-center items-center overscroll-none'>
 						{activePage === 'Timer' && <Timer />}

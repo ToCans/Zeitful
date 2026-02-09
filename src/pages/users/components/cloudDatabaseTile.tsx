@@ -4,7 +4,13 @@ import {
 	syncLocalDataToSupabaseDatabase,
 	getDataFromSupabaseDatabase,
 } from '../../../api/cloudDatabase';
-import { getTasks, getTopics, getLocalDatabaseData, getWorkEntries, updataLocalDatabaseFromJson } from '../../../api/localDatabase';
+import {
+	getTasks,
+	getTopics,
+	getLocalDatabaseData,
+	getWorkEntries,
+	updataLocalDatabaseFromJson,
+} from '../../../api/localDatabase';
 
 // Hook Imports
 import { useAppContext } from '../../../hooks/useAppContext';
@@ -14,10 +20,15 @@ import { IconContext } from 'react-icons';
 // Library Imports
 import { createClient } from '@supabase/supabase-js';
 // React Imports
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 // Utils Imports
 import { formatDate } from '../../../utils/date';
-import type { CloudDatabaseData, WorkEntry, WorkTask, WorkTopic } from '../../../types/types';
+import type {
+	CloudDatabaseData,
+	WorkEntry,
+	WorkTask,
+	WorkTopic,
+} from '../../../types/types';
 
 // Component Definition
 const CloudDatabaseTile = () => {
@@ -25,6 +36,97 @@ const CloudDatabaseTile = () => {
 	const credentialsInputRef = useRef<HTMLInputElement>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
+	async function handleCloudCredentialsImportClick() {
+		credentialsInputRef.current?.click();
+	}
+
+	async function handleCloudDatabaseFileUpload(
+		e: React.ChangeEvent<HTMLInputElement>,
+	) {
+		try {
+			const file = e.target.files?.[0];
+			if (!file) {
+				console.log('Error: Cloud Credentials File not found.');
+				return;
+			}
+			const credentialResponse =
+				await importCloudDatabaseCredentials(file);
+			if (credentialResponse.status == 'Failure') {
+				settings.toast?.show({
+					severity: 'error',
+					summary: credentialResponse.status,
+					detail: credentialResponse.message,
+					life: 3000,
+				});
+			} else {
+				const supabaseClient = createClient(
+					credentialResponse.cloudCredentials['database_url'],
+					credentialResponse.cloudCredentials['api_key'],
+				);
+				settings.setCloudDatabase(supabaseClient);
+			}
+		} catch (err) {
+			settings.toast?.show({
+				severity: 'error',
+				summary: 'Error',
+				detail: 'Incorrect credentials provided.',
+				life: 3000,
+			});
+			console.error(err);
+		}
+	}
+
+	const handleCloudDatabaseDataSync = useCallback(async () => {
+		if (!settings.cloudDatabase) return;
+
+		try {
+			setIsLoading(true);
+
+			// Syncing Mechanism
+			const localData = await getLocalDatabaseData();
+
+			// Sync local data to Supabase
+			const syncResponse = await syncLocalDataToSupabaseDatabase(
+				settings.cloudDatabase,
+				localData,
+			);
+			console.log(syncResponse.status, syncResponse.message);
+
+			// Get latest data from Supabase
+			const response = await getDataFromSupabaseDatabase(
+				settings.cloudDatabase,
+			);
+
+			if (response.status === 'Success' && response.item) {
+				await updataLocalDatabaseFromJson(
+					response.item as CloudDatabaseData,
+				);
+
+				settings.setLastCloudDatabaseSync(new Date().toISOString());
+
+				// Refresh state
+				settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
+				settings.setWorkTasks((await getTasks()).item as WorkTask[]);
+				settings.setWorkEntries(
+					(await getWorkEntries()).item as WorkEntry[],
+				);
+
+				console.log('Successful database sync');
+			}
+			if (response.status == 'Failure') {
+				settings.toast?.show({
+					severity: 'error',
+					summary: response.status,
+					detail: response.message,
+					life: 3000,
+				});
+			}
+		} catch (e) {
+			console.log('Experienced error syncing databases', e);
+		} finally {
+			setIsLoading(false);
+		}
+	}, [settings, setIsLoading]);
 
 	useEffect(() => {
 		if (
@@ -35,61 +137,12 @@ const CloudDatabaseTile = () => {
 			handleCloudDatabaseDataSync();
 			settings.hasSyncedRef.current = true; // mark as synced
 		}
-	}, [settings.cloudDatabase, settings.useCloudDatabase]);
-
-	async function handleCloudCredentialsImportClick() {
-		credentialsInputRef.current?.click();
-	}
-
-	async function handleCloudDatabaseFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-		try {
-			const file = e.target.files?.[0];
-			if (!file) {
-				console.log("Error: Cloud Credentials File not found.");
-				return;
-			}
-			const response = await importCloudDatabaseCredentials(file);
-			console.log(response.status, response.message);
-			const supabaseClient = createClient(
-				response.cloudCredentials['database_url'],
-				response.cloudCredentials['api_key']
-			);
-			settings.setCloudDatabase(supabaseClient);
-		} catch (err) {
-			console.error(err);
-		}
-	}
-
-	async function handleCloudDatabaseDataSync() {
-		if (settings.cloudDatabase) {
-			try {
-				setIsLoading(true);
-				// Syncing Mechanism
-				const localData = await getLocalDatabaseData();
-				// Syncing Local Data to the supabase (adding/updating missing entries)
-				const syncReponse = await syncLocalDataToSupabaseDatabase(settings.cloudDatabase, localData);
-				console.log(syncReponse.status, syncReponse.message);
-
-				// Getting the most recent data from supabase
-				const response = await getDataFromSupabaseDatabase(settings.cloudDatabase);
-				if (response.status === "Success" && response.item) {
-					await updataLocalDatabaseFromJson(response.item as CloudDatabaseData);
-					settings.setLastCloudDatabaseSync(new Date().toISOString());
-
-					// Setting All Items
-					settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
-					settings.setWorkTasks((await getTasks()).item as WorkTask[]);
-					settings.setWorkEntries((await getWorkEntries()).item as WorkEntry[]);
-					console.log('Successful database sync');
-
-				}
-			} catch (e) {
-				console.log('Experience error syncing databases', e);
-			} finally {
-				setIsLoading(false);
-			}
-		}
-	}
+	}, [
+		handleCloudDatabaseDataSync,
+		settings.hasSyncedRef,
+		settings.cloudDatabase,
+		settings.useCloudDatabase,
+	]);
 
 	return (
 		<div className='flex flex-row items-center gap-1 p-1'>
@@ -102,30 +155,34 @@ const CloudDatabaseTile = () => {
 			/>
 			<IconContext.Provider
 				value={{
-					className: `${settings.darkMode
-						? 'fill-gray-200 hover:fill-gray-400'
-						: 'fill-gray-600 hover:fill-gray-400'
-						} size-5 custom-target-icon ${settings.cloudDatabase === null && settings.useCloudDatabase === true
+					className: `${
+						settings.darkMode
+							? 'fill-gray-200 hover:fill-gray-400'
+							: 'fill-gray-600 hover:fill-gray-400'
+					} size-5 custom-target-icon ${
+						settings.cloudDatabase === null &&
+						settings.useCloudDatabase === true
 							? 'animate-bounce'
 							: ''
-						}`,
+					}`,
 				}}
 			>
 				<PiCloud
 					onClick={async () => {
 						await handleCloudCredentialsImportClick();
-						await handleCloudDatabaseDataSync();
 					}}
 				/>
 			</IconContext.Provider>
 			<div className='flex flex-row space-x-1 items-center'></div>
-			{settings.useCloudDatabase === true && settings.cloudDatabase !== null ? (
+			{settings.useCloudDatabase === true &&
+			settings.cloudDatabase !== null ? (
 				<IconContext.Provider
 					value={{
-						className: `${settings.darkMode
-							? 'fill-gray-200 hover:fill-gray-400'
-							: 'fill-gray-600 hover:fill-gray-400'
-							} size-5 custom-target-icon`,
+						className: `${
+							settings.darkMode
+								? 'fill-gray-200 hover:fill-gray-400'
+								: 'fill-gray-600 hover:fill-gray-400'
+						} size-5 custom-target-icon`,
 					}}
 				>
 					<PiArrowsClockwise
@@ -136,11 +193,16 @@ const CloudDatabaseTile = () => {
 					/>
 				</IconContext.Provider>
 			) : null}
-			{settings.lastCloudDatabaseSync !== 'None' && settings.useCloudDatabase === true ? (
+			{settings.lastCloudDatabaseSync !== 'None' &&
+			settings.useCloudDatabase === true ? (
 				<div className='flex flex-row space-x-1'>
 					<p className='text-xs'>Last Synced:</p>
-					<p className='text-xs'>{formatDate(settings.lastCloudDatabaseSync).date}</p>
-					<p className='text-xs'>@ {formatDate(settings.lastCloudDatabaseSync).time}</p>
+					<p className='text-xs'>
+						{formatDate(settings.lastCloudDatabaseSync).date}
+					</p>
+					<p className='text-xs'>
+						@ {formatDate(settings.lastCloudDatabaseSync).time}
+					</p>
 				</div>
 			) : null}
 		</div>

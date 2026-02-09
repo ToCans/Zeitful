@@ -1,6 +1,10 @@
 // API Imports
 import { getTopics, getWorkEntries } from '../../../api/localDatabase';
-import { getTasks, importLocalDatabaseDataFromJson, downloadDataJson } from '../../../api/localDatabase';
+import {
+	getTasks,
+	importLocalDatabaseDataFromJson,
+	downloadDataJson,
+} from '../../../api/localDatabase';
 // Icon Imports
 import { PiUpload, PiDownloadSimple } from 'react-icons/pi';
 // Hook Imports
@@ -24,17 +28,36 @@ const DataHandlerTile = () => {
 
 		if (!file) return;
 		try {
-			await importLocalDatabaseDataFromJson(file);
-			settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
-			settings.setWorkTasks((await getTasks()).item as WorkTask[]);
-			settings.setWorkEntries((await getWorkEntries()).item as WorkEntry[]);
+			const importResponse = await importLocalDatabaseDataFromJson(file);
+			if (importResponse.status == 'Failure') {
+				settings.toast?.show({
+					severity: 'error',
+					summary: importResponse.status,
+					detail: importResponse.message,
+					life: 3000,
+				});
+			} else {
+				settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
+				settings.setWorkTasks((await getTasks()).item as WorkTask[]);
+				settings.setWorkEntries(
+					(await getWorkEntries()).item as WorkEntry[],
+				);
+			}
 		} catch (err) {
 			console.error(err);
 		}
 	}
 
 	async function handleDataDownloadClick() {
-		await downloadDataJson();
+		const downloadResponse = await downloadDataJson();
+		if (downloadResponse.status == 'Failure') {
+			settings.toast?.show({
+				severity: 'error',
+				summary: downloadResponse.status,
+				detail: downloadResponse.message,
+				life: 3000,
+			});
+		}
 	}
 	return (
 		<div className='flex gap-1'>
@@ -47,20 +70,22 @@ const DataHandlerTile = () => {
 			/>
 			<IconContext.Provider
 				value={{
-					className: `${settings.darkMode
-						? 'fill-gray-200 hover:fill-gray-400'
-						: 'fill-gray-600 hover:fill-gray-400'
-						} size-5 custom-target-icon`,
+					className: `${
+						settings.darkMode
+							? 'fill-gray-200 hover:fill-gray-400'
+							: 'fill-gray-600 hover:fill-gray-400'
+					} size-5 custom-target-icon`,
 				}}
 			>
 				<PiUpload onClick={handleDataImportClick} />
 			</IconContext.Provider>
 			<IconContext.Provider
 				value={{
-					className: `${settings.darkMode
-						? 'fill-gray-200 hover:fill-gray-400'
-						: 'fill-gray-600 hover:fill-gray-400'
-						} size-5 custom-target-icon`,
+					className: `${
+						settings.darkMode
+							? 'fill-gray-200 hover:fill-gray-400'
+							: 'fill-gray-600 hover:fill-gray-400'
+					} size-5 custom-target-icon`,
 				}}
 			>
 				<PiDownloadSimple onClick={handleDataDownloadClick} />

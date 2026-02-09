@@ -11,7 +11,7 @@ import type {
 	WorkTaskStatus,
 	WorkTopic,
 	WorkEntry,
-	CloudDatabaseData
+	CloudDatabaseData,
 } from '../types/types';
 
 // Consts
@@ -68,7 +68,6 @@ function createTables(db: Database) {
 }
 
 // Saving Local Database
-// TODO: Wrap in Try Catch
 export async function saveLocalDatabase() {
 	const db = await getLocalDatabase();
 	const data = db.export();
@@ -76,7 +75,6 @@ export async function saveLocalDatabase() {
 }
 
 // Gathers all of the local database data from each table
-// TODO: Wrap in Try Catch
 export async function getLocalDatabaseData() {
 	const db = await getLocalDatabase();
 
@@ -96,18 +94,28 @@ export async function getLocalDatabaseData() {
 }
 
 // Converts the database to a downloadable json file
-// TODO: Wrap in Try Catch
 export async function downloadDataJson() {
-	const data = await getLocalDatabaseData();
-	const blob = new Blob([JSON.stringify(data, null, 2)], {
-		type: 'application/json',
-	});
-	const url = URL.createObjectURL(blob);
-	const a = document.createElement('a');
-	a.href = url;
-	a.download = 'zeitful_data.json';
-	a.click();
-	URL.revokeObjectURL(url);
+	try {
+		const data = await getLocalDatabaseData();
+		const blob = new Blob([JSON.stringify(data, null, 2)], {
+			type: 'application/json',
+		});
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'zeitful_data.json';
+		a.click();
+		URL.revokeObjectURL(url);
+		return {
+			status: 'Success',
+			message: `Data was successfully downloaded.`,
+		};
+	} catch (e) {
+		return {
+			status: 'Failure',
+			message: `Data wasn't downloaded successfully. ${e}`,
+		};
+	}
 }
 
 // Import JSON data back into the database
@@ -133,7 +141,7 @@ export async function updataLocalDatabaseFromJson(jsonData: CloudDatabaseData) {
 				t.name,
 				t.color,
 				t.last_action,
-				t.last_action_date ?? new Date().toISOString()
+				t.last_action_date ?? new Date().toISOString(),
 			]);
 		}
 		upsertTopic.free();
@@ -158,7 +166,7 @@ export async function updataLocalDatabaseFromJson(jsonData: CloudDatabaseData) {
 				t.name,
 				t.status,
 				t.last_action,
-				t.last_action_date ?? new Date().toISOString()
+				t.last_action_date ?? new Date().toISOString(),
 			]);
 		}
 		upsertTask.free();
@@ -190,17 +198,27 @@ export async function updataLocalDatabaseFromJson(jsonData: CloudDatabaseData) {
 		upsertEntry.free();
 		await saveLocalDatabase();
 	} catch (e) {
-		console.log("Failed to import data into local database. Error:", e);
+		console.log('Failed to import data into local database. Error:', e);
 	}
 }
 
 // Imports Database Data from Json File
-// TODO: Wrap in Try Catch
 export async function importLocalDatabaseDataFromJson(file: File) {
-	const text = await file.text();
-	const jsonData = JSON.parse(text);
-	console.log(jsonData);
-	await updataLocalDatabaseFromJson(jsonData);
+	try {
+		const text = await file.text();
+		const jsonData = JSON.parse(text);
+		console.log(jsonData);
+		await updataLocalDatabaseFromJson(jsonData);
+		return {
+			status: 'Success',
+			message: `Data was successfully imported.`,
+		};
+	} catch (e) {
+		return {
+			status: 'Failure',
+			message: `Data wasn't imported successfully. ${e}`,
+		};
+	}
 }
 
 // Local Database Functions for Tasks
@@ -211,7 +229,9 @@ export async function addTask(task: WorkTask): Promise<DatabaseActionResponse> {
 
 		// Check if topic already exists
 		const existing = db.exec(
-			'SELECT * FROM work_tasks WHERE name = "' + task.name.replace(/"/g, '""') + '"'
+			'SELECT * FROM work_tasks WHERE name = "' +
+				task.name.replace(/"/g, '""') +
+				'"',
 		);
 
 		if (existing.length > 0) {
@@ -224,7 +244,14 @@ export async function addTask(task: WorkTask): Promise<DatabaseActionResponse> {
 		db.run(
 			`INSERT INTO work_tasks (id, topic_id, name, status, last_action, last_action_date)
              VALUES (?, ?, ?, ?, ?, ?)`,
-			[task.id, task?.topic_id ?? null, task.name, 1, 1, task?.last_action_date]
+			[
+				task.id,
+				task?.topic_id ?? null,
+				task.name,
+				1,
+				1,
+				task?.last_action_date,
+			],
 		);
 
 		await saveLocalDatabase();
@@ -242,13 +269,16 @@ export async function addTask(task: WorkTask): Promise<DatabaseActionResponse> {
 }
 
 // Editing task in local database
-export async function editTask(taskId: string, workTask: EditedWorkTask): Promise<DatabaseActionResponse> {
+export async function editTask(
+	taskId: string,
+	workTask: EditedWorkTask,
+): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
 		// Check if task exists
 		const existing = db.exec(
-			`SELECT * FROM work_tasks WHERE id = "${taskId.replace(/"/g, '""')}"`
+			`SELECT * FROM work_tasks WHERE id = "${taskId.replace(/"/g, '""')}"`,
 		);
 
 		if (existing.length === 0) {
@@ -266,7 +296,14 @@ export async function editTask(taskId: string, workTask: EditedWorkTask): Promis
                  last_action = ?,
 				 last_action_date = ?
              WHERE id = ?`,
-			[workTask.topic_id ?? null, workTask.name, workTask.status, 2, workTask.last_action_date, taskId]
+			[
+				workTask.topic_id ?? null,
+				workTask.name,
+				workTask.status,
+				2,
+				workTask.last_action_date,
+				taskId,
+			],
 		);
 
 		await saveLocalDatabase();
@@ -284,13 +321,17 @@ export async function editTask(taskId: string, workTask: EditedWorkTask): Promis
 }
 
 // Deleting Task in local database
-export async function deleteTask(taskId: string, task: WorkTask, last_action_date: string): Promise<DatabaseActionResponse> {
+export async function deleteTask(
+	taskId: string,
+	task: WorkTask,
+	last_action_date: string,
+): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
 		// Check if task exists
 		const existing = db.exec(
-			`SELECT * FROM work_tasks WHERE id = "${taskId.replace(/"/g, '""')}"`
+			`SELECT * FROM work_tasks WHERE id = "${taskId.replace(/"/g, '""')}"`,
 		);
 
 		if (existing.length === 0) {
@@ -305,7 +346,7 @@ export async function deleteTask(taskId: string, task: WorkTask, last_action_dat
              SET last_action = ?,
 				last_action_date = ?
              WHERE id = ?`,
-			[3, last_action_date, taskId]
+			[3, last_action_date, taskId],
 		);
 
 		await saveLocalDatabase();
@@ -337,14 +378,16 @@ export async function getTasks(): Promise<DatabaseActionResponse> {
 				item: [],
 			};
 
-		const localWorkTasks = res[0].values.map(([id, topic_id, name, status, last_action, last_action_date]) => ({
-			id: id as string,
-			topic_id: topic_id as string | null,
-			name: name as string,
-			status: status as WorkTaskStatus,
-			last_action: last_action as Action,
-			last_action_date: last_action_date as string,
-		}));
+		const localWorkTasks = res[0].values.map(
+			([id, topic_id, name, status, last_action, last_action_date]) => ({
+				id: id as string,
+				topic_id: topic_id as string | null,
+				name: name as string,
+				status: status as WorkTaskStatus,
+				last_action: last_action as Action,
+				last_action_date: last_action_date as string,
+			}),
+		);
 
 		return {
 			status: 'Success',
@@ -361,13 +404,17 @@ export async function getTasks(): Promise<DatabaseActionResponse> {
 
 // Local Database Functions for Topics
 // Adding Topic to local database
-export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse> {
+export async function addTopic(
+	topic: WorkTopic,
+): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
 		// Check if topic already exists
 		const existing = db.exec(
-			'SELECT * FROM work_topics WHERE name = "' + topic.name.replace(/"/g, '""') + '"'
+			'SELECT * FROM work_topics WHERE name = "' +
+				topic.name.replace(/"/g, '""') +
+				'"',
 		);
 
 		if (existing.length > 0) {
@@ -382,7 +429,7 @@ export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse
 			`INSERT INTO work_topics 
 			(id, name, color, last_action, last_action_date) 
 			VALUES (?, ?, ?, ?, ?)`,
-			[topic.id, topic.name, topic.color, 1, topic.last_action_date]
+			[topic.id, topic.name, topic.color, 1, topic.last_action_date],
 		);
 
 		await saveLocalDatabase();
@@ -399,13 +446,16 @@ export async function addTopic(topic: WorkTopic): Promise<DatabaseActionResponse
 }
 
 // Editing topic in local database
-export async function editTopic(topicId: string, workTopic: EditedWorkTopic): Promise<DatabaseActionResponse> {
+export async function editTopic(
+	topicId: string,
+	workTopic: EditedWorkTopic,
+): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
 		// Check if task exists
 		const existing = db.exec(
-			`SELECT * FROM work_topics WHERE id = "${topicId.replace(/"/g, '""')}"`
+			`SELECT * FROM work_topics WHERE id = "${topicId.replace(/"/g, '""')}"`,
 		);
 
 		if (existing.length === 0) {
@@ -428,8 +478,8 @@ export async function editTopic(topicId: string, workTopic: EditedWorkTopic): Pr
 				workTopic.color,
 				workTopic.last_action,
 				workTopic.last_action_date,
-				topicId
-			]
+				topicId,
+			],
 		);
 
 		await saveLocalDatabase();
@@ -447,13 +497,17 @@ export async function editTopic(topicId: string, workTopic: EditedWorkTopic): Pr
 }
 
 // Deleting Task in local database ()
-export async function deleteTopic(topicId: string, topic: WorkTopic, last_action_date: string): Promise<DatabaseActionResponse> {
+export async function deleteTopic(
+	topicId: string,
+	topic: WorkTopic,
+	last_action_date: string,
+): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 
 		// Check if task exists
 		const existing = db.exec(
-			`SELECT * FROM work_topics WHERE id = "${topicId.replace(/"/g, '""')}"`
+			`SELECT * FROM work_topics WHERE id = "${topicId.replace(/"/g, '""')}"`,
 		);
 
 		if (existing.length === 0) {
@@ -468,7 +522,7 @@ export async function deleteTopic(topicId: string, topic: WorkTopic, last_action
              SET last_action = ?,
 			 	last_action_date = ?
              WHERE id = ?`,
-			[3, last_action_date, topicId]
+			[3, last_action_date, topicId],
 		);
 
 		await saveLocalDatabase();
@@ -500,13 +554,15 @@ export async function getTopics(): Promise<DatabaseActionResponse> {
 				item: [],
 			};
 
-		const localWorkTopics = res[0].values.map(([id, name, color, last_action, last_action_date]) => ({
-			id: id as string,
-			name: name as string,
-			color: color as number,
-			last_action: last_action as Action,
-			last_action_date: last_action_date as string,
-		}));
+		const localWorkTopics = res[0].values.map(
+			([id, name, color, last_action, last_action_date]) => ({
+				id: id as string,
+				name: name as string,
+				color: color as number,
+				last_action: last_action as Action,
+				last_action_date: last_action_date as string,
+			}),
+		);
 
 		return {
 			status: 'Success',
@@ -522,7 +578,9 @@ export async function getTopics(): Promise<DatabaseActionResponse> {
 }
 
 // Work Entires
-export async function addWorkEntry(workEntry: WorkEntry): Promise<DatabaseActionResponse> {
+export async function addWorkEntry(
+	workEntry: WorkEntry,
+): Promise<DatabaseActionResponse> {
 	try {
 		const db = await getLocalDatabase();
 		db.run(
@@ -537,7 +595,7 @@ export async function addWorkEntry(workEntry: WorkEntry): Promise<DatabaseAction
 				workEntry.topic_name,
 				workEntry.duration,
 				workEntry.completion_time,
-			]
+			],
 		);
 		await saveLocalDatabase();
 		return {
@@ -560,15 +618,22 @@ export async function getWorkEntries(): Promise<DatabaseActionResponse> {
     FROM work_entries t
   `);
 
-		if (res.length === 0) return {
-			status: 'Success',
-			message: `No work entries available in local database.`,
-			item: [],
-		};
-		;
-
+		if (res.length === 0)
+			return {
+				status: 'Success',
+				message: `No work entries available in local database.`,
+				item: [],
+			};
 		const localWorkEntries = res[0].values.map(
-			([id, task_id, topic_id, task_name, topic_name, duration, completion_time]) => ({
+			([
+				id,
+				task_id,
+				topic_id,
+				task_name,
+				topic_name,
+				duration,
+				completion_time,
+			]) => ({
 				id: id as string,
 				task_id: task_id as string | null,
 				topic_id: topic_id as string | null,
@@ -576,7 +641,7 @@ export async function getWorkEntries(): Promise<DatabaseActionResponse> {
 				topic_name: topic_name as string | null,
 				duration: duration as number,
 				completion_time: completion_time as string,
-			})
+			}),
 		);
 
 		return {
@@ -584,8 +649,6 @@ export async function getWorkEntries(): Promise<DatabaseActionResponse> {
 			message: `Local entries available in local database.`,
 			item: localWorkEntries,
 		};
-
-
 	} catch (e) {
 		return {
 			status: 'Failure',

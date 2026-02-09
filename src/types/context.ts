@@ -2,6 +2,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Dispatch, RefObject } from 'react';
 import type { Page, WorkTask, WorkTopic, WorkEntry } from './types';
+import type { Toast } from 'primereact/toast';
 
 // Interface Defintion
 export interface SettingsContextType {
@@ -17,7 +18,7 @@ export interface SettingsContextType {
 	workingCyclesCompleted: RefObject<number>;
 	todayDate: RefObject<string | null>;
 	timerRunning: boolean;
-	permission: RefObject<any>;
+	permission: RefObject<PermissionState | null>;
 	subscription: RefObject<PushSubscription | null>;
 	workTopics: WorkTopic[];
 	workTasks: WorkTask[];
@@ -31,6 +32,7 @@ export interface SettingsContextType {
 	hasSyncedRef: RefObject<boolean>;
 	lastUsedPeriodTab: 'W' | 'M' | 'Y' | string;
 	lastUsedItemTab: 'Task' | 'Topic' | string;
+	toast: Toast | null;
 	setActivePage: Dispatch<React.SetStateAction<Page>>;
 	setTabTimer: Dispatch<React.SetStateAction<boolean>>;
 	setWorkingTime: Dispatch<React.SetStateAction<number>>;
