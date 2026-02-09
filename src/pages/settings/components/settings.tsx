@@ -5,9 +5,11 @@ import { InputSwitch } from 'primereact/inputswitch';
 import SettingsTimeTile from './settingsTimeTile';
 // Hook Imports
 import { useAppContext } from '../../../hooks/useAppContext';
-import { usePersistSettings } from '../../../hooks/usePersistSettings';
+import { usePersistAppSettings } from '../../../hooks/usePersistSettings';
 // React Imports
 import { useEffect, useState } from 'react';
+// Type Imports
+import type { PersistedAppSettings } from '../../../types/types';
 // Utils Imports
 import { formatTime } from '../../../utils/time';
 
@@ -17,11 +19,17 @@ const Settings = () => {
 	const [isMounted, setIsMounted] = useState(false);
 
 	const handleTabCheckboxChange = () => {
-		settings.setTabTimer(!settings.showTabTimer);
+		settings.setAppSettings((prev: PersistedAppSettings) => ({
+			...prev,
+			showTabTimer: !prev.showTabTimer,
+		}));
 	};
 
 	const handleCloudCheckboxChange = () => {
-		settings.setUseCloudDatabase(!settings.useCloudDatabase);
+		settings.setAppSettings((prev: PersistedAppSettings) => ({
+			...prev,
+			useCloudDatabase: !prev.useCloudDatabase,
+		}));
 	};
 
 	// Trigger the slide-in animation on component mount
@@ -38,41 +46,34 @@ const Settings = () => {
 	}, []);
 
 	// Handling for when the user changes any of the settings
-	usePersistSettings({
-		lastCloudDatabaseSync: settings.lastCloudDatabaseSync,
-		useCloudDatabase: settings.useCloudDatabase,
-		showTabTimer: settings.showTabTimer,
-		workingTime: settings.workingTime,
-		shortBreakTime: settings.shortBreakTime,
-		longBreakTime: settings.longBreakTime,
-		timerColor: settings.timerColor,
-		darkMode: settings.darkMode,
-		lastUsedPeriodTab: settings.lastUsedPeriodTab,
-		lastUsedItemTab: settings.lastUsedItemTab,
-	});
+	usePersistAppSettings(settings.appSettings);
 
 	// For Showing Timer in Tab Info
 	useEffect(() => {
 		let timeRemaining;
-		if (settings.showTabTimer === true) {
+		if (settings.appSettings.showTabTimer === true) {
 			if (settings.cycleNumber % 8 === 0) {
-				timeRemaining = settings.longBreakTime;
+				timeRemaining = settings.appSettings.longBreakTime as number;
 			} else if (settings.cycleNumber % 2 === 0) {
-				timeRemaining = settings.shortBreakTime;
+				timeRemaining = settings.appSettings.shortBreakTime as number;
 			} else {
-				timeRemaining = settings.workingTime;
+				timeRemaining = settings.appSettings.workingTime as number;
 			}
 			document.title = `${formatTime(timeRemaining)} - Zeitful`;
 		} else {
 			document.title = 'Zeitful';
 		}
-	}, [settings, settings.showTabTimer]);
+	}, [settings, settings.appSettings.showTabTimer]);
 
 	return (
 		<div
-			className={`${settings.darkMode ? 'bg-zinc-700' : 'bg-white'
-				} flex flex-col p-4 short-laptop:h-75per md:max-h-[60vh] md:h-[60vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-				}`}
+			className={`${
+				settings.appSettings.darkMode ? 'bg-zinc-700' : 'bg-white'
+			} flex flex-col p-4 short-laptop:h-75per md:max-h-[60vh] md:h-[60vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
+				isMounted
+					? 'translate-y-0 opacity-100'
+					: '-translate-y-full opacity-0'
+			}`}
 		>
 			<h1 className='flex text-2xl select-none'>User Settings</h1>
 			<div className='flex flex-col items-center justify-center space-y-2 flex-1'>
@@ -81,40 +82,83 @@ const Settings = () => {
 					<ColorPicker
 						className='outline-none focus:outline-none ring-0 focus:ring-0 focus:shadow-none'
 						inputClassName='h-5 w-5'
-						onChange={(e) => settings.setTimerColor(e.value as string)}
-						defaultColor={`#${settings.timerColor}`}
+						onChange={(e) =>
+							settings.setAppSettings(
+								(prev: PersistedAppSettings) => ({
+									...prev,
+									timerColor: e.value as string,
+								}),
+							)
+						}
+						defaultColor={`#${settings.appSettings.timerColor}`}
 					/>
 				</div>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
 					<p className='select-none text-md'>Dark Mode</p>
 					<InputSwitch
-						checked={settings.darkMode}
-						onChange={(e) => settings.setDarkMode(e.value)}
+						checked={settings.appSettings.darkMode}
+						onChange={(e) =>
+							settings.setAppSettings(
+								(prev: PersistedAppSettings) => ({
+									...prev,
+									darkMode: e.value,
+								}),
+							)
+						}
 					/>
 				</div>
 				<SettingsTimeTile
 					label='Working Minutes'
-					value={settings.workingTime}
-					setter={settings.setWorkingTime}
+					value={settings.appSettings.workingTime}
+					setter={(newValue) =>
+						settings.setAppSettings(
+							(prev: PersistedAppSettings) => ({
+								...prev,
+								workingTime: newValue as number,
+							}),
+						)
+					}
 				/>
+
 				<SettingsTimeTile
 					label='Short Break Minutes'
-					value={settings.shortBreakTime}
-					setter={settings.setShortBreakTime}
+					value={settings.appSettings.shortBreakTime}
+					setter={(newValue) =>
+						settings.setAppSettings(
+							(prev: PersistedAppSettings) => ({
+								...prev,
+								shortBreakTime: newValue as number,
+							}),
+						)
+					}
 				/>
 				<SettingsTimeTile
 					label='Long Break Minutes'
-					value={settings.longBreakTime}
-					setter={settings.setLongBreakTime}
+					value={settings.appSettings.longBreakTime}
+					setter={(newValue) =>
+						settings.setAppSettings(
+							(prev: PersistedAppSettings) => ({
+								...prev,
+								longBreakTime: newValue as number,
+							}),
+						)
+					}
 				/>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
-					<p className='text-center align-middle select-none'>Show Timer in Tab</p>
-					<Checkbox checked={settings.showTabTimer} onChange={handleTabCheckboxChange} />
+					<p className='text-center align-middle select-none'>
+						Show Timer in Tab
+					</p>
+					<Checkbox
+						checked={settings.appSettings.showTabTimer}
+						onChange={handleTabCheckboxChange}
+					/>
 				</div>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
-					<p className='text-center align-middle select-none'>Use Cloud Database</p>
+					<p className='text-center align-middle select-none'>
+						Use Cloud Database
+					</p>
 					<Checkbox
-						checked={settings.useCloudDatabase}
+						checked={settings.appSettings.useCloudDatabase}
 						onChange={handleCloudCheckboxChange}
 					/>
 				</div>

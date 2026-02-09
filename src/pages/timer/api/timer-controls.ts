@@ -85,17 +85,20 @@ export const restartTimer = async ({
 
 	if (setTimeRemaining) {
 		if (settings.cycleNumber % 8 === 0) {
-			setTimeRemaining(settings.longBreakTime);
+			setTimeRemaining(settings.appSettings.longBreakTime);
 		} else if (settings.cycleNumber % 2 === 0) {
-			setTimeRemaining(settings.shortBreakTime);
+			setTimeRemaining(settings.appSettings.shortBreakTime);
 		} else {
-			setTimeRemaining(settings.workingTime);
+			setTimeRemaining(settings.appSettings.workingTime);
 		}
 	}
 };
 
 // Skip Timer Functionality
-export const skipTimer = async ({ settings, setTimerRunning }: timerControlsProps) => {
+export const skipTimer = async ({
+	settings,
+	setTimerRunning,
+}: timerControlsProps) => {
 	if (settings.permission.current === 'prompt') {
 		await subscribeToPush(settings);
 	}

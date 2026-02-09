@@ -71,7 +71,7 @@ const DataHandlerTile = () => {
 			<IconContext.Provider
 				value={{
 					className: `${
-						settings.darkMode
+						settings.appSettings.darkMode
 							? 'fill-gray-200 hover:fill-gray-400'
 							: 'fill-gray-600 hover:fill-gray-400'
 					} size-5 custom-target-icon`,
@@ -82,7 +82,7 @@ const DataHandlerTile = () => {
 			<IconContext.Provider
 				value={{
 					className: `${
-						settings.darkMode
+						settings.appSettings.darkMode
 							? 'fill-gray-200 hover:fill-gray-400'
 							: 'fill-gray-600 hover:fill-gray-400'
 					} size-5 custom-target-icon`,

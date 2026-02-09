@@ -7,12 +7,14 @@ import { useAppContext } from '../../../hooks/useAppContext';
 const CloudSyncStatusTile = () => {
 	// Settings Context
 	const settings = useAppContext();
-	if (settings.useCloudDatabase && !settings.cloudDatabase) {
+	if (settings.appSettings.useCloudDatabase && !settings.cloudDatabase) {
 		return (
 			<IconContext.Provider
 				value={{
 					className: `${
-						settings.darkMode ? 'fill-gray-200' : 'fill-gray-600'
+						settings.appSettings.darkMode
+							? 'fill-gray-200'
+							: 'fill-gray-600'
 					} size-6 custom-target-icon`,
 				}}
 			>
@@ -24,7 +26,9 @@ const CloudSyncStatusTile = () => {
 			<IconContext.Provider
 				value={{
 					className: `${
-						settings.darkMode ? 'fill-gray-200' : 'fill-gray-600'
+						settings.appSettings.darkMode
+							? 'fill-gray-200'
+							: 'fill-gray-600'
 					} size-6 custom-target-icon`,
 				}}
 			>

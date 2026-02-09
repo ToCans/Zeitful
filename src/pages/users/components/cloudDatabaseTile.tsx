@@ -28,6 +28,7 @@ import type {
 	WorkEntry,
 	WorkTask,
 	WorkTopic,
+	PersistedAppSettings,
 } from '../../../types/types';
 
 // Component Definition
@@ -109,7 +110,10 @@ const CloudDatabaseTile = () => {
 					response.item as CloudDatabaseData,
 				);
 
-				settings.setLastCloudDatabaseSync(new Date().toISOString());
+				settings.setAppSettings((prev: PersistedAppSettings) => ({
+					...prev,
+					lastCloudDatabaseSync: new Date().toISOString(),
+				}));
 
 				// Refresh state
 				settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
@@ -137,7 +141,7 @@ const CloudDatabaseTile = () => {
 
 	useEffect(() => {
 		if (
-			settings.useCloudDatabase === true &&
+			settings.appSettings.useCloudDatabase === true &&
 			settings.cloudDatabase !== null &&
 			!settings.hasSyncedRef.current
 		) {
@@ -148,7 +152,7 @@ const CloudDatabaseTile = () => {
 		handleCloudDatabaseDataSync,
 		settings.hasSyncedRef,
 		settings.cloudDatabase,
-		settings.useCloudDatabase,
+		settings.appSettings.useCloudDatabase,
 	]);
 
 	return (
@@ -163,12 +167,12 @@ const CloudDatabaseTile = () => {
 			<IconContext.Provider
 				value={{
 					className: `${
-						settings.darkMode
+						settings.appSettings.darkMode
 							? 'fill-gray-200 hover:fill-gray-400'
 							: 'fill-gray-600 hover:fill-gray-400'
 					} size-5 custom-target-icon ${
 						settings.cloudDatabase === null &&
-						settings.useCloudDatabase === true
+						settings.appSettings.useCloudDatabase === true
 							? 'animate-bounce'
 							: ''
 					}`,
@@ -181,12 +185,12 @@ const CloudDatabaseTile = () => {
 				/>
 			</IconContext.Provider>
 			<div className='flex flex-row space-x-1 items-center'></div>
-			{settings.useCloudDatabase === true &&
+			{settings.appSettings.useCloudDatabase === true &&
 			settings.cloudDatabase !== null ? (
 				<IconContext.Provider
 					value={{
 						className: `${
-							settings.darkMode
+							settings.appSettings.darkMode
 								? 'fill-gray-200 hover:fill-gray-400'
 								: 'fill-gray-600 hover:fill-gray-400'
 						} size-5 custom-target-icon`,
@@ -200,15 +204,24 @@ const CloudDatabaseTile = () => {
 					/>
 				</IconContext.Provider>
 			) : null}
-			{settings.lastCloudDatabaseSync !== 'None' &&
-			settings.useCloudDatabase === true ? (
+			{settings.appSettings.lastCloudDatabaseSync !== 'None' &&
+			settings.appSettings.useCloudDatabase === true ? (
 				<div className='flex flex-row space-x-1'>
 					<p className='text-xs'>Last Synced:</p>
 					<p className='text-xs'>
-						{formatDate(settings.lastCloudDatabaseSync).date}
+						{
+							formatDate(
+								settings.appSettings.lastCloudDatabaseSync,
+							).date
+						}
 					</p>
 					<p className='text-xs'>
-						@ {formatDate(settings.lastCloudDatabaseSync).time}
+						@{' '}
+						{
+							formatDate(
+								settings.appSettings.lastCloudDatabaseSync,
+							).time
+						}
 					</p>
 				</div>
 			) : null}

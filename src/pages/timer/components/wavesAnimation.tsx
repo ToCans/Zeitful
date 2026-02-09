@@ -51,28 +51,40 @@ const WavesAnimation = ({ progress, timerColor }: WavesAnimationProps) => {
 							href='#gentle-wave'
 							x='48'
 							y='0'
-							fill={getWaveFillColor(settings.darkMode, 0.7)}
+							fill={getWaveFillColor(
+								settings.appSettings.darkMode,
+								0.7,
+							)}
 							className='animate-move-forever [animation-delay:-2s] [animation-duration:7s]'
 						/>
 						<use
 							href='#gentle-wave'
 							x='48'
 							y='3'
-							fill={getWaveFillColor(settings.darkMode, 0.5)}
+							fill={getWaveFillColor(
+								settings.appSettings.darkMode,
+								0.5,
+							)}
 							className='animate-move-forever [animation-delay:-3s] [animation-duration:10s]'
 						/>
 						<use
 							href='#gentle-wave'
 							x='48'
 							y='5'
-							fill={getWaveFillColor(settings.darkMode, 0.3)}
+							fill={getWaveFillColor(
+								settings.appSettings.darkMode,
+								0.3,
+							)}
 							className='animate-move-forever [animation-delay:-4s] [animation-duration:13s]'
 						/>
 						<use
 							href='#gentle-wave'
 							x='48'
 							y='7'
-							fill={getWaveFillColor(settings.darkMode, 1.0)}
+							fill={getWaveFillColor(
+								settings.appSettings.darkMode,
+								1.0,
+							)}
 							className='animate-move-forever [animation-delay:-5s] [animation-duration:20s]'
 						/>
 					</g>

@@ -29,8 +29,15 @@ import {
 	type WorkEntry,
 	type WorkTask,
 	type WorkTopic,
+	type TimePeriod,
+	type StatisticsTab,
+	type Item,
 } from './types/types';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type {
+	PersistedAppSettings,
+	PersistedTabSettings,
+} from '../src/types/types';
 // Utils Imports
 import { getCurrentDate } from './utils/time';
 
@@ -71,48 +78,47 @@ function App() {
 	const toast = useRef<Toast>(null!);
 
 	// Local Storage Checks
-	const [showTabTimer, setTabTimer] = useState<boolean>(() => {
-		const value = checkLocalStorage('tabTimer', true);
-		return typeof value === 'boolean' ? value : true;
-	});
-	const [workingTime, setWorkingTime] = useState<number>(() => {
-		const value = checkLocalStorage('workingTime', 25 * 60);
-		return typeof value === 'number' ? value : 5 * 60;
-	});
-	const [shortBreakTime, setShortBreakTime] = useState<number>(() => {
-		const value = checkLocalStorage('shortBreakTime', 5 * 60);
-		return typeof value === 'number' ? value : 5 * 60;
-	});
-	const [longBreakTime, setLongBreakTime] = useState<number>(() => {
-		const value = checkLocalStorage('longBreakTime', 15 * 60);
-		return typeof value === 'number' ? value : 15 * 60;
-	});
-	const [timerColor, setTimerColor] = useState<string>(() => {
-		const value = checkLocalStorage('timerColor', 'bfdbfe');
-		return typeof value === 'string' ? value : 'bfdbfe';
-	});
-	const [darkMode, setDarkMode] = useState<boolean>(() => {
-		const value = checkLocalStorage('darkMode', false);
-		return typeof value === 'boolean' ? value : false;
-	});
-	const [useCloudDatabase, setUseCloudDatabase] = useState<boolean>(() => {
-		const value = checkLocalStorage('useCloudDatabase', false);
-		return typeof value === 'boolean' ? value : false;
-	});
-	const [lastCloudDatabaseSync, setLastCloudDatabaseSync] = useState<string>(
-		() => {
-			const value = checkLocalStorage('lastCloudDatabaseSync', 'None');
-			return typeof value === 'string' ? value : 'None';
-		},
+	const [appSettings, setAppSettings] = useState<PersistedAppSettings>(
+		() => ({
+			showTabTimer: checkLocalStorage('showTabTimer', true) as boolean,
+			workingTime: checkLocalStorage('workingTime', 25 * 60) as number,
+			shortBreakTime: checkLocalStorage(
+				'shortBreakTime',
+				5 * 60,
+			) as number,
+			longBreakTime: checkLocalStorage(
+				'longBreakTime',
+				15 * 60,
+			) as number,
+			timerColor: checkLocalStorage('timerColor', 'bfdbfe') as string,
+			darkMode: checkLocalStorage('darkMode', false) as boolean,
+			useCloudDatabase: checkLocalStorage(
+				'useCloudDatabase',
+				false,
+			) as boolean,
+			lastCloudDatabaseSync: checkLocalStorage(
+				'lastCloudDatabaseSync',
+				'None',
+			) as string,
+		}),
 	);
-	const [lastUsedPeriodTab, setLastUsedPeriodTab] = useState<string>(() => {
-		const value = checkLocalStorage('lastUsedPeriodTab', 'M');
-		return typeof value === 'string' ? value : 'M';
-	});
-	const [lastUsedItemTab, setLastUsedItemTab] = useState<string>(() => {
-		const value = checkLocalStorage('lastUsedItemTab', 'Task');
-		return typeof value === 'string' ? value : 'Task';
-	});
+
+	const [tabSettings, setTabSettings] = useState<PersistedTabSettings>(
+		() => ({
+			lastUsedPeriodTab: checkLocalStorage(
+				'lastUsedPeriodTab',
+				'M',
+			) as TimePeriod,
+			lastUsedStatisticsTab: checkLocalStorage(
+				'lastUsedStatisticsTab',
+				'Task',
+			) as StatisticsTab,
+			lastUsedUserPageTab: checkLocalStorage(
+				'lastUsedUserPageTab',
+				'Task',
+			) as Item,
+		}),
+	);
 
 	// Push
 	useEffect(() => {
@@ -215,7 +221,7 @@ function App() {
 	return (
 		<div
 			className={`flex flex-col h-dvh w-dvw ${
-				darkMode
+				appSettings.darkMode
 					? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
 					: 'bg-zinc-100 text-black fill-gray-400'
 			} overflow-hidden`}
@@ -223,10 +229,6 @@ function App() {
 			<PrimeReactProvider>
 				<SettingsContext.Provider
 					value={{
-						showTabTimer,
-						workingTime,
-						shortBreakTime,
-						longBreakTime,
 						cycleNumber,
 						timerWorker,
 						breakFinishAudio,
@@ -241,33 +243,21 @@ function App() {
 						workTopics,
 						workEntries,
 						activeWorkTask,
-						timerColor,
 						cloudDatabase,
-						useCloudDatabase,
-						lastCloudDatabaseSync,
-						darkMode,
 						hasSyncedRef,
-						lastUsedPeriodTab,
-						lastUsedItemTab,
 						toast: toast.current,
+						appSettings,
+						tabSettings,
 						setActivePage,
-						setTabTimer,
-						setWorkingTime,
-						setShortBreakTime,
-						setLongBreakTime,
 						setCycleNumber,
 						setTimerRunning,
 						setWorkTasks,
 						setWorkTopics,
 						setWorkEntries,
 						setActiveWorkTask,
-						setTimerColor,
 						setCloudDatabase,
-						setUseCloudDatabase,
-						setLastCloudDatabaseSync,
-						setDarkMode,
-						setLastUsedPeriodTab,
-						setLastUsedItemTab,
+						setAppSettings,
+						setTabSettings,
 					}}
 				>
 					<Toast ref={toast}></Toast>

@@ -1,11 +1,10 @@
-// Type Imports
-import type { SettingsContextType } from './context';
-
 // Type Defintions
 export type Action = 1 | 2 | 3; // 1=Added, 2=Edited, 3=Deleted
 export type DatabaseActionStatus = 'Success' | 'Failure';
 export type Item = 'Task' | 'Topic' | 'Entries';
 export type Page = 'Timer' | 'Statistics' | 'UserPage' | 'Settings';
+export type StatisticsTab = 'Task' | 'Topic';
+export type TimePeriod = 'W' | 'M' | 'Y';
 export type WorkTaskStatus = 1 | 2 | 3; // 1=Open, 2=Active, 3=Closed
 
 export type CloudDatabaseCredentials = {
@@ -24,7 +23,6 @@ export type DatabaseActionResponse = {
 	message: string;
 	item?: WorkTask[] | WorkTopic[] | WorkEntry[] | CloudDatabaseData;
 };
-
 
 export type DurationByTask = {
 	[task_id: string]: number;
@@ -58,21 +56,22 @@ export type TopicData = {
 	topicPercentage?: number[];
 };
 
+export interface PersistedAppSettings {
+	showTabTimer: boolean;
+	workingTime: number;
+	shortBreakTime: number;
+	longBreakTime: number;
+	timerColor: string;
+	useCloudDatabase: boolean;
+	lastCloudDatabaseSync: string;
+	darkMode: boolean;
+}
 
-
-export type PersistedSettings = Pick<
-	SettingsContextType,
-	| 'showTabTimer'
-	| 'workingTime'
-	| 'shortBreakTime'
-	| 'longBreakTime'
-	| 'timerColor'
-	| 'useCloudDatabase'
-	| 'lastCloudDatabaseSync'
-	| 'darkMode'
-	| 'lastUsedPeriodTab'
-	| 'lastUsedItemTab'
->;
+export interface PersistedTabSettings {
+	lastUsedPeriodTab: TimePeriod;
+	lastUsedStatisticsTab: StatisticsTab;
+	lastUsedUserPageTab: Item;
+}
 
 // Work Tasks //
 export type EditedWorkTask = {

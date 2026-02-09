@@ -16,7 +16,10 @@ const WorkEntryViewer = () => {
 	const [sortMethod, setSortMethod] = useState<'dsc' | 'asc'>('dsc');
 
 	const sortedWorkEntries = useMemo(() => {
-		return sortWorkEntriesByCompletionTime(settings.workEntries, sortMethod);
+		return sortWorkEntriesByCompletionTime(
+			settings.workEntries,
+			sortMethod,
+		);
 	}, [settings.workEntries, sortMethod]);
 
 	return (
@@ -26,25 +29,35 @@ const WorkEntryViewer = () => {
 				<div className='flex flex-row items-center space-x-1'>
 					<IconContext.Provider
 						value={{
-							className: `${settings.darkMode
-								? 'fill-gray-200 hover:fill-gray-400'
-								: 'fill-black hover:fill-gray-600'
-								} ${sortMethod === 'asc' ? 'opacity-100' : 'opacity-50'} 
+							className: `${
+								settings.appSettings.darkMode
+									? 'fill-gray-200 hover:fill-gray-400'
+									: 'fill-black hover:fill-gray-600'
+							} ${sortMethod === 'asc' ? 'opacity-100' : 'opacity-50'} 
 								size-4 custom-target-icon`,
 						}}
 					>
-						<PiSortAscending onClick={() => { setSortMethod('asc'); }} />
+						<PiSortAscending
+							onClick={() => {
+								setSortMethod('asc');
+							}}
+						/>
 					</IconContext.Provider>
 					<IconContext.Provider
 						value={{
-							className: `${settings.darkMode
-								? 'fill-gray-200 hover:fill-gray-400'
-								: 'fill-black hover:fill-gray-600'
-								} ${sortMethod === 'dsc' ? 'opacity-100' : 'opacity-50'} 
+							className: `${
+								settings.appSettings.darkMode
+									? 'fill-gray-200 hover:fill-gray-400'
+									: 'fill-black hover:fill-gray-600'
+							} ${sortMethod === 'dsc' ? 'opacity-100' : 'opacity-50'} 
 								size-4 custom-target-icon`,
 						}}
 					>
-						<PiSortDescending onClick={() => { setSortMethod('dsc'); }} />
+						<PiSortDescending
+							onClick={() => {
+								setSortMethod('dsc');
+							}}
+						/>
 					</IconContext.Provider>
 				</div>
 			</div>

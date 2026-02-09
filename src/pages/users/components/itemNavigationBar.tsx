@@ -1,35 +1,59 @@
-// Type Immports
-import type { Item } from '../../../types/types';
-import type { Dispatch } from 'react';
+// Hook Imports
+import { useAppContext } from '../../../hooks/useAppContext';
 
 // Interface Definition
 interface ItemNavigationBarProps {
-	itemManagement: Item;
-	setItemManagement: Dispatch<React.SetStateAction<Item>>;
+	itemManagement: string;
 }
 
 // Component Definition
-const ItemNavigationBar = ({ itemManagement, setItemManagement }: ItemNavigationBarProps) => {
+const ItemNavigationBar = ({ itemManagement }: ItemNavigationBarProps) => {
+	const settings = useAppContext();
+
 	return (
 		<div className='flex flex-row gap-2'>
 			<button
-				className={`${itemManagement == 'Task' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
-					}`}
-				onClick={() => setItemManagement('Task')}
+				className={`${
+					itemManagement == 'Task'
+						? 'opacity-85'
+						: 'opacity-50 hover:opacity-75'
+				}`}
+				onClick={() => {
+					settings.setTabSettings((prev) => ({
+						...prev,
+						lastUsedUserPageTab: 'Task',
+					}));
+				}}
 			>
 				Task
 			</button>
 			<button
-				className={`${itemManagement == 'Topic' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
-					}`}
-				onClick={() => setItemManagement('Topic')}
+				className={`${
+					itemManagement == 'Topic'
+						? 'opacity-85'
+						: 'opacity-50 hover:opacity-75'
+				}`}
+				onClick={() => {
+					settings.setTabSettings((prev) => ({
+						...prev,
+						lastUsedUserPageTab: 'Topic',
+					}));
+				}}
 			>
 				Topic
 			</button>
 			<button
-				className={`${itemManagement == 'Entries' ? 'opacity-85' : 'opacity-50 hover:opacity-75'
-					}`}
-				onClick={() => setItemManagement('Entries')}
+				className={`${
+					itemManagement == 'Entries'
+						? 'opacity-85'
+						: 'opacity-50 hover:opacity-75'
+				}`}
+				onClick={() => {
+					settings.setTabSettings((prev) => ({
+						...prev,
+						lastUsedUserPageTab: 'Entries',
+					}));
+				}}
 			>
 				Entries
 			</button>

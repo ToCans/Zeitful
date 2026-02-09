@@ -1,14 +1,29 @@
 // Hook Imports
 import { useEffect } from 'react';
 // Type Imports
-import type { PersistedSettings } from '../types/types';
+import type {
+	PersistedAppSettings,
+	PersistedTabSettings,
+} from '../types/types';
 
-export function usePersistSettings(settings: PersistedSettings) {
+export function usePersistAppSettings(settings: PersistedAppSettings) {
 	useEffect(() => {
-		console.log('Saving settings to local storage');
+		const timeout = setTimeout(() => {
+			localStorage.setItem('app_settings', JSON.stringify(settings));
+			console.log('Saved app settings');
+		}, 300);
 
-		Object.entries(settings).forEach(([key, value]) => {
-			localStorage.setItem(key, JSON.stringify(value));
-		});
-	}, [settings]); // single dependency!
+		return () => clearTimeout(timeout);
+	}, [settings]);
+}
+
+export function usePersistTabSettings(settings: PersistedTabSettings) {
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			localStorage.setItem('tab_settings', JSON.stringify(settings));
+			console.log('Saved tab settings');
+		}, 300);
+
+		return () => clearTimeout(timeout);
+	}, [settings]);
 }

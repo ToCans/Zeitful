@@ -75,7 +75,7 @@ const TopicAdder = () => {
 	return (
 		<div className='flex flex-row items-center gap-2 w-full'>
 			<button
-				className='m-2 cursor-pointer'
+				className='m-2 cursor-pointer group'
 				onClick={async () => {
 					const id = uuidv4();
 					await handleAddTopic(settings, {
@@ -98,7 +98,8 @@ const TopicAdder = () => {
 			>
 				<IconContext.Provider
 					value={{
-						className: 'size-6',
+						className:
+							'size-6 group-hover:text-zinc-400 transition-colors duration-200',
 					}}
 				>
 					<PiPlus />
@@ -106,7 +107,7 @@ const TopicAdder = () => {
 			</button>
 			<InputText
 				className={`w-2/5 ${
-					settings.darkMode
+					settings.appSettings.darkMode
 						? 'dark-dropdown text-zinc-100'
 						: 'light-dropdown text-black'
 				}`}
@@ -115,9 +116,15 @@ const TopicAdder = () => {
 				value={newTopicName}
 				onChange={(e) => setNewTopicName(e.target.value)}
 				style={{
-					backgroundColor: settings.darkMode ? '#52525B' : '#ffffff', // input background
-					color: settings.darkMode ? '#F4F4F5' : '#000000', // input text color
-					borderColor: settings.darkMode ? '#6b7280' : '#d1d5db', // border color
+					backgroundColor: settings.appSettings.darkMode
+						? '#52525B'
+						: '#ffffff', // input background
+					color: settings.appSettings.darkMode
+						? '#F4F4F5'
+						: '#000000', // input text color
+					borderColor: settings.appSettings.darkMode
+						? '#6b7280'
+						: '#d1d5db', // border color
 				}}
 			/>
 			<ColorPicker

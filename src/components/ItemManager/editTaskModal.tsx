@@ -6,9 +6,9 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { useState, useCallback, type SetStateAction } from 'react';
 import {
-	workTopicOptionTemplate,
-	selectedWorkTopicOptionTemplate,
-} from './workTopicOptionTemplate';
+	WorkTaskOptionTemplate,
+	SelectedWorkTaskOptionTemplate,
+} from './workTaskOptionTemplate';
 import { editTask, getTasks } from '../../api/localDatabase';
 import type { Dispatch } from 'react';
 // API Imports
@@ -62,14 +62,16 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 		<div className='absolute top-0 left-0 flex flex-col h-full w-full bg-black/60 z-30 p-2 justify-center items-center'>
 			<div
 				className={`${
-					settings.darkMode ? 'bg-zinc-700' : 'bg-zinc-100'
+					settings.appSettings.darkMode
+						? 'bg-zinc-700'
+						: 'bg-zinc-100'
 				} flex lg:size-96 size-80 rounded-lg p-4 flex-col items-center`}
 			>
 				<div className='flex w-full justify-end space-x-1'>
 					<IconContext.Provider
 						value={{
 							className: `${
-								settings.darkMode
+								settings.appSettings.darkMode
 									? 'fill-gray-200 hover:fill-gray-400'
 									: 'fill-gray-600 hover:fill-gray-400'
 							} size-6 custom-target-icon`,
@@ -84,7 +86,7 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 					<IconContext.Provider
 						value={{
 							className: `${
-								settings.darkMode
+								settings.appSettings.darkMode
 									? 'fill-gray-200 hover:fill-gray-400'
 									: 'fill-gray-600 hover:fill-gray-400'
 							} size-6 custom-target-icon`,
@@ -103,7 +105,7 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 							<p className='font-semibold'>Task Name</p>
 							<InputText
 								className={`${
-									settings.darkMode
+									settings.appSettings.darkMode
 										? 'dark-dropdown text-zinc-100'
 										: 'light-dropdown text-black'
 								}`}
@@ -115,13 +117,14 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 									})
 								}
 								style={{
-									backgroundColor: settings.darkMode
+									backgroundColor: settings.appSettings
+										.darkMode
 										? '#52525B'
 										: '#ffffff', // input background
-									color: settings.darkMode
+									color: settings.appSettings.darkMode
 										? '#F4F4F5'
 										: '#000000',
-									borderColor: settings.darkMode
+									borderColor: settings.appSettings.darkMode
 										? '#6b7280'
 										: '#d1d5db', // border color
 								}}
@@ -141,24 +144,26 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 									(topic) => topic.last_action !== 3,
 								)}
 								placeholder='None' // Hacky way of triggering default option without having it in options
-								itemTemplate={workTopicOptionTemplate}
-								valueTemplate={selectedWorkTopicOptionTemplate}
-								className={`${settings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
+								itemTemplate={WorkTaskOptionTemplate}
+								valueTemplate={SelectedWorkTaskOptionTemplate}
+								className={`${settings.appSettings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
 								style={{
-									backgroundColor: settings.darkMode
+									backgroundColor: settings.appSettings
+										.darkMode
 										? '#52525B'
 										: '#ffffff',
-									borderColor: settings.darkMode
+									borderColor: settings.appSettings.darkMode
 										? '#6b7280'
 										: '#d1d5db',
 								}}
 								panelClassName={
-									settings.darkMode
+									settings.appSettings.darkMode
 										? 'dark-dropdown-panel'
 										: 'light-dropdown-panel'
 								}
 								panelStyle={{
-									backgroundColor: settings.darkMode
+									backgroundColor: settings.appSettings
+										.darkMode
 										? '#52525B'
 										: '#ffffff',
 								}}
@@ -177,22 +182,24 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 								}
 								options={statusOptions}
 								optionLabel='label'
-								className={`${settings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
+								className={`${settings.appSettings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
 								style={{
-									backgroundColor: settings.darkMode
+									backgroundColor: settings.appSettings
+										.darkMode
 										? '#52525B'
 										: '#ffffff',
-									borderColor: settings.darkMode
+									borderColor: settings.appSettings.darkMode
 										? '#6b7280'
 										: '#d1d5db',
 								}}
 								panelClassName={
-									settings.darkMode
+									settings.appSettings.darkMode
 										? 'dark-dropdown-panel'
 										: 'light-dropdown-panel'
 								}
 								panelStyle={{
-									backgroundColor: settings.darkMode
+									backgroundColor: settings.appSettings
+										.darkMode
 										? '#52525B'
 										: '#ffffff',
 								}}

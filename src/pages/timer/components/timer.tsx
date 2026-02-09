@@ -28,12 +28,14 @@ const Timer = () => {
 	// Component States
 	const [isMounted, setIsMounted] = useState<boolean>(false);
 	const [timeRemaining, setTimeRemaining] = useState<number>(
-		settings.workingTime
+		settings.appSettings.workingTime,
 	);
 	const [progressBarValue, setProgressBarValue] = useState<number>(0);
 
 	// References
-	const progressBarTotalRef = useRef<number>(settings.workingTime);
+	const progressBarTotalRef = useRef<number>(
+		settings.appSettings.workingTime,
+	);
 	const timeRemainingRef = useRef<number>(timeRemaining);
 
 	// Helper Functions Memos
@@ -45,10 +47,10 @@ const Timer = () => {
 				WorkEntry,
 				'id' | 'duration' | 'topic_name' | 'completion_time'
 			>,
-			workTopics: WorkTopic[]
+			workTopics: WorkTopic[],
 		) => {
 			const matchedTopic = workTopics.find(
-				(workTopic) => workTopic.id === workEntry.topic_id
+				(workTopic) => workTopic.id === workEntry.topic_id,
 			);
 			const response = await addWorkEntry({
 				id: uuid,
@@ -56,16 +58,16 @@ const Timer = () => {
 				topic_id: workEntry.topic_id,
 				task_name: workEntry.task_name,
 				topic_name: matchedTopic?.name ?? null,
-				duration: settings.workingTime / 60,
+				duration: settings.appSettings.workingTime / 60,
 				completion_time: new Date().toISOString(),
 			});
 
 			console.log(response.status, response.message);
 			settings.setWorkEntries(
-				(await getWorkEntries()).item as WorkEntry[]
+				(await getWorkEntries()).item as WorkEntry[],
 			);
 		},
-		[]
+		[],
 	);
 
 	const handleAddWorkEntryToCloudDatabase = useCallback(
@@ -76,11 +78,11 @@ const Timer = () => {
 				WorkEntry,
 				'id' | 'duration' | 'topic_name' | 'completion_time'
 			>,
-			workTopics: WorkTopic[]
+			workTopics: WorkTopic[],
 		) => {
 			if (settings.cloudDatabase) {
 				const matchedTopic = workTopics.find(
-					(workTopic) => workTopic.id === workEntry.topic_id
+					(workTopic) => workTopic.id === workEntry.topic_id,
 				);
 				const response = await addWorkEntrySupabaseDatabase(
 					settings.cloudDatabase,
@@ -90,14 +92,14 @@ const Timer = () => {
 						topic_id: workEntry.topic_id,
 						task_name: workEntry.task_name,
 						topic_name: matchedTopic?.name ?? null,
-						duration: settings.workingTime / 60,
+						duration: settings.appSettings.workingTime / 60,
 						completion_time: new Date().toISOString(),
-					}
+					},
 				);
 				console.log(response.status, response.message);
 			}
 		},
-		[]
+		[],
 	);
 
 	// Trigger the slide-in animation on component mount
@@ -133,7 +135,7 @@ const Timer = () => {
 
 					// Local Storage Completion
 					settings.workingTimeCompleted.current += Math.floor(
-						settings.workingTime / 60
+						settings.appSettings.workingTime / 60,
 					);
 					settings.workingCyclesCompleted.current += 1;
 
@@ -149,7 +151,7 @@ const Timer = () => {
 							topic_id: settings.activeWorkTask?.topic_id ?? null,
 							task_name: settings.activeWorkTask?.name ?? null,
 						},
-						settings.workTopics
+						settings.workTopics,
 					);
 
 					// Storing Work Entry to  Cloud Database
@@ -164,7 +166,7 @@ const Timer = () => {
 								task_name:
 									settings.activeWorkTask?.name ?? null,
 							},
-							settings.workTopics
+							settings.workTopics,
 						);
 					}
 				}
@@ -180,7 +182,7 @@ const Timer = () => {
 
 	// Showing Tab Timer
 	useEffect(() => {
-		if (settings.showTabTimer === true) {
+		if (settings.appSettings.showTabTimer === true) {
 			document.title = `${formatTime(timeRemaining)} - Zeitful`;
 		} else {
 			document.title = 'Zeitful';
@@ -197,33 +199,34 @@ const Timer = () => {
 	// Time Remaining Handling
 	useEffect(() => {
 		if (settings.cycleNumber % 8 === 0) {
-			setTimeRemaining(settings.longBreakTime);
-			progressBarTotalRef.current = settings.longBreakTime;
+			setTimeRemaining(settings.appSettings.longBreakTime);
+			progressBarTotalRef.current = settings.appSettings.longBreakTime;
 		} else if (settings.cycleNumber % 2 === 0) {
-			setTimeRemaining(settings.shortBreakTime);
-			progressBarTotalRef.current = settings.shortBreakTime;
+			setTimeRemaining(settings.appSettings.shortBreakTime);
+			progressBarTotalRef.current = settings.appSettings.shortBreakTime;
 		} else {
-			setTimeRemaining(settings.workingTime);
-			progressBarTotalRef.current = settings.workingTime;
+			setTimeRemaining(settings.appSettings.workingTime);
+			progressBarTotalRef.current = settings.appSettings.workingTime;
 		}
 	}, [
 		settings.cycleNumber,
-		settings.longBreakTime,
-		settings.shortBreakTime,
-		settings.workingTime,
+		settings.appSettings.longBreakTime,
+		settings.appSettings.shortBreakTime,
+		settings.appSettings.workingTime,
 	]);
 
 	return (
 		<div
-			className={`relative p-4 short-laptop:h-75per md:max-h-[60vh] md:h-[60vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted
-				? 'translate-y-0 opacity-100'
-				: '-translate-y-full opacity-0'
-				} `}
+			className={`relative p-4 short-laptop:h-75per md:max-h-[60vh] md:h-[60vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
+				isMounted
+					? 'translate-y-0 opacity-100'
+					: '-translate-y-full opacity-0'
+			} `}
 		>
 			{/* Fill Layer (grows from bottom to top) */}
 			<WavesAnimation
 				progress={progressBarValue}
-				timerColor={settings.timerColor}
+				timerColor={settings.appSettings.timerColor}
 			/>
 
 			{/* Content Layer */}
@@ -231,7 +234,7 @@ const Timer = () => {
 				<TimeDisplay timeRemaining={timeRemaining} />
 				<div className='relative flex rounded-lg items-center justify-center opacity-70'>
 					<TaskFocus />
-					{settings.useCloudDatabase ? (
+					{settings.appSettings.useCloudDatabase ? (
 						<div className='absolute right-full mr-2'>
 							<CloudSyncStatusTile />
 						</div>
@@ -247,8 +250,9 @@ const Timer = () => {
 			</div>
 
 			<div
-				className={`absolute inset-0 ${settings.darkMode ? 'bg-zinc-700' : 'bg-white'
-					} rounded-lg z-0`}
+				className={`absolute inset-0 ${
+					settings.appSettings.darkMode ? 'bg-zinc-700' : 'bg-white'
+				} rounded-lg z-0`}
 			></div>
 		</div>
 	);

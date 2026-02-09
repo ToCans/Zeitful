@@ -55,14 +55,16 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 		<div className='absolute top-0 left-0 flex flex-col h-full w-full bg-black/60 z-30 p-2 justify-center items-center'>
 			<div
 				className={`${
-					settings.darkMode ? 'bg-zinc-700' : 'bg-zinc-100'
+					settings.appSettings.darkMode
+						? 'bg-zinc-700'
+						: 'bg-zinc-100'
 				} flex lg:size-96 size-80 rounded-lg p-4 flex-col items-center`}
 			>
 				<div className='flex w-full justify-end space-x-1'>
 					<IconContext.Provider
 						value={{
 							className: `${
-								settings.darkMode
+								settings.appSettings.darkMode
 									? 'fill-gray-200 hover:fill-gray-400'
 									: 'fill-gray-600 hover:fill-gray-400'
 							} size-6 custom-target-icon`,
@@ -77,7 +79,7 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 					<IconContext.Provider
 						value={{
 							className: `${
-								settings.darkMode
+								settings.appSettings.darkMode
 									? 'fill-gray-200 hover:fill-gray-400'
 									: 'fill-gray-600 hover:fill-gray-400'
 							} size-6 custom-target-icon`,
@@ -106,7 +108,7 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 							<p className='font-semibold'>Topic Name</p>
 							<InputText
 								className={`${
-									settings.darkMode
+									settings.appSettings.darkMode
 										? 'dark-dropdown text-zinc-100'
 										: 'light-dropdown text-black'
 								}`}
@@ -118,13 +120,14 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 									})
 								}
 								style={{
-									backgroundColor: settings.darkMode
+									backgroundColor: settings.appSettings
+										.darkMode
 										? '#52525B'
 										: '#ffffff', // input background
-									color: settings.darkMode
+									color: settings.appSettings.darkMode
 										? '#F4F4F5'
 										: '#000000',
-									borderColor: settings.darkMode
+									borderColor: settings.appSettings.darkMode
 										? '#6b7280'
 										: '#d1d5db', // border color
 								}}

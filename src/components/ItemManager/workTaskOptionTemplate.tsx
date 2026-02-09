@@ -7,27 +7,41 @@ import type { WorkTask } from '../../types/types';
 // Utils Imports
 import { intToColor } from '../../utils/colors';
 
-export const workTaskOptionTemplate = (workTask: WorkTask) => {
+export const WorkTaskOptionTemplate = (workTask: WorkTask) => {
 	const settings = useAppContext();
-	const matchedTopic = settings.workTopics.find((t) => t.id === workTask.topic_id);
+	const matchedTopic = settings.workTopics.find(
+		(t) => t.id === workTask.topic_id,
+	);
 	const tileColor = matchedTopic ? matchedTopic.color : 14408667;
 	return (
-		<div className={`flex flex-row items-center justify-center focus:outline-none ${settings.darkMode ? 'dark-mode' : 'light-mode'}`}>
+		<div
+			className={`flex flex-row items-center justify-center focus:outline-none ${settings.appSettings.darkMode ? 'dark-mode' : 'light-mode'}`}
+		>
 			<ColorIcon color={intToColor(tileColor)} />
-			<p className={`text-center justify-center ${settings.darkMode ? 'text-zinc-100' : 'text-black'}`}>{workTask.name}</p>
+			<p
+				className={`text-center justify-center ${settings.appSettings.darkMode ? 'text-zinc-100' : 'text-black'}`}
+			>
+				{workTask.name}
+			</p>
 		</div>
 	);
 };
 
-export const selectedWorkTaskOptionTemplate = (workTask: WorkTask) => {
+export const SelectedWorkTaskOptionTemplate = (workTask: WorkTask) => {
 	const settings = useAppContext();
 	if (workTask) {
-		const matchedTopic = settings.workTopics.find((t) => t.id === workTask.topic_id);
+		const matchedTopic = settings.workTopics.find(
+			(t) => t.id === workTask.topic_id,
+		);
 		const tileColor = matchedTopic ? matchedTopic.color : 14408667;
 		return (
 			<div className='flex flex-row items-center justify-center focus:outline-none'>
 				<ColorIcon color={intToColor(tileColor)} />
-				<p className={`text-center justify-center ${settings.darkMode ? 'text-zinc-100' : 'text-black'}`}>{workTask.name}</p>
+				<p
+					className={`text-center justify-center ${settings.appSettings.darkMode ? 'text-zinc-100' : 'text-black'}`}
+				>
+					{workTask.name}
+				</p>
 			</div>
 		);
 	}

@@ -19,10 +19,14 @@ interface ItemPercentageBreakdownProps {
 }
 
 // Component Defintion
-const ItemPercentageBreakdown = ({ itemData }: ItemPercentageBreakdownProps) => {
+const ItemPercentageBreakdown = ({
+	itemData,
+}: ItemPercentageBreakdownProps) => {
 	const settings = useAppContext();
 	const [sortMethod, setSortMethod] = useState<'dsc' | 'asc'>('dsc');
-	const [sortedWorkEntries, setSortedWorkEntries] = useState<TopicData | TaskData | null>(null);
+	const [sortedWorkEntries, setSortedWorkEntries] = useState<
+		TopicData | TaskData | null
+	>(null);
 
 	useEffect(() => {
 		if (!itemData) return;
@@ -40,25 +44,35 @@ const ItemPercentageBreakdown = ({ itemData }: ItemPercentageBreakdownProps) => 
 			<div className='flex flex-row justify-end space-x-1'>
 				<IconContext.Provider
 					value={{
-						className: `${settings.darkMode
-							? 'fill-gray-200 hover:fill-gray-400'
-							: 'fill-black hover:fill-gray-600'
-							} ${sortMethod === 'asc' ? 'opacity-100' : 'opacity-50'} 
+						className: `${
+							settings.appSettings.darkMode
+								? 'fill-gray-200 hover:fill-gray-400'
+								: 'fill-black hover:fill-gray-600'
+						} ${sortMethod === 'asc' ? 'opacity-100' : 'opacity-50'} 
 											size-4 custom-target-icon`,
 					}}
 				>
-					<PiSortAscending onClick={() => { setSortMethod('asc'); }} />
+					<PiSortAscending
+						onClick={() => {
+							setSortMethod('asc');
+						}}
+					/>
 				</IconContext.Provider>
 				<IconContext.Provider
 					value={{
-						className: `${settings.darkMode
-							? 'fill-gray-200 hover:fill-gray-400'
-							: 'fill-black hover:fill-gray-600'
-							} ${sortMethod === 'dsc' ? 'opacity-100' : 'opacity-50'} 
+						className: `${
+							settings.appSettings.darkMode
+								? 'fill-gray-200 hover:fill-gray-400'
+								: 'fill-black hover:fill-gray-600'
+						} ${sortMethod === 'dsc' ? 'opacity-100' : 'opacity-50'} 
 											size-4 custom-target-icon`,
 					}}
 				>
-					<PiSortDescending onClick={() => { setSortMethod('dsc'); }} />
+					<PiSortDescending
+						onClick={() => {
+							setSortMethod('dsc');
+						}}
+					/>
 				</IconContext.Provider>
 			</div>
 			<div className='w-full overflow-y-auto'>
@@ -71,12 +85,12 @@ const ItemPercentageBreakdown = ({ itemData }: ItemPercentageBreakdownProps) => 
 						itemName={sortedWorkEntries.itemNames[index]}
 						itemDuration={sortedWorkEntries.itemDurations[index]}
 						topicPercentage={
-							topicDataWithPercentage?.topicPercentage?.[index] ?? 0
+							topicDataWithPercentage?.topicPercentage?.[index] ??
+							0
 						}
 					/>
 				))}
 			</div>
-
 		</div>
 	);
 };
