@@ -62,6 +62,13 @@ const CloudDatabaseTile = () => {
 				const supabaseClient = createClient(
 					credentialResponse.cloudCredentials['database_url'],
 					credentialResponse.cloudCredentials['api_key'],
+					{
+						auth: {
+							persistSession: false,
+							autoRefreshToken: false,
+							detectSessionInUrl: false,
+						},
+					},
 				);
 				settings.setCloudDatabase(supabaseClient);
 			}
