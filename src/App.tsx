@@ -9,7 +9,7 @@ import { PrimeReactProvider } from 'primereact/api';
 // React Imports
 import { useState, useRef, useEffect } from 'react';
 // Component and Context Imports
-import NavBar from './components/NavBar/NavBar';
+import NavBar from './components/NavBar/navBar';
 import UserPage from './pages/users/components/userPage';
 import Settings from './pages/settings/components/settings';
 import Statistics from './pages/statistics/components/statistics';
@@ -220,11 +220,10 @@ function App() {
 
 	return (
 		<div
-			className={`flex flex-col h-dvh w-dvw ${
-				appSettings.darkMode
+			className={`flex flex-col h-dvh w-dvw ${appSettings.darkMode
 					? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
 					: 'bg-zinc-100 text-black fill-gray-400'
-			} overflow-hidden`}
+				} overflow-hidden`}
 		>
 			<PrimeReactProvider>
 				<SettingsContext.Provider
