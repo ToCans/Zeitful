@@ -10,8 +10,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      strategies: 'injectManifest',
-      injectRegister: false, // Don't auto-register SW
+      injectRegister: null, // Don't auto-register SW
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
         name: 'Zeitful',
