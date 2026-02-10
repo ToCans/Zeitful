@@ -1,12 +1,8 @@
 // src/sw.js
-import { precacheAndRoute } from 'workbox-precaching';
+self.__WB_MANIFEST;
 
-// THIS LINE IS REQUIRED - don't remove it!
-precacheAndRoute(self.__WB_MANIFEST);
-
-// Your existing push notification code
 self.addEventListener('push', (event) => {
-	let pushData = event.data.json();
+	const pushData = event.data?.json() ?? {};
 	if (!pushData || !pushData.title) {
 		console.error('Received WebPush with an empty title. Received body: ', pushData);
 		return;

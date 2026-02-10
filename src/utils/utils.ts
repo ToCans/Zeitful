@@ -1,21 +1,6 @@
 // Library Imports
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 
-// Checking Local Browser Storage
-export const checkLocalStorage = (
-	checkFor: string,
-	defaultValue: number | string | boolean
-): number | string | boolean => {
-	const item = localStorage.getItem(checkFor);
-	if (item === null) return defaultValue;
-
-	try {
-		return JSON.parse(item);
-	} catch {
-		return defaultValue;
-	}
-};
-
 // Get Date Range for Statistics
 export const getRange = (timeframe: string, period: any) => {
 	const now = new Date();

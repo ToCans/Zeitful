@@ -21,8 +21,6 @@ import breakFinishAudioClip from './assets/sounds/complete.mp3';
 import workFinishAudioClip from './assets/sounds/lowHighChime.mp3';
 // Script Imports
 import timerWorkerScript from './scripts/timerWorker';
-// Function Imports
-import { checkLocalStorage } from './utils/utils';
 //Type Imports
 import {
 	type Page,
@@ -78,69 +76,62 @@ function App() {
 	const toast = useRef<Toast>(null!);
 
 	// Local Storage Checks
-	const [appSettings, setAppSettings] = useState<PersistedAppSettings>(
-		() => ({
-			showTabTimer: checkLocalStorage('showTabTimer', true) as boolean,
-			workingTime: checkLocalStorage('workingTime', 25 * 60) as number,
-			shortBreakTime: checkLocalStorage(
-				'shortBreakTime',
-				5 * 60,
-			) as number,
-			longBreakTime: checkLocalStorage(
-				'longBreakTime',
-				15 * 60,
-			) as number,
-			timerColor: checkLocalStorage('timerColor', 'bfdbfe') as string,
-			darkMode: checkLocalStorage('darkMode', false) as boolean,
-			useCloudDatabase: checkLocalStorage(
-				'useCloudDatabase',
-				false,
-			) as boolean,
-			lastCloudDatabaseSync: checkLocalStorage(
-				'lastCloudDatabaseSync',
-				'None',
-			) as string,
-		}),
-	);
+	const [appSettings, setAppSettings] = useState<PersistedAppSettings>(() => {
+		const saved = localStorage.getItem('app_settings');
+		if (saved) {
+			try {
+				return JSON.parse(saved);
+			} catch (e) {
+				console.error('Failed to parse app_settings:', e);
+			}
+		}
+		// Default values if nothing saved
+		return {
+			showTabTimer: true,
+			workingTime: 25 * 60,
+			shortBreakTime: 5 * 60,
+			longBreakTime: 15 * 60,
+			timerColor: 'bfdbfe',
+			darkMode: false,
+			useCloudDatabase: false,
+			lastCloudDatabaseSync: 'None',
+		};
+	});
 
-	const [tabSettings, setTabSettings] = useState<PersistedTabSettings>(
-		() => ({
-			lastUsedPeriodTab: checkLocalStorage(
-				'lastUsedPeriodTab',
-				'M',
-			) as TimePeriod,
-			lastUsedStatisticsTab: checkLocalStorage(
-				'lastUsedStatisticsTab',
-				'Task',
-			) as StatisticsTab,
-			lastUsedUserPageTab: checkLocalStorage(
-				'lastUsedUserPageTab',
-				'Task',
-			) as Item,
-		}),
-	);
+	const [tabSettings, setTabSettings] = useState<PersistedTabSettings>(() => {
+		const saved = localStorage.getItem('tab_settings');
+		if (saved) {
+			try {
+				return JSON.parse(saved);
+			} catch (e) {
+				console.error('Failed to parse tab_settings:', e);
+			}
+		}
+		// Default values if nothing saved
+		return {
+			lastUsedPeriodTab: 'M' as TimePeriod,
+			lastUsedStatisticsTab: 'Task' as StatisticsTab,
+			lastUsedUserPageTab: 'Task' as Item,
+		};
+	});
 
 	// Push
 	useEffect(() => {
-		if ('serviceWorker' in navigator) {
+		if ('serviceWorker' in navigator && window.isSecureContext) {
 			(async () => {
 				try {
 					const swRegistration =
 						await navigator.serviceWorker.register('/sw.js');
 					console.log('SW registered', swRegistration);
-
 					const pushManager = swRegistration.pushManager;
 					if (!pushManager) {
 						console.warn('Push manager unsupported');
 						return;
 					}
-
 					const permissionState = await pushManager.permissionState();
 					permission.current = permissionState;
-
 					if (permissionState === 'granted') {
-						subscription.current =
-							await pushManager.getSubscription();
+						subscription.current = await pushManager.getSubscription();
 						console.log('Push registered', subscription.current);
 					}
 				} catch (e) {
@@ -221,8 +212,8 @@ function App() {
 	return (
 		<div
 			className={`flex flex-col h-dvh w-dvw ${appSettings.darkMode
-					? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
-					: 'bg-zinc-100 text-black fill-gray-400'
+				? 'bg-zinc-800 text-zinc-100 fill-gray-200 hover:fill-gray-400'
+				: 'bg-zinc-100 text-black fill-gray-400'
 				} overflow-hidden`}
 		>
 			<PrimeReactProvider>
