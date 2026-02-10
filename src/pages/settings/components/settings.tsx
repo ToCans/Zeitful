@@ -1,6 +1,5 @@
 // Component Imports
 import { ColorPicker } from 'primereact/colorpicker';
-import { Checkbox } from 'primereact/checkbox';
 import { InputSwitch } from 'primereact/inputswitch';
 import SettingsTimeTile from './settingsTimeTile';
 // Hook Imports
@@ -18,19 +17,6 @@ const Settings = () => {
 	const settings = useAppContext();
 	const [isMounted, setIsMounted] = useState(false);
 
-	const handleTabCheckboxChange = () => {
-		settings.setAppSettings((prev: PersistedAppSettings) => ({
-			...prev,
-			showTabTimer: !prev.showTabTimer,
-		}));
-	};
-
-	const handleCloudCheckboxChange = () => {
-		settings.setAppSettings((prev: PersistedAppSettings) => ({
-			...prev,
-			useCloudDatabase: !prev.useCloudDatabase,
-		}));
-	};
 
 	// Trigger the slide-in animation on component mount
 	useEffect(() => {
@@ -67,16 +53,14 @@ const Settings = () => {
 
 	return (
 		<div
-			className={`${
-				settings.appSettings.darkMode ? 'bg-zinc-700' : 'bg-white'
-			} flex flex-col p-4 short-laptop:h-75per md:max-h-[60vh] md:h-[60vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${
-				isMounted
+			className={`${settings.appSettings.darkMode ? 'bg-zinc-700' : 'bg-white'
+				} flex flex-col p-4 short-laptop:h-75per md:max-h-[60vh] md:h-[60vh] max-h-[80vh] h-[80vh] xl:w-1/2 md:w-2/3 w-11/12 rounded-lg overflow-hidden shadow-[2px_2px_2px_rgba(0,0,0,0.3)] transform transition-transform duration-700 duration ease-out ${isMounted
 					? 'translate-y-0 opacity-100'
 					: '-translate-y-full opacity-0'
-			}`}
+				}`}
 		>
 			<h1 className='flex text-2xl select-none'>User Settings</h1>
-			<div className='flex flex-col items-center justify-center space-y-2 flex-1'>
+			<div className='flex flex-col items-center justify-center space-y-3 flex-1'>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
 					<p className='select-none text-md'>Timer Color</p>
 					<ColorPicker
@@ -145,21 +129,31 @@ const Settings = () => {
 					}
 				/>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
-					<p className='text-center align-middle select-none'>
-						Show Timer in Tab
-					</p>
-					<Checkbox
+					<p className='select-none text-md'>Show Timer in Tab</p>
+					<InputSwitch
 						checked={settings.appSettings.showTabTimer}
-						onChange={handleTabCheckboxChange}
+						onChange={(e) =>
+							settings.setAppSettings(
+								(prev: PersistedAppSettings) => ({
+									...prev,
+									showTabTimer: e.value,
+								}),
+							)
+						}
 					/>
 				</div>
 				<div className='flex flex-row space-x-2 xl:text-lg text-lg items-center justify-center w-full'>
-					<p className='text-center align-middle select-none'>
-						Use Cloud Database
-					</p>
-					<Checkbox
+					<p className='select-none text-md'>Use Cloud Database</p>
+					<InputSwitch
 						checked={settings.appSettings.useCloudDatabase}
-						onChange={handleCloudCheckboxChange}
+						onChange={(e) =>
+							settings.setAppSettings(
+								(prev: PersistedAppSettings) => ({
+									...prev,
+									useCloudDatabase: e.value,
+								}),
+							)
+						}
 					/>
 				</div>
 			</div>
