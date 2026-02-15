@@ -39,7 +39,6 @@ interface TimerControlsProps {
 
 // Start Timer Functionality
 export const startTimer = async ({
-	appSettings,
 	timerWorker,
 	permission,
 	timeRemaining,
@@ -60,7 +59,6 @@ export const startTimer = async ({
 
 // Pause Timer Functionality
 export const pauseTimer = async ({
-	appSettings,
 	timerWorker,
 	permission,
 	timeRemaining,
@@ -115,7 +113,6 @@ export const restartTimer = async ({
 
 // Skip Timer Functionality
 export const skipTimer = async ({
-	appSettings,
 	cycleNumber,
 	timerWorker,
 	permission,
