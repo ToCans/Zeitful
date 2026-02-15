@@ -1,12 +1,12 @@
 // Component Imports
 import ItemPercentageTile from './itemPercentageTile';
-// Hook Imports
-import { useAppContext } from '../../../hooks/useAppContext';
 // Icon Imports
 import { PiSortAscending, PiSortDescending } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
 // React Imports
 import { useEffect, useState } from 'react';
+// Store Imports
+import { useSettingsStore } from '../../../stores/useSettingsStore';
 // Type Imports
 import type { TaskData, TopicData } from '../../../types/types';
 // Utils Imports
@@ -22,7 +22,7 @@ interface ItemPercentageBreakdownProps {
 const ItemPercentageBreakdown = ({
 	itemData,
 }: ItemPercentageBreakdownProps) => {
-	const settings = useAppContext();
+	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
 	const [sortMethod, setSortMethod] = useState<'dsc' | 'asc'>('dsc');
 	const [sortedWorkEntries, setSortedWorkEntries] = useState<
 		TopicData | TaskData | null
@@ -44,11 +44,10 @@ const ItemPercentageBreakdown = ({
 			<div className='flex flex-row justify-end space-x-1'>
 				<IconContext.Provider
 					value={{
-						className: `${
-							settings.appSettings.darkMode
-								? 'fill-gray-200 hover:fill-gray-400'
-								: 'fill-black hover:fill-gray-600'
-						} ${sortMethod === 'asc' ? 'opacity-100' : 'opacity-50'} 
+						className: `${darkMode
+							? 'fill-gray-200 hover:fill-gray-400'
+							: 'fill-black hover:fill-gray-600'
+							} ${sortMethod === 'asc' ? 'opacity-100' : 'opacity-50'} 
 											size-4 custom-target-icon`,
 					}}
 				>
@@ -60,11 +59,10 @@ const ItemPercentageBreakdown = ({
 				</IconContext.Provider>
 				<IconContext.Provider
 					value={{
-						className: `${
-							settings.appSettings.darkMode
-								? 'fill-gray-200 hover:fill-gray-400'
-								: 'fill-black hover:fill-gray-600'
-						} ${sortMethod === 'dsc' ? 'opacity-100' : 'opacity-50'} 
+						className: `${darkMode
+							? 'fill-gray-200 hover:fill-gray-400'
+							: 'fill-black hover:fill-gray-600'
+							} ${sortMethod === 'dsc' ? 'opacity-100' : 'opacity-50'} 
 											size-4 custom-target-icon`,
 					}}
 				>

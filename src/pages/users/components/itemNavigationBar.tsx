@@ -1,5 +1,7 @@
-// Hook Imports
-import { useAppContext } from '../../../hooks/useAppContext';
+// Store Imports
+import { useSettingsStore } from '../../../stores/useSettingsStore';
+// Type Imports
+import type { Item } from '../../../types/types';
 
 // Interface Definition
 interface ItemNavigationBarProps {
@@ -8,55 +10,38 @@ interface ItemNavigationBarProps {
 
 // Component Definition
 const ItemNavigationBar = ({ itemManagement }: ItemNavigationBarProps) => {
-	const settings = useAppContext();
+	const setTabSettings = useSettingsStore((state) => state.setTabSettings);
+
+	const updateUserPageTab = (tab: Item) => {
+		setTabSettings((prev) => ({
+			...prev,
+			lastUsedUserPageTab: tab,
+		}));
+	};
+
+	const getButtonClassName = (tab: string) =>
+		`${itemManagement === tab
+			? 'opacity-85'
+			: 'opacity-50 hover:opacity-75'
+		} cursor-pointer`;
+
+	const tabs: Array<{ value: Item; label: string; }> = [
+		{ value: 'Task', label: 'Task' },
+		{ value: 'Topic', label: 'Topic' },
+		{ value: 'Entries', label: 'Entries' },
+	];
 
 	return (
 		<div className='flex flex-row gap-2'>
-			<button
-				className={`${
-					itemManagement == 'Task'
-						? 'opacity-85'
-						: 'opacity-50 hover:opacity-75'
-				}`}
-				onClick={() => {
-					settings.setTabSettings((prev) => ({
-						...prev,
-						lastUsedUserPageTab: 'Task',
-					}));
-				}}
-			>
-				Task
-			</button>
-			<button
-				className={`${
-					itemManagement == 'Topic'
-						? 'opacity-85'
-						: 'opacity-50 hover:opacity-75'
-				}`}
-				onClick={() => {
-					settings.setTabSettings((prev) => ({
-						...prev,
-						lastUsedUserPageTab: 'Topic',
-					}));
-				}}
-			>
-				Topic
-			</button>
-			<button
-				className={`${
-					itemManagement == 'Entries'
-						? 'opacity-85'
-						: 'opacity-50 hover:opacity-75'
-				}`}
-				onClick={() => {
-					settings.setTabSettings((prev) => ({
-						...prev,
-						lastUsedUserPageTab: 'Entries',
-					}));
-				}}
-			>
-				Entries
-			</button>
+			{tabs.map(({ value, label }) => (
+				<button
+					key={value}
+					className={getButtonClassName(value)}
+					onClick={() => updateUserPageTab(value)}
+				>
+					{label}
+				</button>
+			))}
 		</div>
 	);
 };

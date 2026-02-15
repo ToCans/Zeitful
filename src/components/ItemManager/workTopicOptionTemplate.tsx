@@ -1,21 +1,21 @@
 // Component Imports
 import ColorIcon from './colorIcon';
-// Hook Imports
-import { useAppContext } from '../../hooks/useAppContext';
+// Store Imports
+import { useSettingsStore } from '../../stores/useSettingsStore';
 // Type Imports
 import type { WorkTopic } from '../../types/types';
 // Utils Imports
 import { intToColor } from '../../utils/colors';
 
 export const WorkTopicOptionTemplate = (workTopic: WorkTopic) => {
-	const settings = useAppContext();
+	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
+
 	return (
 		<div className='flex flex-row items-center justify-center focus:outline-none'>
-			<div className='flex items-center justify-center'>
-				<ColorIcon color={intToColor(workTopic.color)} />
-			</div>
+			<ColorIcon color={intToColor(workTopic.color)} />
 			<p
-				className={`text-center justify-center ${settings.appSettings.darkMode ? 'text-zinc-100' : 'text-black'}`}
+				className={`text-center justify-center ${darkMode ? 'text-zinc-100' : 'text-black'
+					}`}
 			>
 				{workTopic.name}
 			</p>
@@ -23,14 +23,16 @@ export const WorkTopicOptionTemplate = (workTopic: WorkTopic) => {
 	);
 };
 
-export const SelectedWorkTopicOptionTemplate = (workTopic: WorkTopic) => {
-	const settings = useAppContext();
+export const SelectedWorkTopicOptionTemplate = (workTopic: WorkTopic | null) => {
+	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
+
 	if (workTopic) {
 		return (
 			<div className='flex flex-row items-center justify-center focus:outline-none'>
 				<ColorIcon color={intToColor(workTopic.color)} />
 				<p
-					className={`text-center justify-center ${settings.appSettings.darkMode ? 'text-zinc-100' : 'text-black'}`}
+					className={`text-center justify-center ${darkMode ? 'text-zinc-100' : 'text-black'
+						}`}
 				>
 					{workTopic.name}
 				</p>

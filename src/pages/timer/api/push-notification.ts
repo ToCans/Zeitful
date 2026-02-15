@@ -1,50 +1,31 @@
-// Type Imports
-import type { SettingsContextType } from '../../../types/context';
-// Utils Imports
-import { urlBase64ToUint8Array } from '../utils/push-notification-utils';
+// api/push-notification.ts
+import { useRefsStore } from '../../../stores/useRefsStore';
 
+// Helper function to convert VAPID key
+const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
+	const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+	const base64 = (base64String + padding)
+		.replace(/\-/g, '+')
+		.replace(/_/g, '/');
 
-// Send Push Notification Functions
-export const sendPushNotification = async (settings: SettingsContextType) => {
-	if (settings.subscription.current !== null) {
-		try {
-			// Sends notification based on cycle number
-			const response = await fetch(
-				'https://cozystudy-server.vercel.app/api/send-push-notifications',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						cycleNumber: settings.cycleNumber,
-						pushSubscription: settings.subscription.current,
-					}),
-				}
-			);
+	const rawData = window.atob(base64);
+	const outputArray = new Uint8Array(rawData.length);
 
-			// Notification Server Response
-			if (response.ok) {
-				console.log('Notification request sent to server!');
-			} else {
-				console.error('Failed to send notification');
-			}
-		} catch (error) {
-			console.error('Error sending notification:', error);
-		}
+	for (let i = 0; i < rawData.length; ++i) {
+		outputArray[i] = rawData.charCodeAt(i);
 	}
+	return outputArray;
 };
 
 // Subscribe to Push Notifications Function
-export const subscribeToPush = async (settings: SettingsContextType): Promise<void> => {
-	// No settings context handling
-	if (!settings) {
-		console.warn('Settings context is not available');
-		return;
-	}
-
-	// Service Worker and Push Manager Handling
+export const subscribeToPush = async (): Promise<void> => {
 	try {
+		// Check for service worker support
+		if (!('serviceWorker' in navigator) || !window.isSecureContext) {
+			console.warn('Service workers or secure context not available');
+			return;
+		}
+
 		// Service Worker Registration
 		const swRegistration = await navigator.serviceWorker.getRegistration();
 		if (!swRegistration) {
@@ -59,19 +40,73 @@ export const subscribeToPush = async (settings: SettingsContextType): Promise<vo
 			return;
 		}
 
-		// Public Vapid Key and Push Notifcation Setup
+		// Request notification permission first
+		const permission = await Notification.requestPermission();
+
+		if (permission !== 'granted') {
+			console.log('Notification permission denied');
+			return;
+		}
+
+		// Public Vapid Key and Push Notification Setup
 		const vapidPublicKey = 'BKcJp8Aq5hki25jJsakB9Gcazick4XBYw_tnazGj6F7WNUi5TPAdevrd6O1OfbsLN_uZQM1LidLrFVuuycyv0Qs';
 		const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+
 		const pushSubscription = await pushManager.subscribe({
 			userVisibleOnly: true,
-			applicationServerKey: convertedVapidKey,
+			applicationServerKey: convertedVapidKey as BufferSource,
 		});
 
-		// Sets push manager subscription if it doesn't exist already
-		if (settings.subscription?.current !== undefined) {
-			settings.subscription.current = pushSubscription;
+		// Update Zustand store with permission and subscription
+		const { setPermission, setSubscription } = useRefsStore.getState();
+		setPermission(permission);
+		setSubscription(pushSubscription);
+
+		console.log('Push subscription successful', pushSubscription);
+	} catch (error) {
+		console.error('Subscription error', error);
+	}
+};
+
+// Send Push Notification Interface
+interface PushNotificationParams {
+	cycleNumber: number;
+	subscription: PushSubscription | null;
+}
+
+// Send Push Notification Function
+export const sendPushNotification = async ({
+	cycleNumber,
+	subscription,
+}: PushNotificationParams) => {
+	if (subscription === null) {
+		console.log('No push subscription available');
+		return;
+	}
+
+	try {
+		// Sends notification based on cycle number
+		const response = await fetch(
+			'https://cozystudy-server.vercel.app/api/send-push-notifications',
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					cycleNumber,
+					pushSubscription: subscription,
+				}),
+			}
+		);
+
+		// Notification Server Response
+		if (response.ok) {
+			console.log('Notification request sent to server!');
+		} else {
+			console.error('Failed to send notification');
 		}
 	} catch (error) {
-		console.log('Subscription error', error);
+		console.error('Error sending notification:', error);
 	}
 };

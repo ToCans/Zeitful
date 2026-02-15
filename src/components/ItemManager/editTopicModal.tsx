@@ -6,10 +6,12 @@ import { InputText } from 'primereact/inputtext';
 // Icon Imports
 import { PiXBold, PiCheckBold } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
-// Hook Imports
-import { useAppContext } from '../../hooks/useAppContext';
 // React Imports
 import { useState, useCallback } from 'react';
+// Store Imports
+import { useSettingsStore } from '../../stores/useSettingsStore';
+import { useDataStore } from '../../stores/useDataStore';
+import { useRefsStore } from '../../stores/useRefsStore';
 // Type Imports
 import type { Dispatch } from 'react';
 import type { EditedWorkTopic, WorkTopic } from '../../types/types';
@@ -24,7 +26,10 @@ interface EditTopicModalProps {
 
 // Component Definition
 const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
-	const settings = useAppContext();
+	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
+	const setWorkTopics = useDataStore((state) => state.setWorkTopics);
+	const toast = useRefsStore((state) => state.toast);
+
 	const [editValues, setEditValues] = useState({
 		name: workTopic.name,
 		color: workTopic.color,
@@ -33,68 +38,60 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 	});
 
 	const handleConfirmEdit = useCallback(
-		async (topicId: string, workTopic: EditedWorkTopic) => {
-			const topicResponse = await editTopic(topicId, workTopic);
+		async (topicId: string, editedWorkTopic: EditedWorkTopic) => {
+			const topicResponse = await editTopic(topicId, editedWorkTopic);
 
-			if (topicResponse.status == 'Failure') {
-				settings.toast?.show({
+			if (topicResponse.status === 'Failure') {
+				toast?.show({
 					severity: 'error',
 					summary: topicResponse.status,
 					detail: topicResponse.message,
 					life: 3000,
 				});
 			} else {
-				settings.setWorkTopics((await getTopics()).item as WorkTopic[]);
+				const updatedTopics = await getTopics();
+				if (updatedTopics.item) {
+					setWorkTopics(updatedTopics.item as WorkTopic[]);
+				}
 			}
 			setEditMode(false);
 		},
-		[settings, setEditMode],
+		[toast, setWorkTopics, setEditMode],
 	);
+
+	const iconClassName = `${darkMode ? 'fill-gray-200 hover:fill-gray-400' : 'fill-gray-600 hover:fill-gray-400'
+		} size-6 custom-target-icon cursor-pointer`;
+
+	const inputStyle = {
+		backgroundColor: darkMode ? '#52525B' : '#ffffff',
+		color: darkMode ? '#F4F4F5' : '#000000',
+		borderColor: darkMode ? '#6b7280' : '#d1d5db',
+	};
+
+	const inputClassName = `${darkMode ? 'dark-dropdown text-zinc-100' : 'light-dropdown text-black'
+		}`;
 
 	return (
 		<div className='absolute top-0 left-0 flex flex-col h-full w-full bg-black/60 z-30 p-2 justify-center items-center'>
 			<div
-				className={`${
-					settings.appSettings.darkMode
-						? 'bg-zinc-700'
-						: 'bg-zinc-100'
-				} flex lg:size-96 size-80 rounded-lg p-4 flex-col items-center`}
+				className={`${darkMode ? 'bg-zinc-700' : 'bg-zinc-100'
+					} flex lg:size-96 size-80 rounded-lg p-4 flex-col items-center`}
 			>
 				<div className='flex w-full justify-end space-x-1'>
-					<IconContext.Provider
-						value={{
-							className: `${
-								settings.appSettings.darkMode
-									? 'fill-gray-200 hover:fill-gray-400'
-									: 'fill-gray-600 hover:fill-gray-400'
-							} size-6 custom-target-icon`,
-						}}
-					>
-						<PiXBold
-							onClick={() => {
-								setEditMode(false);
-							}}
-						/>
+					<IconContext.Provider value={{ className: iconClassName }}>
+						<PiXBold onClick={() => setEditMode(false)} />
 					</IconContext.Provider>
-					<IconContext.Provider
-						value={{
-							className: `${
-								settings.appSettings.darkMode
-									? 'fill-gray-200 hover:fill-gray-400'
-									: 'fill-gray-600 hover:fill-gray-400'
-							} size-6 custom-target-icon`,
-						}}
-					>
+					<IconContext.Provider value={{ className: iconClassName }}>
 						<PiCheckBold
-							onClick={() => {
-								handleConfirmEdit(workTopic.id, editValues);
-							}}
+							onClick={() => handleConfirmEdit(workTopic.id, editValues)}
 						/>
 					</IconContext.Provider>
 				</div>
+
 				<div className='flex flex-1 items-center justify-center'>
-					<div className='flex flex-col items-center w-full '>
+					<div className='flex flex-col items-center w-full'>
 						<div className='flex flex-col w-full space-y-2'>
+							{/* Topic Color */}
 							<p className='font-semibold'>Topic Color</p>
 							<ColorPicker
 								value={intToColor(editValues.color)}
@@ -105,13 +102,11 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 									})
 								}
 							/>
+
+							{/* Topic Name */}
 							<p className='font-semibold'>Topic Name</p>
 							<InputText
-								className={`${
-									settings.appSettings.darkMode
-										? 'dark-dropdown text-zinc-100'
-										: 'light-dropdown text-black'
-								}`}
+								className={inputClassName}
 								value={editValues.name}
 								onChange={(e) =>
 									setEditValues({
@@ -119,18 +114,7 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 										name: e.target.value,
 									})
 								}
-								style={{
-									backgroundColor: settings.appSettings
-										.darkMode
-										? '#52525B'
-										: '#ffffff', // input background
-									color: settings.appSettings.darkMode
-										? '#F4F4F5'
-										: '#000000',
-									borderColor: settings.appSettings.darkMode
-										? '#6b7280'
-										: '#d1d5db', // border color
-								}}
+								style={inputStyle}
 							/>
 						</div>
 					</div>

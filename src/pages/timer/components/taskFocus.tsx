@@ -4,53 +4,47 @@ import {
 	WorkTaskOptionTemplate,
 	SelectedWorkTaskOptionTemplate,
 } from '../../../components/ItemManager/workTaskOptionTemplate';
-// Hook Imports
-import { useAppContext } from '../../../hooks/useAppContext';
-// Utils Imports
-import { sortWorkTasks } from '../../../utils/items';
+// Store Imports
+import { useSettingsStore } from '../../../stores/useSettingsStore';
+import { useTimerStore } from '../../../stores/useTimerStore';
+import { useDataStore } from '../../../stores/useDataStore';
 // Type Imports
 import type { DropdownChangeEvent } from 'primereact/dropdown';
+// Utils Imports
+import { sortWorkTasks } from '../../../utils/items';
 
 // Component Definition
 const TaskFocus = () => {
-	const settings = useAppContext();
-	const sortedWorkTasks = sortWorkTasks(
-		settings.workEntries,
-		settings.workTasks,
-	);
+	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
+	const activeWorkTask = useTimerStore((state) => state.activeWorkTask);
+	const setActiveWorkTask = useTimerStore((state) => state.setActiveWorkTask);
+	const workEntries = useDataStore((state) => state.workEntries);
+	const workTasks = useDataStore((state) => state.workTasks);
+
+	const sortedWorkTasks = sortWorkTasks(workEntries, workTasks);
 
 	return (
 		<div className='flex rounded-lg items-center justify-center'>
 			<Dropdown
-				value={settings.activeWorkTask}
-				onChange={(e: DropdownChangeEvent) =>
-					settings.setActiveWorkTask(e.value)
-				}
+				value={activeWorkTask}
+				onChange={(e: DropdownChangeEvent) => setActiveWorkTask(e.value)}
 				options={sortedWorkTasks.filter(
-					(task) => task.last_action !== 3 && task.status == 2,
+					(task) => task.last_action !== 3 && task.status === 2,
 				)}
 				optionLabel='name'
 				placeholder='Select an active Work Task'
 				valueTemplate={SelectedWorkTaskOptionTemplate}
 				itemTemplate={WorkTaskOptionTemplate}
-				className={`w-full ${settings.appSettings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
+				className={`w-full ${darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
 				style={{
-					backgroundColor: settings.appSettings.darkMode
-						? '#52525B'
-						: '#ffffff',
-					borderColor: settings.appSettings.darkMode
-						? '#6b7280'
-						: '#d1d5db',
+					backgroundColor: darkMode ? '#52525B' : '#ffffff',
+					borderColor: darkMode ? '#6b7280' : '#d1d5db',
 				}}
 				panelClassName={
-					settings.appSettings.darkMode
-						? 'dark-dropdown-panel'
-						: 'light-dropdown-panel'
+					darkMode ? 'dark-dropdown-panel' : 'light-dropdown-panel'
 				}
 				panelStyle={{
-					backgroundColor: settings.appSettings.darkMode
-						? '#52525B'
-						: '#ffffff',
+					backgroundColor: darkMode ? '#52525B' : '#ffffff',
 				}}
 			/>
 		</div>

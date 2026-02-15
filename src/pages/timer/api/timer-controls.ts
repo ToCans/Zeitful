@@ -1,16 +1,16 @@
 // API Imports
 import { subscribeToPush } from '../api/push-notification';
-// Type Defintions
-import type { SettingsContextType } from '../../../types/context';
+// Type Imports
+import type { PersistedAppSettings } from '../../../types/types';
 
-// Interface Definition for Timer Worker
+// Interface Definition for Timer Worker Message
 export interface TimerWorkerMessageProps {
 	timerWorker: Worker | null;
 	runningBoolean: boolean;
 	timeRemaining: number | null;
 }
 
-// Sending Time Worker Message
+// Sending Timer Worker Message
 export const sendTimerWorkerMessage = ({
 	timerWorker,
 	runningBoolean,
@@ -25,88 +25,116 @@ export const sendTimerWorkerMessage = ({
 	}
 };
 
-// Interface Defintion for Timer Controls
-interface timerControlsProps {
-	settings: SettingsContextType;
+// Interface Definition for Timer Controls
+interface TimerControlsProps {
+	appSettings: PersistedAppSettings;
+	cycleNumber: number;
+	timerWorker: Worker | null;
+	permission?: PermissionState | null;
 	timeRemaining: number;
 	setTimerRunning: (timerRunning: boolean) => void;
 	setTimeRemaining?: (timeRemaining: number) => void;
+	setCycleNumber?: (cycleNumber: number) => void;
 }
 
 // Start Timer Functionality
 export const startTimer = async ({
-	settings,
+	appSettings,
+	timerWorker,
+	permission,
 	timeRemaining,
 	setTimerRunning,
-}: timerControlsProps) => {
-	if (settings.permission.current === 'prompt') {
-		await subscribeToPush(settings);
+}: TimerControlsProps) => {
+	if (permission === 'prompt') {
+		await subscribeToPush();
 	}
+
 	sendTimerWorkerMessage({
-		timerWorker: settings.timerWorker.current,
+		timerWorker,
 		runningBoolean: true,
-		timeRemaining: timeRemaining,
+		timeRemaining,
 	});
+
 	setTimerRunning(true);
 };
 
 // Pause Timer Functionality
 export const pauseTimer = async ({
-	settings,
+	appSettings,
+	timerWorker,
+	permission,
 	timeRemaining,
 	setTimerRunning,
-}: timerControlsProps) => {
-	if (settings.permission.current === 'prompt') {
-		await subscribeToPush(settings);
+}: TimerControlsProps) => {
+	if (permission === 'prompt') {
+		await subscribeToPush();
 	}
+
 	sendTimerWorkerMessage({
-		timerWorker: settings.timerWorker.current,
+		timerWorker,
 		runningBoolean: false,
-		timeRemaining: timeRemaining,
+		timeRemaining,
 	});
+
 	setTimerRunning(false);
 };
 
 // Restart Timer Functionality
 export const restartTimer = async ({
-	settings,
+	appSettings,
+	cycleNumber,
+	timerWorker,
+	permission,
 	setTimerRunning,
 	setTimeRemaining,
-}: timerControlsProps) => {
-	if (settings.permission.current === 'prompt') {
-		await subscribeToPush(settings);
+}: TimerControlsProps) => {
+	if (permission === 'prompt') {
+		await subscribeToPush();
 	}
+
 	sendTimerWorkerMessage({
-		timerWorker: settings.timerWorker.current,
+		timerWorker,
 		runningBoolean: false,
 		timeRemaining: null,
 	});
+
 	setTimerRunning(false);
 
 	if (setTimeRemaining) {
-		if (settings.cycleNumber % 8 === 0) {
-			setTimeRemaining(settings.appSettings.longBreakTime);
-		} else if (settings.cycleNumber % 2 === 0) {
-			setTimeRemaining(settings.appSettings.shortBreakTime);
+		let newTime: number;
+		if (cycleNumber % 8 === 0) {
+			newTime = appSettings.longBreakTime;
+		} else if (cycleNumber % 2 === 0) {
+			newTime = appSettings.shortBreakTime;
 		} else {
-			setTimeRemaining(settings.appSettings.workingTime);
+			newTime = appSettings.workingTime;
 		}
+		setTimeRemaining(newTime);
 	}
 };
 
 // Skip Timer Functionality
 export const skipTimer = async ({
-	settings,
+	appSettings,
+	cycleNumber,
+	timerWorker,
+	permission,
 	setTimerRunning,
-}: timerControlsProps) => {
-	if (settings.permission.current === 'prompt') {
-		await subscribeToPush(settings);
+	setCycleNumber,
+}: TimerControlsProps) => {
+	if (permission === 'prompt') {
+		await subscribeToPush();
 	}
+
 	sendTimerWorkerMessage({
-		timerWorker: settings.timerWorker.current,
+		timerWorker,
 		runningBoolean: false,
 		timeRemaining: null,
 	});
+
 	setTimerRunning(false);
-	settings.setCycleNumber(settings.cycleNumber + 1);
+
+	if (setCycleNumber) {
+		setCycleNumber(cycleNumber + 1);
+	}
 };

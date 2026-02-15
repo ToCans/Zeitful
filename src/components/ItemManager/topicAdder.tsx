@@ -6,42 +6,49 @@ import { IconContext } from 'react-icons';
 import { PiPlus } from 'react-icons/pi';
 import { ColorPicker } from 'primereact/colorpicker';
 import { InputText } from 'primereact/inputtext';
-// Hook Imports
+// React Imports
 import { useState, useCallback } from 'react';
-import { useAppContext } from '../../hooks/useAppContext';
+// Store Imports
+import { useSettingsStore } from '../../stores/useSettingsStore';
+import { useDataStore } from '../../stores/useDataStore';
+import { useCloudStore } from '../../stores/useCloudStore';
+import { useRefsStore } from '../../stores/useRefsStore';
 // Library Imports
 import { v4 as uuidv4 } from 'uuid';
 // Type Imports
 import type { WorkTopic } from '../../types/types';
-import type { SettingsContextType } from '../../types/context';
 // Utils Imports
 import { colorToInt, getRandomHexColor } from '../../utils/colors';
 
 // Component Definition
 const TopicAdder = () => {
-	const settings = useAppContext();
+	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
+	const setWorkTopics = useDataStore((state) => state.setWorkTopics);
+	const cloudDatabase = useCloudStore((state) => state.cloudDatabase);
+	const toast = useRefsStore((state) => state.toast);
+
 	const [newTopicName, setNewTopicName] = useState<string>('');
-	const [newTopicColor, setNewTopicColor] =
-		useState<string>(getRandomHexColor());
+	const [newTopicColor, setNewTopicColor] = useState<string>(getRandomHexColor());
 
 	const handleAddTopic = useCallback(
-		async (settings: SettingsContextType, workTopic: WorkTopic) => {
+		async (workTopic: WorkTopic) => {
 			if (workTopic.name !== '') {
 				const topicResponse = await addTopic(workTopic);
-				if (topicResponse.status == 'Failure') {
-					settings.toast?.show({
+				if (topicResponse.status === 'Failure') {
+					toast?.show({
 						severity: 'error',
 						summary: topicResponse.status,
 						detail: topicResponse.message,
 						life: 3000,
 					});
 				} else {
-					settings.setWorkTopics(
-						(await getTopics()).item as WorkTopic[],
-					);
+					const updatedTopics = await getTopics();
+					if (updatedTopics.item) {
+						setWorkTopics(updatedTopics.item as WorkTopic[]);
+					}
 				}
 			} else {
-				settings.toast?.show({
+				toast?.show({
 					severity: 'error',
 					summary: 'Error',
 					detail: 'Please enter a topic name.',
@@ -49,52 +56,58 @@ const TopicAdder = () => {
 				});
 			}
 		},
-		[],
+		[toast, setWorkTopics],
 	);
 
 	const handleAddTopicToCloudDatabase = useCallback(
-		async (settings: SettingsContextType, workTopic: WorkTopic) => {
-			if (workTopic.name !== '') {
-				if (settings.cloudDatabase) {
-					const response = await addWorkTopicSupabaseDatabase(
-						settings.cloudDatabase,
-						workTopic,
-					);
-					console.log(response.status, response.message);
-					settings.setWorkTopics(
-						(await getTopics()).item as WorkTopic[],
-					);
-				} else {
-					console.log('Please enter a task name');
+		async (workTopic: WorkTopic) => {
+			if (workTopic.name !== '' && cloudDatabase) {
+				const response = await addWorkTopicSupabaseDatabase(
+					cloudDatabase,
+					workTopic,
+				);
+				console.log(response.status, response.message);
+				const updatedTopics = await getTopics();
+				if (updatedTopics.item) {
+					setWorkTopics(updatedTopics.item as WorkTopic[]);
 				}
 			}
 		},
-		[],
+		[cloudDatabase, setWorkTopics],
 	);
+
+	const handleAddTopicClick = async () => {
+		const id = uuidv4();
+		const topicData: WorkTopic = {
+			id,
+			name: newTopicName,
+			color: colorToInt(newTopicColor),
+			last_action: 1,
+			last_action_date: new Date().toISOString(),
+		};
+
+		await handleAddTopic(topicData);
+
+		if (cloudDatabase) {
+			await handleAddTopicToCloudDatabase(topicData);
+		}
+
+		// Clear inputs after successful add
+		setNewTopicName('');
+		setNewTopicColor(getRandomHexColor());
+	};
+
+	const inputStyle = {
+		backgroundColor: darkMode ? '#52525B' : '#ffffff',
+		color: darkMode ? '#F4F4F5' : '#000000',
+		borderColor: darkMode ? '#6b7280' : '#d1d5db',
+	};
 
 	return (
 		<div className='flex flex-row items-center gap-2 w-full'>
 			<button
 				className='m-2 cursor-pointer group'
-				onClick={async () => {
-					const id = uuidv4();
-					await handleAddTopic(settings, {
-						id: id,
-						name: newTopicName,
-						color: colorToInt(newTopicColor),
-						last_action: 1,
-						last_action_date: new Date().toISOString(),
-					});
-					if (settings.cloudDatabase) {
-						await handleAddTopicToCloudDatabase(settings, {
-							id: id,
-							name: newTopicName,
-							color: colorToInt(newTopicColor),
-							last_action: 1,
-							last_action_date: new Date().toISOString(),
-						});
-					}
-				}}
+				onClick={handleAddTopicClick}
 			>
 				<IconContext.Provider
 					value={{
@@ -105,28 +118,17 @@ const TopicAdder = () => {
 					<PiPlus />
 				</IconContext.Provider>
 			</button>
+
 			<InputText
-				className={`w-2/5 ${
-					settings.appSettings.darkMode
-						? 'dark-dropdown text-zinc-100'
-						: 'light-dropdown text-black'
-				}`}
+				className={`w-2/5 ${darkMode ? 'dark-dropdown text-zinc-100' : 'light-dropdown text-black'
+					}`}
 				id='newTopic'
 				placeholder='Add a new topic'
 				value={newTopicName}
 				onChange={(e) => setNewTopicName(e.target.value)}
-				style={{
-					backgroundColor: settings.appSettings.darkMode
-						? '#52525B'
-						: '#ffffff', // input background
-					color: settings.appSettings.darkMode
-						? '#F4F4F5'
-						: '#000000', // input text color
-					borderColor: settings.appSettings.darkMode
-						? '#6b7280'
-						: '#d1d5db', // border color
-				}}
+				style={inputStyle}
 			/>
+
 			<ColorPicker
 				value={newTopicColor}
 				onChange={(e) => setNewTopicColor(`#${e.value}`)}

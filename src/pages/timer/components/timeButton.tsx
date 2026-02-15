@@ -1,9 +1,9 @@
 // API Imports
 import { startTimer, pauseTimer, restartTimer, skipTimer } from '../api/timer-controls';
-
-// Hook Imports
-import { useAppContext } from '../../../hooks/useAppContext';
-
+// Store Imports
+import { useSettingsStore } from '../../../stores/useSettingsStore';
+import { useTimerStore } from '../../../stores/useTimerStore';
+import { useRefsStore } from '../../../stores/useRefsStore';
 // Icon Imports
 import { IconContext } from 'react-icons';
 import {
@@ -28,81 +28,68 @@ const TimeButton = ({
 	setTimeRemaining,
 	setTimerRunning,
 }: TimeButtonProps) => {
-	const settings = useAppContext();
+	const appSettings = useSettingsStore((state) => state.appSettings);
+	const cycleNumber = useTimerStore((state) => state.cycleNumber);
+	const timerWorker = useRefsStore((state) => state.timerWorker);
 
-	// Start Button Handling
-	if (purpose === 'Start') {
-		return (
-			<IconContext.Provider value={{ className: 'size-8 opacity-50 hover:opacity-70' }}>
-				<PiPlayDuotone
-					id='startButton'
-					onClick={async () => {
-						startTimer({
-							settings: settings,
-							timeRemaining,
-							setTimerRunning: setTimerRunning,
-						});
-					}}
-				/>
-			</IconContext.Provider>
-		);
-	}
-	// Pause Button Handling
-	else if (purpose === 'Pause') {
-		return (
-			<IconContext.Provider value={{ className: 'size-8 opacity-50 hover:opacity-70' }}>
-				<PiPauseDuotone
-					id='pauseButton'
-					onClick={async () => {
-						pauseTimer({
-							settings: settings,
-							timeRemaining,
-							setTimerRunning: setTimerRunning,
-						});
-					}}
-					className='size-8'
-				/>
-			</IconContext.Provider>
-		);
-	}
-	// Restart Button Handling
-	else if (purpose === 'Restart') {
-		return (
-			<IconContext.Provider value={{ className: 'size-8 opacity-50 hover:opacity-70' }}>
-				<PiArrowCounterClockwise
-					id='restartButton'
-					onClick={async () => {
-						restartTimer({
-							settings: settings,
-							timeRemaining,
-							setTimerRunning: setTimerRunning,
-							setTimeRemaining: setTimeRemaining,
-						});
-					}}
-					className='size-8'
-				/>
-			</IconContext.Provider>
-		);
-	}
-	// Skip Button Handling
-	else {
-		return (
-			<IconContext.Provider value={{ className: 'size-8 opacity-50 hover:opacity-70' }}>
-				<PiSkipForwardDuotone
-					id='skipButton'
-					onClick={async () => {
-						skipTimer({
-							settings: settings,
-							timeRemaining,
-							setTimerRunning: setTimerRunning,
-							setTimeRemaining: setTimeRemaining,
-						});
-					}}
-					className='size-8'
-				/>
-			</IconContext.Provider>
-		);
-	}
+	const iconClassName = 'size-8 opacity-50 hover:opacity-70 cursor-pointer';
+
+	const buttonConfig = {
+		Start: {
+			icon: PiPlayDuotone,
+			id: 'startButton',
+			action: () => startTimer({
+				appSettings,
+				cycleNumber,
+				timerWorker,
+				timeRemaining,
+				setTimerRunning,
+			}),
+		},
+		Pause: {
+			icon: PiPauseDuotone,
+			id: 'pauseButton',
+			action: () => pauseTimer({
+				appSettings,
+				cycleNumber,
+				timerWorker,
+				timeRemaining,
+				setTimerRunning,
+			}),
+		},
+		Restart: {
+			icon: PiArrowCounterClockwise,
+			id: 'restartButton',
+			action: () => restartTimer({
+				appSettings,
+				cycleNumber,
+				timerWorker,
+				timeRemaining,
+				setTimerRunning,
+				setTimeRemaining,
+			}),
+		},
+		Skip: {
+			icon: PiSkipForwardDuotone,
+			id: 'skipButton',
+			action: () => skipTimer({
+				appSettings,
+				cycleNumber,
+				timerWorker,
+				timeRemaining,
+				setTimerRunning,
+				setTimeRemaining,
+			}),
+		},
+	};
+
+	const { icon: Icon, id, action } = buttonConfig[purpose];
+
+	return (
+		<IconContext.Provider value={{ className: iconClassName }}>
+			<Icon id={id} onClick={action} />
+		</IconContext.Provider>
+	);
 };
 
 export default TimeButton;

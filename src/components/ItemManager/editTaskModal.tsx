@@ -1,17 +1,20 @@
 import type { EditedWorkTask, WorkTask } from '../../types/types';
 import { PiXBold, PiCheckBold } from 'react-icons/pi';
 import { IconContext } from 'react-icons';
-import { useAppContext } from '../../hooks/useAppContext';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
-import { useState, useCallback, type SetStateAction } from 'react';
+import { useState, useCallback, type SetStateAction, type Dispatch } from 'react';
+// Store Imports
+import { useSettingsStore } from '../../stores/useSettingsStore';
+import { useDataStore } from '../../stores/useDataStore';
+import { useRefsStore } from '../../stores/useRefsStore';
+// Component Imports
 import {
-	WorkTaskOptionTemplate,
-	SelectedWorkTaskOptionTemplate,
-} from './workTaskOptionTemplate';
-import { editTask, getTasks } from '../../api/localDatabase';
-import type { Dispatch } from 'react';
+	WorkTopicOptionTemplate,
+	SelectedWorkTopicOptionTemplate,
+} from './workTopicOptionTemplate';
 // API Imports
+import { editTask, getTasks } from '../../api/localDatabase';
 
 interface EditTaskModalProps {
 	setEditMode: Dispatch<SetStateAction<boolean>>;
@@ -19,7 +22,11 @@ interface EditTaskModalProps {
 }
 
 const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
-	const settings = useAppContext();
+	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
+	const workTopics = useDataStore((state) => state.workTopics);
+	const setWorkTasks = useDataStore((state) => state.setWorkTasks);
+	const toast = useRefsStore((state) => state.toast);
+
 	const [editValues, setEditValues] = useState({
 		name: workTask.name,
 		topic_id: workTask.topic_id,
@@ -35,80 +42,69 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 	];
 
 	const handleConfirmEdit = useCallback(
-		async (taskId: string, workTask: EditedWorkTask) => {
-			const taskResponse = await editTask(taskId, workTask);
+		async (taskId: string, editedWorkTask: EditedWorkTask) => {
+			const taskResponse = await editTask(taskId, editedWorkTask);
 
 			// Setting Tasks
-			if (taskResponse.status == 'Failure') {
-				settings.toast?.show({
+			if (taskResponse.status === 'Failure') {
+				toast?.show({
 					severity: 'error',
 					summary: taskResponse.status,
 					detail: taskResponse.message,
 					life: 3000,
 				});
 			} else {
-				settings.setWorkTasks((await getTasks()).item as WorkTask[]);
+				const updatedTasks = await getTasks();
+				if (updatedTasks.item) {
+					setWorkTasks(updatedTasks.item as WorkTask[]);
+				}
 			}
 			setEditMode(false);
 		},
-		[settings, setEditMode],
+		[toast, setWorkTasks, setEditMode],
 	);
 
-	const matchedTopic = settings.workTopics.find(
+	const matchedTopic = workTopics.find(
 		(workTopic) => workTopic.id === editValues.topic_id,
 	);
+
+	const iconClassName = `${darkMode ? 'fill-gray-200 hover:fill-gray-400' : 'fill-gray-600 hover:fill-gray-400'
+		} size-6 custom-target-icon cursor-pointer`;
+
+	const inputStyle = {
+		backgroundColor: darkMode ? '#52525B' : '#ffffff',
+		color: darkMode ? '#F4F4F5' : '#000000',
+		borderColor: darkMode ? '#6b7280' : '#d1d5db',
+	};
+
+	const dropdownClassName = darkMode ? 'dark-dropdown' : 'light-dropdown';
+	const panelClassName = darkMode ? 'dark-dropdown-panel' : 'light-dropdown-panel';
 
 	return (
 		<div className='absolute top-0 left-0 flex flex-col h-full w-full bg-black/60 z-30 p-2 justify-center items-center'>
 			<div
-				className={`${
-					settings.appSettings.darkMode
-						? 'bg-zinc-700'
-						: 'bg-zinc-100'
-				} flex lg:size-96 size-80 rounded-lg p-4 flex-col items-center`}
+				className={`${darkMode ? 'bg-zinc-700' : 'bg-zinc-100'
+					} flex lg:size-96 size-80 rounded-lg p-4 flex-col items-center`}
 			>
 				<div className='flex w-full justify-end space-x-1'>
-					<IconContext.Provider
-						value={{
-							className: `${
-								settings.appSettings.darkMode
-									? 'fill-gray-200 hover:fill-gray-400'
-									: 'fill-gray-600 hover:fill-gray-400'
-							} size-6 custom-target-icon`,
-						}}
-					>
-						<PiXBold
-							onClick={() => {
-								setEditMode(false);
-							}}
-						/>
+					<IconContext.Provider value={{ className: iconClassName }}>
+						<PiXBold onClick={() => setEditMode(false)} />
 					</IconContext.Provider>
-					<IconContext.Provider
-						value={{
-							className: `${
-								settings.appSettings.darkMode
-									? 'fill-gray-200 hover:fill-gray-400'
-									: 'fill-gray-600 hover:fill-gray-400'
-							} size-6 custom-target-icon`,
-						}}
-					>
+					<IconContext.Provider value={{ className: iconClassName }}>
 						<PiCheckBold
-							onClick={() => {
-								handleConfirmEdit(workTask.id, editValues);
-							}}
+							onClick={() => handleConfirmEdit(workTask.id, editValues)}
 						/>
 					</IconContext.Provider>
 				</div>
+
 				<div className='flex flex-1 items-center justify-center'>
 					<div className='flex flex-col items-center w-full space-y-2'>
+						{/* Task Name */}
 						<div className='flex flex-col w-full'>
 							<p className='font-semibold'>Task Name</p>
 							<InputText
-								className={`${
-									settings.appSettings.darkMode
-										? 'dark-dropdown text-zinc-100'
-										: 'light-dropdown text-black'
-								}`}
+								className={`${dropdownClassName} ${darkMode ? 'text-zinc-100' : 'text-black'
+									}`}
 								value={editValues.name}
 								onChange={(e) =>
 									setEditValues({
@@ -116,20 +112,11 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 										name: e.target.value,
 									})
 								}
-								style={{
-									backgroundColor: settings.appSettings
-										.darkMode
-										? '#52525B'
-										: '#ffffff', // input background
-									color: settings.appSettings.darkMode
-										? '#F4F4F5'
-										: '#000000',
-									borderColor: settings.appSettings.darkMode
-										? '#6b7280'
-										: '#d1d5db', // border color
-								}}
+								style={inputStyle}
 							/>
 						</div>
+
+						{/* Assigned Topic */}
 						<div className='flex flex-col w-full'>
 							<p className='font-semibold'>Assigned Topic</p>
 							<Dropdown
@@ -140,36 +127,22 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 										topic_id: e.target.value.id,
 									})
 								}
-								options={settings.workTopics.filter(
+								options={workTopics.filter(
 									(topic) => topic.last_action !== 3,
 								)}
-								placeholder='None' // Hacky way of triggering default option without having it in options
-								itemTemplate={WorkTaskOptionTemplate}
-								valueTemplate={SelectedWorkTaskOptionTemplate}
-								className={`${settings.appSettings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
-								style={{
-									backgroundColor: settings.appSettings
-										.darkMode
-										? '#52525B'
-										: '#ffffff',
-									borderColor: settings.appSettings.darkMode
-										? '#6b7280'
-										: '#d1d5db',
-								}}
-								panelClassName={
-									settings.appSettings.darkMode
-										? 'dark-dropdown-panel'
-										: 'light-dropdown-panel'
-								}
+								placeholder='None'
+								itemTemplate={WorkTopicOptionTemplate}
+								valueTemplate={SelectedWorkTopicOptionTemplate}
+								className={dropdownClassName}
+								style={inputStyle}
+								panelClassName={panelClassName}
 								panelStyle={{
-									backgroundColor: settings.appSettings
-										.darkMode
-										? '#52525B'
-										: '#ffffff',
+									backgroundColor: darkMode ? '#52525B' : '#ffffff',
 								}}
 							/>
 						</div>
 
+						{/* Task Status */}
 						<div className='flex flex-col w-full'>
 							<p className='font-semibold'>Task Status</p>
 							<Dropdown
@@ -182,26 +155,11 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 								}
 								options={statusOptions}
 								optionLabel='label'
-								className={`${settings.appSettings.darkMode ? 'dark-dropdown' : 'light-dropdown'}`}
-								style={{
-									backgroundColor: settings.appSettings
-										.darkMode
-										? '#52525B'
-										: '#ffffff',
-									borderColor: settings.appSettings.darkMode
-										? '#6b7280'
-										: '#d1d5db',
-								}}
-								panelClassName={
-									settings.appSettings.darkMode
-										? 'dark-dropdown-panel'
-										: 'light-dropdown-panel'
-								}
+								className={dropdownClassName}
+								style={inputStyle}
+								panelClassName={panelClassName}
 								panelStyle={{
-									backgroundColor: settings.appSettings
-										.darkMode
-										? '#52525B'
-										: '#ffffff',
+									backgroundColor: darkMode ? '#52525B' : '#ffffff',
 								}}
 							/>
 						</div>
