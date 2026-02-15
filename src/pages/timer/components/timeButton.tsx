@@ -30,7 +30,9 @@ const TimeButton = ({
 }: TimeButtonProps) => {
 	const appSettings = useSettingsStore((state) => state.appSettings);
 	const cycleNumber = useTimerStore((state) => state.cycleNumber);
+	const setCycleNumber = useTimerStore((state) => state.setCycleNumber);
 	const timerWorker = useRefsStore((state) => state.timerWorker);
+	const permission = useRefsStore((state) => state.permission);
 
 	const iconClassName = 'size-8 opacity-50 hover:opacity-70 cursor-pointer';
 
@@ -42,6 +44,7 @@ const TimeButton = ({
 				appSettings,
 				cycleNumber,
 				timerWorker,
+				permission,
 				timeRemaining,
 				setTimerRunning,
 			}),
@@ -53,6 +56,7 @@ const TimeButton = ({
 				appSettings,
 				cycleNumber,
 				timerWorker,
+				permission,
 				timeRemaining,
 				setTimerRunning,
 			}),
@@ -64,6 +68,7 @@ const TimeButton = ({
 				appSettings,
 				cycleNumber,
 				timerWorker,
+				permission,
 				timeRemaining,
 				setTimerRunning,
 				setTimeRemaining,
@@ -76,9 +81,10 @@ const TimeButton = ({
 				appSettings,
 				cycleNumber,
 				timerWorker,
+				permission,
 				timeRemaining,
 				setTimerRunning,
-				setTimeRemaining,
+				setCycleNumber,
 			}),
 		},
 	};
