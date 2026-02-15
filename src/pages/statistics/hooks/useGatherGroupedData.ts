@@ -23,7 +23,6 @@ const useGatherGroupedData = ({
     workTasks,
     workTopics,
 }: UseGatherGroupedDataProps) => {
-    console.log("Running use gather grouped data");
     const groupedWorkEntries = useMemo(() => {
         if (!workEntries) return null;
 
