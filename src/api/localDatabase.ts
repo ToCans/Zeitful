@@ -16,6 +16,7 @@ import type {
 
 // Consts
 let dbInstance: Database | null = null;
+let tablesCreated = false;
 
 // Overall Local Database Functions
 // Get Database from Local Memory
@@ -31,7 +32,11 @@ export async function getLocalDatabase(): Promise<Database> {
 		? new SQL.Database(Uint8Array.from(atob(saved), (c) => c.charCodeAt(0)))
 		: new SQL.Database();
 
-	createTables(dbInstance);
+	if (!tablesCreated) {
+		createTables(dbInstance);
+		tablesCreated = true;
+	}
+
 	return dbInstance;
 }
 
@@ -69,8 +74,12 @@ function createTables(db: Database) {
 
 // Saving Local Database
 export async function saveLocalDatabase() {
-	const db = await getLocalDatabase();
-	const data = db.export();
+	if (!dbInstance) {
+		console.warn('No database instance to save');
+		return;
+	}
+	// Use the existing dbInstance, don't call getLocalDatabase()
+	const data = dbInstance.export();
 	localStorage.setItem('zeitful_db', btoa(String.fromCharCode(...data)));
 }
 
