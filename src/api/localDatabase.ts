@@ -119,7 +119,7 @@ export async function downloadDataJson() {
 }
 
 // Import JSON data back into the database
-export async function updataLocalDatabaseFromJson(jsonData: CloudDatabaseData) {
+export async function updateLocalDatabaseFromJson(jsonData: CloudDatabaseData) {
 	try {
 		const db = await getLocalDatabase();
 
@@ -208,7 +208,7 @@ export async function importLocalDatabaseDataFromJson(file: File) {
 		const text = await file.text();
 		const jsonData = JSON.parse(text);
 		console.log(jsonData);
-		await updataLocalDatabaseFromJson(jsonData);
+		await updateLocalDatabaseFromJson(jsonData);
 		return {
 			status: 'Success',
 			message: `Data was successfully imported.`,
@@ -230,8 +230,8 @@ export async function addTask(task: WorkTask): Promise<DatabaseActionResponse> {
 		// Check if topic already exists
 		const existing = db.exec(
 			'SELECT * FROM work_tasks WHERE name = "' +
-				task.name.replace(/"/g, '""') +
-				'"',
+			task.name.replace(/"/g, '""') +
+			'"',
 		);
 
 		if (existing.length > 0) {
@@ -413,8 +413,8 @@ export async function addTopic(
 		// Check if topic already exists
 		const existing = db.exec(
 			'SELECT * FROM work_topics WHERE name = "' +
-				topic.name.replace(/"/g, '""') +
-				'"',
+			topic.name.replace(/"/g, '""') +
+			'"',
 		);
 
 		if (existing.length > 0) {

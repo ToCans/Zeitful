@@ -9,7 +9,7 @@ import {
 	getTopics,
 	getLocalDatabaseData,
 	getWorkEntries,
-	updataLocalDatabaseFromJson,
+	updateLocalDatabaseFromJson,
 } from '../../../api/localDatabase';
 // Icon Imports
 import { PiArrowsClockwise, PiCloud } from 'react-icons/pi';
@@ -48,6 +48,7 @@ const CloudDatabaseTile = () => {
 	const setCloudDatabase = useCloudStore((state) => state.setCloudDatabase);
 	const hasSynced = useCloudStore((state) => state.hasSynced);
 	const setHasSynced = useCloudStore((state) => state.setHasSynced);
+	const isSyncingRef = useRef(false);
 
 	const toast = useRefsStore((state) => state.toast);
 
@@ -105,6 +106,14 @@ const CloudDatabaseTile = () => {
 	const handleCloudDatabaseDataSync = useCallback(async () => {
 		if (!cloudDatabase) return;
 
+		// Prevent concurrent syncs
+		if (isSyncingRef.current) {
+			console.log('Sync already in progress, skipping...');
+			return;
+		}
+
+		isSyncingRef.current = true;
+
 		try {
 			setIsLoading(true);
 
@@ -122,7 +131,7 @@ const CloudDatabaseTile = () => {
 			const response = await getDataFromSupabaseDatabase(cloudDatabase);
 
 			if (response.status === 'Success' && response.item) {
-				await updataLocalDatabaseFromJson(
+				await updateLocalDatabaseFromJson(
 					response.item as CloudDatabaseData,
 				);
 
@@ -157,6 +166,7 @@ const CloudDatabaseTile = () => {
 			console.log('Experienced error syncing databases', e);
 		} finally {
 			setIsLoading(false);
+			isSyncingRef.current = false;
 		}
 	}, [cloudDatabase, setAppSettings, setWorkTopics, setWorkTasks, setWorkEntries, toast]);
 

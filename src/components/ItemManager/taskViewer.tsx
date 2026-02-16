@@ -31,31 +31,33 @@ const TaskViewer = ({ itemAddedSuccess }: TaskViewerProps) => {
 	};
 
 	return (
-		<div className='flex flex-col w-full h-full space-y-2'>
-			<div className='flex flex-row h-6 space-x-2 py-1'>
-				<h2 className='font-semibold'>Work Tasks</h2>
-				<div className='flex flex-row space-x-1'>
-					<TaskFilterButton
-						isActive={workTaskStatus === 2}
-						value={2}
-						setWorkTaskStatus={setWorkTaskStatus}
-					/>
-					<TaskFilterButton
-						isActive={workTaskStatus === 1}
-						value={1}
-						setWorkTaskStatus={setWorkTaskStatus}
-					/>
-					<TaskFilterButton
-						isActive={workTaskStatus === 3}
-						value={3}
-						setWorkTaskStatus={setWorkTaskStatus}
-					/>
+		<div className='flex flex-col w-full h-full space-y-2 py-1'>
+			<div className='flex md:flex-row flex-col md:space-x-2 md:space-y-0 space-y-1 md:items-center'>
+				<div className='flex flex-row h-6 space-x-2 items-center'>
+					<h2 className='font-semibold text-nowrap'>Work Tasks</h2>
+					<div className='flex flex-row space-x-1'>
+						<TaskFilterButton
+							isActive={workTaskStatus === 2}
+							value={2}
+							setWorkTaskStatus={setWorkTaskStatus}
+						/>
+						<TaskFilterButton
+							isActive={workTaskStatus === 1}
+							value={1}
+							setWorkTaskStatus={setWorkTaskStatus}
+						/>
+						<TaskFilterButton
+							isActive={workTaskStatus === 3}
+							value={3}
+							setWorkTaskStatus={setWorkTaskStatus}
+						/>
+					</div>
 				</div>
 				<p className={`text-zinc-500 text-sm transition-all duration-300 ${itemAddedSuccess
 					? 'opacity-100 translate-y-0'
 					: 'opacity-0 translate-y-4 pointer-events-none h-0'
 					}`}>
-					Task was added successfully to "Open" tasks.
+					Task was added to "Open" tasks.
 				</p>
 			</div>
 
