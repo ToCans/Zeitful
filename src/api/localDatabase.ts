@@ -16,7 +16,6 @@ import type {
 
 // Consts
 let dbInstance: Database | null = null;
-let tablesCreated = false;
 
 // Overall Local Database Functions
 // Get Database from Local Memory
@@ -40,10 +39,7 @@ export async function getLocalDatabase(): Promise<Database> {
 		dbInstance = new SQL.Database();
 	}
 
-	if (!tablesCreated) {
-		createTables(dbInstance);
-		tablesCreated = true;
-	}
+	createTables(dbInstance);
 
 	return dbInstance;
 }
