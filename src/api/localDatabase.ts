@@ -28,9 +28,17 @@ export async function getLocalDatabase(): Promise<Database> {
 	});
 
 	const saved = localStorage.getItem('zeitful_db');
-	dbInstance = saved
-		? new SQL.Database(Uint8Array.from(atob(saved), (c) => c.charCodeAt(0)))
-		: new SQL.Database();
+
+	if (saved) {
+		const binary = atob(saved);
+		const bytes = new Uint8Array(binary.length);
+		for (let i = 0; i < binary.length; i++) {
+			bytes[i] = binary.charCodeAt(i);
+		}
+		dbInstance = new SQL.Database(bytes);
+	} else {
+		dbInstance = new SQL.Database();
+	}
 
 	if (!tablesCreated) {
 		createTables(dbInstance);
@@ -72,15 +80,24 @@ function createTables(db: Database) {
   `);
 }
 
-// Saving Local Database
 export async function saveLocalDatabase() {
 	if (!dbInstance) {
 		console.warn('No database instance to save');
 		return;
 	}
-	// Use the existing dbInstance, don't call getLocalDatabase()
+
 	const data = dbInstance.export();
-	localStorage.setItem('zeitful_db', btoa(String.fromCharCode(...data)));
+
+	// Convert to base64 in chunks to avoid stack overflow on Safari/iOS
+	const chunkSize = 8192; // Process 8KB at a time
+	let binary = '';
+
+	for (let i = 0; i < data.length; i += chunkSize) {
+		const chunk = data.subarray(i, i + chunkSize);
+		binary += String.fromCharCode(...chunk);
+	}
+
+	localStorage.setItem('zeitful_db', btoa(binary));
 }
 
 // Gathers all of the local database data from each table
