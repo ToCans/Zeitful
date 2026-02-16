@@ -25,11 +25,11 @@ import type { WorkTask, WorkTopic } from '../../types/types';
 
 // Tasks Adder Interface
 interface TaskAdderProps {
-	onTaskAdded?: () => void;
+	setItemAddedSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Component Definition
-const TaskAdder = ({ onTaskAdded }: TaskAdderProps) => {
+const TaskAdder = ({ setItemAddedSuccess }: TaskAdderProps) => {
 	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
 	const workTopics = useDataStore((state) => state.workTopics);
 	const setWorkTasks = useDataStore((state) => state.setWorkTasks);
@@ -104,11 +104,14 @@ const TaskAdder = ({ onTaskAdded }: TaskAdderProps) => {
 		}
 
 		// Trigger Success Notification
-		onTaskAdded?.();
+		setItemAddedSuccess(true);
 
 		// Clear inputs after successful add
 		setNewTaskName('');
 		setSelectedTopic(null);
+
+		// Hide it after 3 seconds
+		setTimeout(() => setItemAddedSuccess(false), 3000);
 	};
 
 	const inputStyle = {

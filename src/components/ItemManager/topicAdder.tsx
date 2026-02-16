@@ -20,8 +20,13 @@ import type { WorkTopic } from '../../types/types';
 // Utils Imports
 import { colorToInt, getRandomHexColor } from '../../utils/colors';
 
+// Topic Adder Interface
+interface TopicAdderProps {
+	setItemAddedSuccess: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 // Component Definition
-const TopicAdder = () => {
+const TopicAdder = ({ setItemAddedSuccess }: TopicAdderProps) => {
 	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
 	const setWorkTopics = useDataStore((state) => state.setWorkTopics);
 	const cloudDatabase = useCloudStore((state) => state.cloudDatabase);
@@ -92,9 +97,15 @@ const TopicAdder = () => {
 			await handleAddTopicToCloudDatabase(topicData);
 		}
 
+		// Trigger Success Notification
+		setItemAddedSuccess(true);
+
 		// Clear inputs after successful add
 		setNewTopicName('');
 		setNewTopicColor(getRandomHexColor());
+
+		// Hide it after 3 seconds
+		setTimeout(() => setItemAddedSuccess(false), 3000);
 	};
 
 	const inputStyle = {

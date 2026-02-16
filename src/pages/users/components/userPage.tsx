@@ -21,6 +21,7 @@ const UserPage = () => {
 	const tabSettings = useSettingsStore((state) => state.tabSettings);
 
 	const [isMounted, setIsMounted] = useState<boolean>(false);
+	const [itemAddedSuccess, setItemAddedSuccess] = useState<boolean>(false);
 
 	// Persist Settings
 	usePersistTabSettings({
@@ -61,14 +62,14 @@ const UserPage = () => {
 
 			{showAdder && (
 				<div className='flex w-full h-auto'>
-					{currentTab === 'Task' && <TaskAdder />}
-					{currentTab === 'Topic' && <TopicAdder />}
+					{currentTab === 'Task' && <TaskAdder setItemAddedSuccess={setItemAddedSuccess} />}
+					{currentTab === 'Topic' && <TopicAdder setItemAddedSuccess={setItemAddedSuccess} />}
 				</div>
 			)}
 
 			<div className='flex w-full flex-1 min-h-0'>
-				{currentTab === 'Task' && <TaskViewer />}
-				{currentTab === 'Topic' && <TopicViewer />}
+				{currentTab === 'Task' && <TaskViewer itemAddedSuccess={itemAddedSuccess} />}
+				{currentTab === 'Topic' && <TopicViewer itemAddedSuccess={itemAddedSuccess} />}
 				{currentTab === 'Entries' && <WorkEntryViewer />}
 			</div>
 		</div>

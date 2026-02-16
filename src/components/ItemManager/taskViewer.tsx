@@ -8,8 +8,13 @@ import { useDataStore } from '../../stores/useDataStore';
 // Type Imports
 import type { WorkTaskStatus } from '../../types/types';
 
+// Interface Definition
+interface TaskViewerProps {
+	itemAddedSuccess: boolean;
+}
+
 // Component Definition
-const TaskViewer = () => {
+const TaskViewer = ({ itemAddedSuccess }: TaskViewerProps) => {
 	const workTasks = useDataStore((state) => state.workTasks);
 	const workTopics = useDataStore((state) => state.workTopics);
 
@@ -46,6 +51,12 @@ const TaskViewer = () => {
 						setWorkTaskStatus={setWorkTaskStatus}
 					/>
 				</div>
+				<p className={`text-zinc-500 text-sm transition-all duration-300 ${itemAddedSuccess
+					? 'opacity-100 translate-y-0'
+					: 'opacity-0 translate-y-4 pointer-events-none h-0'
+					}`}>
+					Task was added successfully to "Open" tasks.
+				</p>
 			</div>
 
 			<div className='flex flex-col flex-1 overflow-y-auto'>
