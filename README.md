@@ -1,5 +1,7 @@
 # ⏱️ Zeitful
 
+[![React][React.js]][React-url] [![TypeScript][TypeScript]][TypeScript-url] [![SQL][SQL]][SQL-url] [![Tailwind CSS][TailwindCSS]][TailwindCSS-url]
+
 **An intelligent, privacy-first Pomodoro timer.**
 
 Zeitful builds upon the classic pomodoro timer study technique with time tracking capabilities for tasks and topics you're working on. With Zeitful, users can view work statistics, personalize timer lengths and color, and remain confident that your data is truly yours. Zeitful gives you clear insights into your productivity.
@@ -116,3 +118,14 @@ Pull requests are welcome!
 ## 📄 License
 
 [Apache-2.0 License](LICENSE)
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[TypeScript]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[TypeScript-url]: https://www.typescriptlang.org/
+[SQL]: https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white
+[SQL-url]: https://www.mysql.com/
+[TailwindCSS]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[TailwindCSS-url]: https://tailwindcss.com/
