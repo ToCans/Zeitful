@@ -47,10 +47,10 @@ const DataVisualizationPanel = ({
 							{itemFilter} Breakdown
 						</p>
 						{groupedWorkEntries && (
-							<>
+							<div>
 								<PiChart itemData={groupedWorkEntries} />
 								<ItemPercentageBreakdown itemData={groupedWorkEntries} />
-							</>
+							</div>
 						)}
 					</div>
 				)}

@@ -5,7 +5,6 @@ import { Dropdown } from 'primereact/dropdown';
 import DataVisualizationPanel from './dataVisualizationPanel';
 import ItemFilterButton from './itemFilterButton';
 // Hook Imports
-import { usePersistTabSettings } from '../../../hooks/usePersistSettings';
 import useGatherPeriodData from '../hooks/useGatherPeriodData';
 // React Imports
 import { useEffect, useState } from 'react';
@@ -25,13 +24,6 @@ const Statistics = () => {
 	const [isMounted, setIsMounted] = useState(false);
 	const [periodOptions, setPeriodOptions] = useState<any[]>([]);
 	const [selectedPeriod, setSelectedPeriod] = useState<any>(null);
-
-	// Persist Settings
-	usePersistTabSettings({
-		lastUsedPeriodTab: tabSettings.lastUsedPeriodTab,
-		lastUsedStatisticsTab: tabSettings.lastUsedStatisticsTab,
-		lastUsedUserPageTab: tabSettings.lastUsedUserPageTab,
-	});
 
 	// Animate on mount
 	useEffect(() => {

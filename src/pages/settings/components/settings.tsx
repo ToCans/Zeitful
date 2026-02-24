@@ -2,8 +2,6 @@
 import { ColorPicker } from 'primereact/colorpicker';
 import { InputSwitch } from 'primereact/inputswitch';
 import SettingsTimeTile from './settingsTimeTile';
-// Hook Imports
-import { usePersistAppSettings } from '../../../hooks/usePersistSettings';
 // React Imports
 import { useEffect, useState } from 'react';
 // Store Imports
@@ -33,9 +31,6 @@ const Settings = () => {
 			setIsMounted(false);
 		};
 	}, []);
-
-	// Handling for when the user changes any of the settings
-	usePersistAppSettings(appSettings);
 
 	// For Showing Timer in Tab Info
 	useEffect(() => {

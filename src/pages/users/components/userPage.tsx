@@ -7,8 +7,6 @@ import TopicAdder from '../../../components/ItemManager/topicAdder';
 import TopicViewer from '../../../components/ItemManager/topicViewer';
 import CloudDatabaseTile from './cloudDatabaseTile';
 import WorkEntryViewer from '../../../components/ItemManager/workEntryViewer';
-// Hook Imports
-import { usePersistTabSettings } from '../../../hooks/usePersistSettings';
 // React Imports
 import { useEffect, useState } from 'react';
 // Store Imports
@@ -22,13 +20,6 @@ const UserPage = () => {
 
 	const [isMounted, setIsMounted] = useState<boolean>(false);
 	const [itemAddedSuccess, setItemAddedSuccess] = useState<boolean>(false);
-
-	// Persist Settings
-	usePersistTabSettings({
-		lastUsedPeriodTab: tabSettings.lastUsedPeriodTab,
-		lastUsedStatisticsTab: tabSettings.lastUsedStatisticsTab,
-		lastUsedUserPageTab: tabSettings.lastUsedUserPageTab,
-	});
 
 	// Trigger the slide-in animation on component mount
 	useEffect(() => {
