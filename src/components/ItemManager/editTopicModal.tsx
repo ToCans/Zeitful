@@ -1,5 +1,6 @@
 // API Imports
 import { editTopic, getTopics } from '../../api/localDatabase';
+import { editWorkTopicSupabaseDatabase } from '../../api/cloudDatabase';
 // Component Imports
 import { ColorPicker } from 'primereact/colorpicker';
 import { InputText } from 'primereact/inputtext';
@@ -9,6 +10,7 @@ import { IconContext } from 'react-icons';
 // React Imports
 import { useState, useCallback } from 'react';
 // Store Imports
+import { useCloudStore } from '../../stores/useCloudStore';
 import { useSettingsStore } from '../../stores/useSettingsStore';
 import { useDataStore } from '../../stores/useDataStore';
 import { useRefsStore } from '../../stores/useRefsStore';
@@ -29,6 +31,7 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
 	const setWorkTopics = useDataStore((state) => state.setWorkTopics);
 	const toast = useRefsStore((state) => state.toast);
+	const { cloudDatabase } = useCloudStore();
 
 	const [editValues, setEditValues] = useState({
 		name: workTopic.name,
@@ -39,21 +42,43 @@ const EditTopicModal = ({ setEditMode, workTopic }: EditTopicModalProps) => {
 
 	const handleConfirmEdit = useCallback(
 		async (topicId: string, editedWorkTopic: EditedWorkTopic) => {
-			const topicResponse = await editTopic(topicId, editedWorkTopic);
+			try {
+				const localTopicResponse = await editTopic(topicId, editedWorkTopic);
 
-			if (topicResponse.status === 'Failure') {
-				toast?.show({
-					severity: 'error',
-					summary: topicResponse.status,
-					detail: topicResponse.message,
-					life: 3000,
-				});
-			} else {
-				const updatedTopics = await getTopics();
-				if (updatedTopics.item) {
-					setWorkTopics(updatedTopics.item as WorkTopic[]);
+				if (localTopicResponse.status === 'Failure') {
+					toast?.show({
+						severity: 'error',
+						summary: localTopicResponse.status,
+						detail: localTopicResponse.message,
+						life: 3000,
+					});
+				} else {
+					const updatedTopics = await getTopics();
+					if (updatedTopics.item) {
+						setWorkTopics(updatedTopics.item as WorkTopic[]);
+					}
+				}
+			} catch (err) {
+				console.error("Local edit topic failed", err);
+			}
+
+			if (cloudDatabase) {
+				try {
+					const cloudTopicResponse = await editWorkTopicSupabaseDatabase(cloudDatabase, topicId, editedWorkTopic);
+
+					if (cloudTopicResponse.status === 'Failure') {
+						toast?.show({
+							severity: 'error',
+							summary: cloudTopicResponse.status,
+							detail: cloudTopicResponse.message,
+							life: 3000,
+						});
+					}
+				} catch (err) {
+					console.error("Cloud edit topic failed", err);
 				}
 			}
+
 			setEditMode(false);
 		},
 		[toast, setWorkTopics, setEditMode],

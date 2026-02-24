@@ -1,6 +1,8 @@
 // Type Imports
 import type {
 	DatabaseActionResponse,
+	EditedWorkTask,
+	EditedWorkTopic,
 	WorkTask,
 	WorkEntry,
 	WorkTopic,
@@ -173,6 +175,86 @@ export const addWorkTaskSupabaseDatabase = async (
 	}
 };
 
+export const editWorkTaskSupabaseDatabase = async (
+	supabaseClient: SupabaseClient,
+	taskId: string,
+	editedWorkTask: EditedWorkTask,
+): Promise<DatabaseActionResponse> => {
+	try {
+		const { error } = await supabaseClient
+			.from('work_tasks')
+			.update({
+				topic_id: editedWorkTask.topic_id,
+				name: editedWorkTask.name,
+				status: editedWorkTask.status,
+				last_action: editedWorkTask.last_action,
+				last_action_date: editedWorkTask.last_action_date,
+			})
+			.eq('id', taskId)
+			.select(); // required to detect "not found"
+
+		if (error) {
+			return {
+				status: 'Failure',
+				message: `Work Task wasn't updated in supabase database. ${error.message}`,
+			};
+		}
+
+		return {
+			status: 'Success',
+			message: `Work Task was updated in supabase database.`,
+		};
+	} catch (e: any) {
+		return {
+			status: 'Failure',
+			message: `Work Task wasn't updated in supabase database. ${e?.message ?? e}`,
+		};
+	}
+};
+
+export const deleteWorkTaskSupabaseDatabase = async (
+	supabaseClient: SupabaseClient,
+	taskId: string,
+	task: WorkTask,
+	last_action_date: string,
+): Promise<DatabaseActionResponse> => {
+	try {
+		// Soft delete: set last_action = 3 and update last_action_date
+		const { data, error } = await supabaseClient
+			.from('work_tasks')
+			.update({
+				last_action: 3, // 3 = deleted
+				last_action_date: last_action_date,
+			})
+			.eq('id', taskId)
+			.select(); // required to detect "not found"
+
+		if (error) {
+			return {
+				status: 'Failure',
+				message: `Task "${task.name}" wasn't deleted in supabase database. ${error.message}`,
+			};
+		}
+
+		if (!data || data.length === 0) {
+			return {
+				status: 'Failure',
+				message: `Task with id "${taskId}" not found — cannot delete.`,
+			};
+		}
+
+		return {
+			status: 'Success',
+			message: `Task "${task.name}" was deleted in supabase database.`,
+		};
+	} catch (e: any) {
+		return {
+			status: 'Failure',
+			message: `Task "${task.name}" wasn't deleted in supabase database. ${e?.message ?? e}`,
+		};
+	}
+};
+
 // Sending individual Work Entry to Supabase Database
 export const addWorkTopicSupabaseDatabase = async (
 	supabaseClient: SupabaseClient,
@@ -197,6 +279,92 @@ export const addWorkTopicSupabaseDatabase = async (
 		return {
 			status: 'Failure',
 			message: `Work Topic wasn't inserted into supabase database. ${e}`,
+		};
+	}
+};
+
+export const editWorkTopicSupabaseDatabase = async (
+	supabaseClient: SupabaseClient,
+	topicId: string,
+	editedWorkTopic: EditedWorkTopic,
+): Promise<DatabaseActionResponse> => {
+	try {
+		const { data, error } = await supabaseClient
+			.from('work_topics')
+			.update({
+				name: editedWorkTopic.name,
+				color: editedWorkTopic.color,
+				last_action: editedWorkTopic.last_action,
+				last_action_date: editedWorkTopic.last_action_date,
+			})
+			.eq('id', topicId)
+			.select(); // required to detect "not found"
+
+		if (error) {
+			return {
+				status: 'Failure',
+				message: `Work Topic wasn't updated in supabase database. ${error.message}`,
+			};
+		}
+
+		if (!data || data.length === 0) {
+			return {
+				status: 'Failure',
+				message: `Work Topic with id "${topicId}" not found — cannot update.`,
+			};
+		}
+
+		return {
+			status: 'Success',
+			message: `Work Topic updated in supabase database.`,
+		};
+	} catch (e: any) {
+		return {
+			status: 'Failure',
+			message: `Work Topic wasn't updated in supabase database. ${e?.message ?? e}`,
+		};
+	}
+};
+
+export const deleteWorkTopicSupabaseDatabase = async (
+	supabaseClient: SupabaseClient,
+	topicId: string,
+	topic: WorkTopic,
+	last_action_date: string,
+): Promise<DatabaseActionResponse> => {
+	try {
+		// Perform "soft delete" by updating last_action and last_action_date
+		const { data, error } = await supabaseClient
+			.from('work_topics')
+			.update({
+				last_action: 3,           // 3 = deleted
+				last_action_date: last_action_date,
+			})
+			.eq('id', topicId)
+			.select(); // required to detect "not found"
+
+		if (error) {
+			return {
+				status: 'Failure',
+				message: `Topic "${topic.name}" wasn't deleted in supabase database. ${error.message}`,
+			};
+		}
+
+		if (!data || data.length === 0) {
+			return {
+				status: 'Failure',
+				message: `Topic with id "${topicId}" not found — cannot delete.`,
+			};
+		}
+
+		return {
+			status: 'Success',
+			message: `Topic "${topic.name}" was deleted in supabase database.`,
+		};
+	} catch (e: any) {
+		return {
+			status: 'Failure',
+			message: `Topic "${topic.name}" wasn't deleted in supabase database. ${e?.message ?? e}`,
 		};
 	}
 };

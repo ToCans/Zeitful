@@ -1,5 +1,6 @@
 // API Imports
 import { getTasks, deleteTask } from '../../api/localDatabase';
+import { deleteWorkTaskSupabaseDatabase } from '../../api/cloudDatabase';
 // Component Imports
 import ColorIcon from './colorIcon';
 import EditTaskModal from './editTaskModal';
@@ -9,6 +10,7 @@ import { IconContext } from 'react-icons';
 // React Imports
 import { useState, useCallback } from 'react';
 // Store Imports
+import { useCloudStore } from '../../stores/useCloudStore';
 import { useSettingsStore } from '../../stores/useSettingsStore';
 import { useDataStore } from '../../stores/useDataStore';
 import { useRefsStore } from '../../stores/useRefsStore';
@@ -27,6 +29,7 @@ const TaskTile = ({ workTopics, workTask }: TaskTileProps) => {
 	const darkMode = useSettingsStore((state) => state.appSettings.darkMode);
 	const setWorkTasks = useDataStore((state) => state.setWorkTasks);
 	const toast = useRefsStore((state) => state.toast);
+	const { cloudDatabase } = useCloudStore();
 
 	const [editMode, setEditMode] = useState<boolean>(false);
 
@@ -47,25 +50,50 @@ const TaskTile = ({ workTopics, workTask }: TaskTileProps) => {
 	}, []);
 
 	const handleDelete = useCallback(async () => {
-		const taskResponse = await deleteTask(
-			workTask.id,
-			workTask,
-			new Date().toISOString(),
-		);
+		try {
+			const taskResponse = await deleteTask(
+				workTask.id,
+				workTask,
+				new Date().toISOString(),
+			);
 
-		if (taskResponse.status === 'Failure') {
-			toast?.show({
-				severity: 'error',
-				summary: taskResponse.status,
-				detail: taskResponse.message,
-				life: 3000,
-			});
-		} else {
-			const updatedTasks = await getTasks();
-			if (updatedTasks.item) {
-				setWorkTasks(updatedTasks.item as WorkTask[]);
+			if (taskResponse.status === 'Failure') {
+				toast?.show({
+					severity: 'error',
+					summary: taskResponse.status,
+					detail: taskResponse.message,
+					life: 3000,
+				});
+			} else {
+				const updatedTasks = await getTasks();
+				if (updatedTasks.item) {
+					setWorkTasks(updatedTasks.item as WorkTask[]);
+				}
+			}
+		} catch (err) {
+			console.error("Local delete task failed", err);
+		}
+
+		if (cloudDatabase) {
+			try {
+				const cloudTopicResponse = await deleteWorkTaskSupabaseDatabase(cloudDatabase,
+					workTask.id,
+					workTask,
+					new Date().toISOString());
+
+				if (cloudTopicResponse.status === 'Failure') {
+					toast?.show({
+						severity: 'error',
+						summary: cloudTopicResponse.status,
+						detail: cloudTopicResponse.message,
+						life: 3000,
+					});
+				}
+			} catch (err) {
+				console.error("Cloud edit topic failed", err);
 			}
 		}
+
 	}, [workTask, toast, setWorkTasks]);
 
 	const iconClassName = `${darkMode ? 'fill-gray-200 hover:fill-gray-400' : 'fill-gray-600 hover:fill-gray-400'

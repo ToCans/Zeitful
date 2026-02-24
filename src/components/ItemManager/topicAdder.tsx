@@ -91,10 +91,18 @@ const TopicAdder = ({ setItemAddedSuccess }: TopicAdderProps) => {
 			last_action_date: new Date().toISOString(),
 		};
 
-		await handleAddTopic(topicData);
+		try {
+			await handleAddTopic(topicData);
+		} catch (err) {
+			console.error("Local add topic failed", err);
+		}
 
 		if (cloudDatabase) {
-			await handleAddTopicToCloudDatabase(topicData);
+			try {
+				await handleAddTopicToCloudDatabase(topicData);
+			} catch (err) {
+				console.error("Cloud add topic failed", err);
+			}
 		}
 
 		// Trigger Success Notification

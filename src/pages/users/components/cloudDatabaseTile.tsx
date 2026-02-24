@@ -196,14 +196,18 @@ const CloudDatabaseTile = () => {
 			/>
 
 			<IconContext.Provider value={{ className: getIconClassName(shouldBounce) }}>
-				<PiCloud onClick={handleCloudCredentialsImportClick} />
+				<PiCloud
+					className={isLoading ? 'opacity-50 pointer-events-none' : ''}
+					onClick={handleCloudCredentialsImportClick} />
 			</IconContext.Provider>
 
 			{shouldShowSyncButton && (
 				<IconContext.Provider value={{ className: getIconClassName() }}>
 					<PiArrowsClockwise
-						className={isLoading ? 'animate-spin' : ''}
-						onClick={handleCloudDatabaseDataSync}
+						className={isLoading ? 'animate-spin opacity-50 pointer-events-none' : ''}
+						onClick={() => {
+							if (!isLoading) handleCloudDatabaseDataSync();
+						}}
 					/>
 				</IconContext.Provider>
 			)}

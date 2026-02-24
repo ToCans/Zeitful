@@ -165,19 +165,28 @@ const Timer = () => {
 					};
 
 					// Storing Work Entry Data locally
-					await handleAddWorkEntry(id, workEntryData);
+					try {
+						await handleAddWorkEntry(id, workEntryData);
+					} catch (err) {
+						console.error("Local save failed", err);
+					}
 
 					// Storing Work Entry to Cloud Database
 					if (cloudDatabase) {
-						await handleAddWorkEntryToCloudDatabase(id, workEntryData);
+						try {
+							await handleAddWorkEntryToCloudDatabase(id, workEntryData);
+						} catch (err) {
+							console.error("Cloud save failed", err);
+						}
 					}
 				}
 
 				// Sending Push Notification
-				await sendPushNotification({
-					cycleNumber,
-					subscription,
-				});
+				try {
+					await sendPushNotification({ cycleNumber, subscription });
+				} catch (err) {
+					console.error("Push notification failed", err);
+				}
 
 				// Incrementing Cycle
 				setCycleNumber(cycleNumber + 1);

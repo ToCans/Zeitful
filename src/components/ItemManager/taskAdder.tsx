@@ -97,10 +97,18 @@ const TaskAdder = ({ setItemAddedSuccess }: TaskAdderProps) => {
 			last_action_date: new Date().toISOString(),
 		};
 
-		await handleAddTask(taskData);
+		try {
+			await handleAddTask(taskData);
+		} catch (err) {
+			console.error("Local add task failed", err);
+		}
 
 		if (cloudDatabase) {
-			await handleAddTaskToCloudDatabase(taskData);
+			try {
+				await handleAddTaskToCloudDatabase(taskData);
+			} catch (err) {
+				console.error("Cloud add task failed", err);
+			}
 		}
 
 		// Trigger Success Notification

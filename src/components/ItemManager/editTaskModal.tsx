@@ -1,20 +1,25 @@
-import type { EditedWorkTask, WorkTask } from '../../types/types';
-import { PiXBold, PiCheckBold } from 'react-icons/pi';
-import { IconContext } from 'react-icons';
-import { Dropdown } from 'primereact/dropdown';
-import { InputText } from 'primereact/inputtext';
-import { useState, useCallback, type SetStateAction, type Dispatch } from 'react';
-// Store Imports
-import { useSettingsStore } from '../../stores/useSettingsStore';
-import { useDataStore } from '../../stores/useDataStore';
-import { useRefsStore } from '../../stores/useRefsStore';
+// API Imports
+import { editTask, getTasks } from '../../api/localDatabase';
+import { editWorkTaskSupabaseDatabase } from '../../api/cloudDatabase';
 // Component Imports
 import {
 	WorkTopicOptionTemplate,
 	SelectedWorkTopicOptionTemplate,
 } from './workTopicOptionTemplate';
-// API Imports
-import { editTask, getTasks } from '../../api/localDatabase';
+import { Dropdown } from 'primereact/dropdown';
+import { InputText } from 'primereact/inputtext';
+// Icon Imports
+import { PiXBold, PiCheckBold } from 'react-icons/pi';
+import { IconContext } from 'react-icons';
+// React Imports
+import { useState, useCallback, type SetStateAction, type Dispatch } from 'react';
+// Store Imports
+import { useCloudStore } from '../../stores/useCloudStore';
+import { useSettingsStore } from '../../stores/useSettingsStore';
+import { useDataStore } from '../../stores/useDataStore';
+import { useRefsStore } from '../../stores/useRefsStore';
+// Type Imports
+import type { EditedWorkTask, WorkTask } from '../../types/types';
 
 interface EditTaskModalProps {
 	setEditMode: Dispatch<SetStateAction<boolean>>;
@@ -26,6 +31,7 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 	const workTopics = useDataStore((state) => state.workTopics);
 	const setWorkTasks = useDataStore((state) => state.setWorkTasks);
 	const toast = useRefsStore((state) => state.toast);
+	const { cloudDatabase } = useCloudStore();
 
 	const [editValues, setEditValues] = useState({
 		name: workTask.name,
@@ -43,22 +49,47 @@ const EditTaskModal = ({ setEditMode, workTask }: EditTaskModalProps) => {
 
 	const handleConfirmEdit = useCallback(
 		async (taskId: string, editedWorkTask: EditedWorkTask) => {
-			const taskResponse = await editTask(taskId, editedWorkTask);
+			try {
+				const taskResponse = await editTask(taskId, editedWorkTask);
 
-			// Setting Tasks
-			if (taskResponse.status === 'Failure') {
-				toast?.show({
-					severity: 'error',
-					summary: taskResponse.status,
-					detail: taskResponse.message,
-					life: 3000,
-				});
-			} else {
-				const updatedTasks = await getTasks();
-				if (updatedTasks.item) {
-					setWorkTasks(updatedTasks.item as WorkTask[]);
+				// Setting Tasks
+				if (taskResponse.status === 'Failure') {
+					toast?.show({
+						severity: 'error',
+						summary: taskResponse.status,
+						detail: taskResponse.message,
+						life: 3000,
+					});
+				} else {
+					const updatedTasks = await getTasks();
+					if (updatedTasks.item) {
+						setWorkTasks(updatedTasks.item as WorkTask[]);
+					}
+				}
+			} catch (err) {
+				console.error("Local edit task failed", err);
+			}
+
+			if (cloudDatabase) {
+				try {
+					const cloudTopicResponse = await editWorkTaskSupabaseDatabase(cloudDatabase, taskId, editedWorkTask);
+
+					if (cloudTopicResponse.status === 'Failure') {
+						toast?.show({
+							severity: 'error',
+							summary: cloudTopicResponse.status,
+							detail: cloudTopicResponse.message,
+							life: 3000,
+						});
+					}
+				} catch (err) {
+					console.error("Cloud edit task failed", err);
 				}
 			}
+
+
+
+
 			setEditMode(false);
 		},
 		[toast, setWorkTasks, setEditMode],
