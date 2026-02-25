@@ -29,9 +29,9 @@ Zeitful builds upon the classic pomodoro timer study technique with time trackin
 
 -   Topics represent the subject of your work (i.e. Programming) while tasks represent the specifc item you are working on (i.e. Calculator app). When completing a work session, a work entry is stored in your browser.
 -   Topic structure:
-    | id | name | color | last_action |
+    | id | name | color | last_action | last_action_date
 -   Task structure:
-    | id | topic_id | name | status | last_action|
+    | id | topic_id | name | status | last_action | last_action_date
 -   Work Entries structure:
     | id | task_id | topic_id | task_name | topic_name | duration | completion_time |
 
@@ -80,30 +80,32 @@ If you want cloud sync:
 4. Ensure required tables (e.g. `work_tasks`, `work_topics`, `work_topics`) exist. Run the following in the sql editor:
 
 ```
-CREATE TABLE IF NOT EXISTS work_topics (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      color TEXT NOT NULL,
-      last_action TEXT
-    );
+     CREATE TABLE IF NOT EXISTS work_topics (
+		id BLOB(16) PRIMARY KEY, -- UUID as 16-byte BLOB
+		name TEXT NOT NULL,
+		color INTEGER NOT NULL, -- 0xRRGGBB stored as INTEGER
+		last_action INTEGER, -- 1=Added, 2=Edited, 3=Deleted
+		last_action_date TEXT
+	);
 
-    CREATE TABLE IF NOT EXISTS work_tasks (
-      id TEXT PRIMARY KEY,
-      topic_id TEXT,
-      name TEXT,
-      status TEXT NOT NULL CHECK(status IN ('Open', 'Active', 'Closed')),
-      last_action TEXT
-    );
+	CREATE TABLE IF NOT EXISTS work_tasks (
+		id BLOB(16) PRIMARY KEY, -- UUID
+		topic_id BLOB(16),
+		name TEXT NOT NULL,
+		status INTEGER NOT NULL CHECK(status IN (1,2,3)), -- 1=Open, 2=Active, 3=Closed
+		last_action INTEGER, -- same enum as above
+		last_action_date TEXT
+	);
 
-    CREATE TABLE IF NOT EXISTS work_entries (
-      id TEXT PRIMARY KEY,
-      task_id TEXT,
-      topic_id TEXT,
-      task_name TEXT,
-      topic_name TEXT,
-      duration REAL NOT NULL,
-      completion_time TEXT NOT NULL
-    );
+	CREATE TABLE IF NOT EXISTS work_entries (
+		id BLOB(16) PRIMARY KEY, -- UUID
+		task_id BLOB(16),
+		topic_id BLOB(16),
+		task_name TEXT,
+		topic_name TEXT,
+		duration REAL NOT NULL, -- minutes
+		completion_time TEXT NOT NULL
+	);
 ```
 
 ---
