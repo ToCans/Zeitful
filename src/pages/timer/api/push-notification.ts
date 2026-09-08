@@ -87,7 +87,7 @@ export const sendPushNotification = async ({
 	try {
 		// Sends notification based on cycle number
 		const response = await fetch(
-			'https://cozystudy-server.vercel.app/api/send-push-notifications',
+			'https://zeitful-server.vercel.app/api/send-push-notifications',
 			{
 				method: 'POST',
 				headers: {
