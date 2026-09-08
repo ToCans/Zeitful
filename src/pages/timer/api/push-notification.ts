@@ -49,7 +49,7 @@ export const subscribeToPush = async (): Promise<void> => {
 		}
 
 		// Public Vapid Key and Push Notification Setup
-		const vapidPublicKey = 'BKcJp8Aq5hki25jJsakB9Gcazick4XBYw_tnazGj6F7WNUi5TPAdevrd6O1OfbsLN_uZQM1LidLrFVuuycyv0Qs';
+		const vapidPublicKey = 'BHGdYzDyrzWfiOnGnsP4BeQoSJsz87wECZKcGp_scaEQi3Zdzh1xiF6Gb_6NHEHArCZwmuinG4lZW3sG12R8NMM';
 		const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 
 		const pushSubscription = await pushManager.subscribe({
